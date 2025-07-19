@@ -52,7 +52,7 @@ class Sandbox:
         response = self.client.request("POST", f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/preview")
         return dto.SandboxActionResponseDto.model_validate_json(response.text)
 
-    def get_connection_details(self, sandbox_id: str)->dto.SandboxConnectionDetail:
+    def get_connection_details(self, sandbox_id: str)-> dto.SandboxConnectionDetail:
         """
         Get connection details for a sandbox
         """
