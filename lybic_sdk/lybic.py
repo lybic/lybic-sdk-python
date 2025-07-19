@@ -32,6 +32,7 @@ class LybicClient:
             "Content-Type": "application/json"
         }
 
+        self.stats = Stats(self)
         # Auth Test
         self.stats.get()
 
