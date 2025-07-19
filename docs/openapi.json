@@ -1,0 +1,2714 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/api/orgs/{orgId}/mcp-servers": {
+      "get": {
+        "operationId": "listMcpServers",
+        "summary": "List MCP servers",
+        "description": "Returns a list of MCP servers for the organization.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListMcpServerResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createMcpServer",
+        "summary": "Create MCP server",
+        "description": "Creates a new MCP server.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateMcpServerDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/McpServerResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/orgs/{orgId}/mcp-servers/default": {
+      "get": {
+        "operationId": "getDefaultMcpServer",
+        "summary": "Get Default MCP server",
+        "description": "Returns the default MCP server for the organization. If not set, it will create a new one.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/McpServerResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/orgs/{orgId}/mcp-servers/{mcpServerId}": {
+      "delete": {
+        "operationId": "deleteMcpServer",
+        "summary": "Delete MCP server",
+        "description": "Deletes an MCP server by its ID.",
+        "parameters": [
+          {
+            "name": "mcpServerId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/orgs/{orgId}/sandboxes": {
+      "get": {
+        "operationId": "listSandboxes",
+        "summary": "List Sandboxes",
+        "description": "Returns a list of sandboxes for the organization.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SandboxListResponseDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createSandbox",
+        "summary": "Create Sandbox",
+        "description": "Creates a new sandbox.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSandboxDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetSandboxResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/orgs/{orgId}/sandboxes/{sandboxId}": {
+      "delete": {
+        "operationId": "deleteSandbox",
+        "summary": "Delete Sandbox",
+        "description": "Deletes a sandbox by its ID.",
+        "parameters": [
+          {
+            "name": "sandboxId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      },
+      "get": {
+        "operationId": "getSandbox",
+        "summary": "Get Sandbox Details",
+        "description": "Get the sandbox details by id",
+        "parameters": [
+          {
+            "name": "sandboxId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetSandboxResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/orgs/{orgId}/sandboxes/{sandboxId}/actions/computer-use": {
+      "post": {
+        "operationId": "executeComputerUseAction",
+        "summary": "Execute Computer Use Action",
+        "description": "Executes a computer use action on the sandbox.",
+        "parameters": [
+          {
+            "name": "sandboxId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ComputerUseActionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SandboxActionResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/orgs/{orgId}/sandboxes/{sandboxId}/preview": {
+      "post": {
+        "operationId": "previewSandbox",
+        "summary": "Preview Sandbox",
+        "description": "Takes a screenshot and gets cursor position of the sandbox.",
+        "parameters": [
+          {
+            "name": "sandboxId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SandboxActionResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/orgs/{orgId}/projects": {
+      "get": {
+        "operationId": "listProjects",
+        "summary": "List Projects",
+        "description": "Returns a list of projects for the organization.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListProjectsResponseDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createProject",
+        "summary": "Create Project",
+        "description": "Creates a new project.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProjectDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SingleProjectResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/orgs/{orgId}/projects/{projectId}": {
+      "delete": {
+        "operationId": "deleteProject",
+        "summary": "Delete Project",
+        "description": "Deletes a project by its ID.",
+        "parameters": [
+          {
+            "name": "projectId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/computer-use/parse": {
+      "post": {
+        "operationId": "parseModelOutput",
+        "summary": "Parse LLM Output",
+        "description": "Parses the output text of computer use model and returns the parsed actions.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ComputerUseParseRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ComputerUseActionResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/orgs/{orgId}/stats": {
+      "get": {
+        "operationId": "getStats",
+        "summary": "Get Organization Stats",
+        "description": "Returns the stats of the organization, such as number of members, computers, etc.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatsResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "info": {
+    "title": "Lybic core API",
+    "description": "Lybic core API",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "schemas": {
+      "ListMcpServerResponse": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "description": "ID of the MCP server.",
+              "type": "string"
+            },
+            "name": {
+              "description": "Name of the MCP server.",
+              "type": "string"
+            },
+            "createdAt": {
+              "description": "Creation date of the MCP server.",
+              "type": "string"
+            },
+            "defaultMcpServer": {
+              "description": "Whether this is the default MCP server for the organization.",
+              "type": "boolean"
+            },
+            "projectId": {
+              "description": "Project ID to which the MCP server belongs.",
+              "type": "string"
+            },
+            "policy": {
+              "type": "object",
+              "properties": {
+                "sandboxMaxLifetimeSeconds": {
+                  "description": "The maximum lifetime of a sandbox.",
+                  "type": "number",
+                  "default": 3600
+                },
+                "sandboxMaxIdleTimeSeconds": {
+                  "description": "The maximum idle time of a sandbox.",
+                  "type": "number",
+                  "default": 3600
+                },
+                "sandboxAutoCreation": {
+                  "description": "Whether to create a new sandbox automatically when old sandbox is deleted. If not, new sandboxes will be created when calling computer use tools.",
+                  "type": "boolean",
+                  "default": false
+                },
+                "sandboxExposeRecreateTool": {
+                  "description": "Whether to expose recreate tool to LLMs.",
+                  "type": "boolean",
+                  "default": false
+                },
+                "sandboxExposeRestartTool": {
+                  "description": "Whether to expose restart tool to LLMs.",
+                  "type": "boolean",
+                  "default": false
+                },
+                "sandboxExposeDeleteTool": {
+                  "description": "Whether to expose delete tool to LLMs.",
+                  "type": "boolean",
+                  "default": false
+                }
+              }
+            }
+          },
+          "required": [
+            "id",
+            "name",
+            "createdAt",
+            "defaultMcpServer",
+            "projectId",
+            "policy"
+          ]
+        }
+      },
+      "McpServerResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "ID of the MCP server.",
+            "type": "string"
+          },
+          "name": {
+            "description": "Name of the MCP server.",
+            "type": "string"
+          },
+          "createdAt": {
+            "description": "Creation date of the MCP server.",
+            "type": "string"
+          },
+          "defaultMcpServer": {
+            "description": "Whether this is the default MCP server for the organization.",
+            "type": "boolean"
+          },
+          "projectId": {
+            "description": "Project ID to which the MCP server belongs.",
+            "type": "string"
+          },
+          "policy": {
+            "type": "object",
+            "properties": {
+              "sandboxMaxLifetimeSeconds": {
+                "description": "The maximum lifetime of a sandbox.",
+                "type": "number",
+                "default": 3600
+              },
+              "sandboxMaxIdleTimeSeconds": {
+                "description": "The maximum idle time of a sandbox.",
+                "type": "number",
+                "default": 3600
+              },
+              "sandboxAutoCreation": {
+                "description": "Whether to create a new sandbox automatically when old sandbox is deleted. If not, new sandboxes will be created when calling computer use tools.",
+                "type": "boolean",
+                "default": false
+              },
+              "sandboxExposeRecreateTool": {
+                "description": "Whether to expose recreate tool to LLMs.",
+                "type": "boolean",
+                "default": false
+              },
+              "sandboxExposeRestartTool": {
+                "description": "Whether to expose restart tool to LLMs.",
+                "type": "boolean",
+                "default": false
+              },
+              "sandboxExposeDeleteTool": {
+                "description": "Whether to expose delete tool to LLMs.",
+                "type": "boolean",
+                "default": false
+              }
+            }
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "createdAt",
+          "defaultMcpServer",
+          "projectId",
+          "policy"
+        ]
+      },
+      "CreateMcpServerDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "Name of the MCP server.",
+            "type": "string"
+          },
+          "projectId": {
+            "description": "Project to which the MCP server belongs to.",
+            "type": "string"
+          },
+          "sandboxMaxLifetimeSeconds": {
+            "description": "The maximum lifetime of a sandbox.",
+            "type": "number",
+            "default": 3600
+          },
+          "sandboxMaxIdleTimeSeconds": {
+            "description": "The maximum idle time of a sandbox.",
+            "type": "number",
+            "default": 3600
+          },
+          "sandboxAutoCreation": {
+            "description": "Whether to create a new sandbox automatically when old sandbox is deleted. If not, new sandboxes will be created when calling computer use tools.",
+            "type": "boolean",
+            "default": false
+          },
+          "sandboxExposeRecreateTool": {
+            "description": "Whether to expose recreate tool to LLMs.",
+            "type": "boolean",
+            "default": false
+          },
+          "sandboxExposeRestartTool": {
+            "description": "Whether to expose restart tool to LLMs.",
+            "type": "boolean",
+            "default": false
+          },
+          "sandboxExposeDeleteTool": {
+            "description": "Whether to expose delete tool to LLMs.",
+            "type": "boolean",
+            "default": false
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "SandboxListResponseDto": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "sandbox": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "expiredAt": {},
+                "createdAt": {},
+                "projectId": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "expiredAt",
+                "createdAt",
+                "projectId"
+              ]
+            },
+            "connectDetails": {
+              "type": "object",
+              "properties": {
+                "gatewayAddresses": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "address": {
+                        "type": "string"
+                      },
+                      "port": {
+                        "type": "number"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "preferredProviders": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "CHINA_MOBILE",
+                            "CHINA_UNICOM",
+                            "CHINA_TELECOM",
+                            "GLOBAL_BGP",
+                            1,
+                            2,
+                            3,
+                            4
+                          ],
+                          "x-enumNames": [
+                            "1",
+                            "2",
+                            "3",
+                            "4",
+                            "CHINA_MOBILE",
+                            "CHINA_UNICOM",
+                            "CHINA_TELECOM",
+                            "GLOBAL_BGP"
+                          ]
+                        }
+                      },
+                      "gatewayType": {
+                        "type": "string",
+                        "enum": [
+                          "KCP",
+                          "QUIC",
+                          "WEB_TRANSPORT",
+                          4,
+                          5,
+                          6
+                        ],
+                        "x-enumNames": [
+                          "4",
+                          "5",
+                          "6",
+                          "KCP",
+                          "QUIC",
+                          "WEB_TRANSPORT"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "address",
+                      "port",
+                      "name",
+                      "preferredProviders",
+                      "gatewayType"
+                    ]
+                  }
+                },
+                "certificateHashBase64": {
+                  "type": "string"
+                },
+                "endUserToken": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "gatewayAddresses",
+                "certificateHashBase64",
+                "endUserToken"
+              ]
+            }
+          },
+          "required": [
+            "sandbox",
+            "connectDetails"
+          ]
+        }
+      },
+      "CreateSandboxDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "The name of the sandbox.",
+            "type": "string",
+            "default": "sandbox"
+          },
+          "maxLifeSeconds": {
+            "description": "The maximum life time of the sandbox in seconds. Default is 1 hour, max is 1 day.",
+            "type": "number",
+            "minimum": 1,
+            "exclusiveMinimum": false,
+            "maximum": 86400,
+            "exclusiveMaximum": false,
+            "default": 3600
+          },
+          "projectId": {
+            "description": "The project id to use for the sandbox. Use default if not provided.",
+            "type": "string"
+          },
+          "specId": {
+            "description": "The spec of the sandbox. Use default if not provided.",
+            "type": "string"
+          },
+          "datacenterId": {
+            "description": "The datacenter id to use for the sandbox. Use default if not provided.",
+            "type": "string"
+          }
+        }
+      },
+      "GetSandboxResponseDto": {
+        "type": "object",
+        "properties": {
+          "sandbox": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "expiredAt": {},
+              "createdAt": {},
+              "projectId": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "expiredAt",
+              "createdAt",
+              "projectId"
+            ]
+          },
+          "connectDetails": {
+            "type": "object",
+            "properties": {
+              "gatewayAddresses": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "address": {
+                      "type": "string"
+                    },
+                    "port": {
+                      "type": "number"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "preferredProviders": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "CHINA_MOBILE",
+                          "CHINA_UNICOM",
+                          "CHINA_TELECOM",
+                          "GLOBAL_BGP",
+                          1,
+                          2,
+                          3,
+                          4
+                        ],
+                        "x-enumNames": [
+                          "1",
+                          "2",
+                          "3",
+                          "4",
+                          "CHINA_MOBILE",
+                          "CHINA_UNICOM",
+                          "CHINA_TELECOM",
+                          "GLOBAL_BGP"
+                        ]
+                      }
+                    },
+                    "gatewayType": {
+                      "type": "string",
+                      "enum": [
+                        "KCP",
+                        "QUIC",
+                        "WEB_TRANSPORT",
+                        4,
+                        5,
+                        6
+                      ],
+                      "x-enumNames": [
+                        "4",
+                        "5",
+                        "6",
+                        "KCP",
+                        "QUIC",
+                        "WEB_TRANSPORT"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "address",
+                    "port",
+                    "name",
+                    "preferredProviders",
+                    "gatewayType"
+                  ]
+                }
+              },
+              "certificateHashBase64": {
+                "type": "string"
+              },
+              "endUserToken": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "gatewayAddresses",
+              "certificateHashBase64",
+              "endUserToken"
+            ]
+          }
+        },
+        "required": [
+          "sandbox",
+          "connectDetails"
+        ]
+      },
+      "ComputerUseActionDto": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "description": "All possible computer use actions, with optional callId",
+            "oneOf": [
+              {
+                "description": "Click the mouse at the specified coordinates",
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "mouse:click"
+                    ]
+                  },
+                  "x": {
+                    "description": "X coordinate",
+                    "oneOf": [
+                      {
+                        "description": "Length in pixels",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "description": "Indicates the unit is pixel",
+                            "type": "string",
+                            "enum": [
+                              "px"
+                            ]
+                          },
+                          "value": {
+                            "description": "Length in pixels",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "value"
+                        ]
+                      },
+                      {
+                        "description": "Length as a fraction",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "/"
+                            ]
+                          },
+                          "numerator": {
+                            "description": "Numerator of the fraction",
+                            "type": "number"
+                          },
+                          "denominator": {
+                            "description": "Denominator of the fraction",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "numerator",
+                          "denominator"
+                        ]
+                      }
+                    ]
+                  },
+                  "y": {
+                    "description": "Y coordinate",
+                    "oneOf": [
+                      {
+                        "description": "Length in pixels",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "description": "Indicates the unit is pixel",
+                            "type": "string",
+                            "enum": [
+                              "px"
+                            ]
+                          },
+                          "value": {
+                            "description": "Length in pixels",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "value"
+                        ]
+                      },
+                      {
+                        "description": "Length as a fraction",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "/"
+                            ]
+                          },
+                          "numerator": {
+                            "description": "Numerator of the fraction",
+                            "type": "number"
+                          },
+                          "denominator": {
+                            "description": "Denominator of the fraction",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "numerator",
+                          "denominator"
+                        ]
+                      }
+                    ]
+                  },
+                  "button": {
+                    "description": "Mouse button index",
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "type",
+                  "x",
+                  "y",
+                  "button"
+                ]
+              },
+              {
+                "description": "Double click the mouse at the specified coordinates",
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "mouse:doubleClick"
+                    ]
+                  },
+                  "x": {
+                    "description": "X coordinate",
+                    "oneOf": [
+                      {
+                        "description": "Length in pixels",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "description": "Indicates the unit is pixel",
+                            "type": "string",
+                            "enum": [
+                              "px"
+                            ]
+                          },
+                          "value": {
+                            "description": "Length in pixels",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "value"
+                        ]
+                      },
+                      {
+                        "description": "Length as a fraction",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "/"
+                            ]
+                          },
+                          "numerator": {
+                            "description": "Numerator of the fraction",
+                            "type": "number"
+                          },
+                          "denominator": {
+                            "description": "Denominator of the fraction",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "numerator",
+                          "denominator"
+                        ]
+                      }
+                    ]
+                  },
+                  "y": {
+                    "description": "Y coordinate",
+                    "oneOf": [
+                      {
+                        "description": "Length in pixels",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "description": "Indicates the unit is pixel",
+                            "type": "string",
+                            "enum": [
+                              "px"
+                            ]
+                          },
+                          "value": {
+                            "description": "Length in pixels",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "value"
+                        ]
+                      },
+                      {
+                        "description": "Length as a fraction",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "/"
+                            ]
+                          },
+                          "numerator": {
+                            "description": "Numerator of the fraction",
+                            "type": "number"
+                          },
+                          "denominator": {
+                            "description": "Denominator of the fraction",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "numerator",
+                          "denominator"
+                        ]
+                      }
+                    ]
+                  },
+                  "button": {
+                    "description": "Mouse button index",
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "type",
+                  "x",
+                  "y",
+                  "button"
+                ]
+              },
+              {
+                "description": "Move the mouse to the specified coordinates",
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "mouse:move"
+                    ]
+                  },
+                  "x": {
+                    "description": "X coordinate",
+                    "oneOf": [
+                      {
+                        "description": "Length in pixels",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "description": "Indicates the unit is pixel",
+                            "type": "string",
+                            "enum": [
+                              "px"
+                            ]
+                          },
+                          "value": {
+                            "description": "Length in pixels",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "value"
+                        ]
+                      },
+                      {
+                        "description": "Length as a fraction",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "/"
+                            ]
+                          },
+                          "numerator": {
+                            "description": "Numerator of the fraction",
+                            "type": "number"
+                          },
+                          "denominator": {
+                            "description": "Denominator of the fraction",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "numerator",
+                          "denominator"
+                        ]
+                      }
+                    ]
+                  },
+                  "y": {
+                    "description": "Y coordinate",
+                    "oneOf": [
+                      {
+                        "description": "Length in pixels",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "description": "Indicates the unit is pixel",
+                            "type": "string",
+                            "enum": [
+                              "px"
+                            ]
+                          },
+                          "value": {
+                            "description": "Length in pixels",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "value"
+                        ]
+                      },
+                      {
+                        "description": "Length as a fraction",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "/"
+                            ]
+                          },
+                          "numerator": {
+                            "description": "Numerator of the fraction",
+                            "type": "number"
+                          },
+                          "denominator": {
+                            "description": "Denominator of the fraction",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "numerator",
+                          "denominator"
+                        ]
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "type",
+                  "x",
+                  "y"
+                ]
+              },
+              {
+                "description": "Scroll the mouse",
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "mouse:scroll"
+                    ]
+                  },
+                  "x": {
+                    "description": "X coordinate",
+                    "oneOf": [
+                      {
+                        "description": "Length in pixels",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "description": "Indicates the unit is pixel",
+                            "type": "string",
+                            "enum": [
+                              "px"
+                            ]
+                          },
+                          "value": {
+                            "description": "Length in pixels",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "value"
+                        ]
+                      },
+                      {
+                        "description": "Length as a fraction",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "/"
+                            ]
+                          },
+                          "numerator": {
+                            "description": "Numerator of the fraction",
+                            "type": "number"
+                          },
+                          "denominator": {
+                            "description": "Denominator of the fraction",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "numerator",
+                          "denominator"
+                        ]
+                      }
+                    ]
+                  },
+                  "y": {
+                    "description": "Y coordinate",
+                    "oneOf": [
+                      {
+                        "description": "Length in pixels",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "description": "Indicates the unit is pixel",
+                            "type": "string",
+                            "enum": [
+                              "px"
+                            ]
+                          },
+                          "value": {
+                            "description": "Length in pixels",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "value"
+                        ]
+                      },
+                      {
+                        "description": "Length as a fraction",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "/"
+                            ]
+                          },
+                          "numerator": {
+                            "description": "Numerator of the fraction",
+                            "type": "number"
+                          },
+                          "denominator": {
+                            "description": "Denominator of the fraction",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "numerator",
+                          "denominator"
+                        ]
+                      }
+                    ]
+                  },
+                  "stepVertical": {
+                    "description": "Vertical scroll steps",
+                    "type": "number"
+                  },
+                  "stepHorizontal": {
+                    "description": "Horizontal scroll steps",
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "type",
+                  "x",
+                  "y",
+                  "stepVertical",
+                  "stepHorizontal"
+                ]
+              },
+              {
+                "description": "Drag the mouse from start to end coordinates",
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "mouse:drag"
+                    ]
+                  },
+                  "startX": {
+                    "description": "Start X coordinate",
+                    "oneOf": [
+                      {
+                        "description": "Length in pixels",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "description": "Indicates the unit is pixel",
+                            "type": "string",
+                            "enum": [
+                              "px"
+                            ]
+                          },
+                          "value": {
+                            "description": "Length in pixels",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "value"
+                        ]
+                      },
+                      {
+                        "description": "Length as a fraction",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "/"
+                            ]
+                          },
+                          "numerator": {
+                            "description": "Numerator of the fraction",
+                            "type": "number"
+                          },
+                          "denominator": {
+                            "description": "Denominator of the fraction",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "numerator",
+                          "denominator"
+                        ]
+                      }
+                    ]
+                  },
+                  "startY": {
+                    "description": "Start Y coordinate",
+                    "oneOf": [
+                      {
+                        "description": "Length in pixels",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "description": "Indicates the unit is pixel",
+                            "type": "string",
+                            "enum": [
+                              "px"
+                            ]
+                          },
+                          "value": {
+                            "description": "Length in pixels",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "value"
+                        ]
+                      },
+                      {
+                        "description": "Length as a fraction",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "/"
+                            ]
+                          },
+                          "numerator": {
+                            "description": "Numerator of the fraction",
+                            "type": "number"
+                          },
+                          "denominator": {
+                            "description": "Denominator of the fraction",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "numerator",
+                          "denominator"
+                        ]
+                      }
+                    ]
+                  },
+                  "endX": {
+                    "description": "End X coordinate",
+                    "oneOf": [
+                      {
+                        "description": "Length in pixels",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "description": "Indicates the unit is pixel",
+                            "type": "string",
+                            "enum": [
+                              "px"
+                            ]
+                          },
+                          "value": {
+                            "description": "Length in pixels",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "value"
+                        ]
+                      },
+                      {
+                        "description": "Length as a fraction",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "/"
+                            ]
+                          },
+                          "numerator": {
+                            "description": "Numerator of the fraction",
+                            "type": "number"
+                          },
+                          "denominator": {
+                            "description": "Denominator of the fraction",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "numerator",
+                          "denominator"
+                        ]
+                      }
+                    ]
+                  },
+                  "endY": {
+                    "description": "End Y coordinate",
+                    "oneOf": [
+                      {
+                        "description": "Length in pixels",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "description": "Indicates the unit is pixel",
+                            "type": "string",
+                            "enum": [
+                              "px"
+                            ]
+                          },
+                          "value": {
+                            "description": "Length in pixels",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "value"
+                        ]
+                      },
+                      {
+                        "description": "Length as a fraction",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "/"
+                            ]
+                          },
+                          "numerator": {
+                            "description": "Numerator of the fraction",
+                            "type": "number"
+                          },
+                          "denominator": {
+                            "description": "Denominator of the fraction",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "numerator",
+                          "denominator"
+                        ]
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "type",
+                  "startX",
+                  "startY",
+                  "endX",
+                  "endY"
+                ]
+              },
+              {
+                "description": "Type text content",
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "keyboard:type"
+                    ]
+                  },
+                  "content": {
+                    "description": "Text content to type",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "type",
+                  "content"
+                ]
+              },
+              {
+                "description": "Press a keyboard hotkey",
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "keyboard:hotkey"
+                    ]
+                  },
+                  "keys": {
+                    "description": "Hotkey combination, in xdotool key syntax. Examples: \"a\", \"Return\", \"alt+Tab\", \"ctrl+s\", \"Up\", \"KP_0\" (for the numpad 0 key).",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "type",
+                  "keys"
+                ]
+              },
+              {
+                "description": "Take a screenshot of the current screen",
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "screenshot"
+                    ]
+                  }
+                },
+                "required": [
+                  "type"
+                ]
+              },
+              {
+                "description": "Wait for a specified duration",
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "wait"
+                    ]
+                  },
+                  "duration": {
+                    "description": "Duration in milliseconds",
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "type",
+                  "duration"
+                ]
+              },
+              {
+                "description": "Indicates the action has finished",
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "finished"
+                    ]
+                  },
+                  "message": {
+                    "description": "Completion message",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "type"
+                ]
+              },
+              {
+                "description": "Indicates the action has failed",
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "failed"
+                    ]
+                  },
+                  "message": {
+                    "description": "Failure message",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "type"
+                ]
+              }
+            ],
+            "type": "object",
+            "properties": {
+              "callId": {
+                "description": "Optional call identifier",
+                "type": "string"
+              }
+            }
+          },
+          "includeScreenShot": {
+            "type": "boolean",
+            "default": true
+          },
+          "includeCursorPosition": {
+            "type": "boolean",
+            "default": true
+          }
+        },
+        "required": [
+          "action"
+        ]
+      },
+      "SandboxActionResponseDto": {
+        "type": "object",
+        "properties": {
+          "screenShot": {
+            "description": "The screenshot of the sandbox after the action is executed.",
+            "type": "string",
+            "format": "uri"
+          },
+          "cursorPosition": {
+            "type": "object",
+            "properties": {
+              "x": {
+                "description": "The x position of the cursor.",
+                "type": "number"
+              },
+              "y": {
+                "description": "The y position of the cursor.",
+                "type": "number"
+              },
+              "screenWidth": {
+                "description": "The width of the screen.",
+                "type": "number"
+              },
+              "screenHeight": {
+                "description": "The height of the screen.",
+                "type": "number"
+              },
+              "screenIndex": {
+                "description": "The index of the screen.",
+                "type": "number"
+              }
+            },
+            "required": [
+              "x",
+              "y",
+              "screenWidth",
+              "screenHeight",
+              "screenIndex"
+            ]
+          }
+        },
+        "required": [
+          "screenShot",
+          "cursorPosition"
+        ]
+      },
+      "ListProjectsResponseDto": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "createdAt": {
+              "type": "string"
+            },
+            "defaultProject": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "id",
+            "name",
+            "createdAt",
+            "defaultProject"
+          ]
+        }
+      },
+      "CreateProjectDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "Name of the project.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "SingleProjectResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "defaultProject": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "createdAt",
+          "defaultProject"
+        ]
+      },
+      "ComputerUseParseRequestDto": {
+        "type": "object",
+        "properties": {
+          "model": {
+            "description": "The model to parse the input for",
+            "type": "string",
+            "enum": [
+              "ui-tars",
+              "oai-compute-use"
+            ]
+          },
+          "textContent": {
+            "description": "The text content to parse",
+            "type": "string"
+          },
+          "output": {
+            "description": "The response output from the model, if available",
+            "type": "array",
+            "items": {
+              "description": "A single item from the model output"
+            }
+          }
+        },
+        "required": [
+          "model",
+          "textContent"
+        ]
+      },
+      "ComputerUseActionResponseDto": {
+        "type": "object",
+        "properties": {
+          "actions": {
+            "type": "array",
+            "items": {
+              "description": "All possible computer use actions, with optional callId",
+              "oneOf": [
+                {
+                  "description": "Click the mouse at the specified coordinates",
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "mouse:click"
+                      ]
+                    },
+                    "x": {
+                      "description": "X coordinate",
+                      "oneOf": [
+                        {
+                          "description": "Length in pixels",
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "description": "Indicates the unit is pixel",
+                              "type": "string",
+                              "enum": [
+                                "px"
+                              ]
+                            },
+                            "value": {
+                              "description": "Length in pixels",
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "type",
+                            "value"
+                          ]
+                        },
+                        {
+                          "description": "Length as a fraction",
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string",
+                              "enum": [
+                                "/"
+                              ]
+                            },
+                            "numerator": {
+                              "description": "Numerator of the fraction",
+                              "type": "number"
+                            },
+                            "denominator": {
+                              "description": "Denominator of the fraction",
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "type",
+                            "numerator",
+                            "denominator"
+                          ]
+                        }
+                      ]
+                    },
+                    "y": {
+                      "description": "Y coordinate",
+                      "oneOf": [
+                        {
+                          "description": "Length in pixels",
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "description": "Indicates the unit is pixel",
+                              "type": "string",
+                              "enum": [
+                                "px"
+                              ]
+                            },
+                            "value": {
+                              "description": "Length in pixels",
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "type",
+                            "value"
+                          ]
+                        },
+                        {
+                          "description": "Length as a fraction",
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string",
+                              "enum": [
+                                "/"
+                              ]
+                            },
+                            "numerator": {
+                              "description": "Numerator of the fraction",
+                              "type": "number"
+                            },
+                            "denominator": {
+                              "description": "Denominator of the fraction",
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "type",
+                            "numerator",
+                            "denominator"
+                          ]
+                        }
+                      ]
+                    },
+                    "button": {
+                      "description": "Mouse button index",
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "x",
+                    "y",
+                    "button"
+                  ]
+                },
+                {
+                  "description": "Double click the mouse at the specified coordinates",
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "mouse:doubleClick"
+                      ]
+                    },
+                    "x": {
+                      "description": "X coordinate",
+                      "oneOf": [
+                        {
+                          "description": "Length in pixels",
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "description": "Indicates the unit is pixel",
+                              "type": "string",
+                              "enum": [
+                                "px"
+                              ]
+                            },
+                            "value": {
+                              "description": "Length in pixels",
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "type",
+                            "value"
+                          ]
+                        },
+                        {
+                          "description": "Length as a fraction",
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string",
+                              "enum": [
+                                "/"
+                              ]
+                            },
+                            "numerator": {
+                              "description": "Numerator of the fraction",
+                              "type": "number"
+                            },
+                            "denominator": {
+                              "description": "Denominator of the fraction",
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "type",
+                            "numerator",
+                            "denominator"
+                          ]
+                        }
+                      ]
+                    },
+                    "y": {
+                      "description": "Y coordinate",
+                      "oneOf": [
+                        {
+                          "description": "Length in pixels",
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "description": "Indicates the unit is pixel",
+                              "type": "string",
+                              "enum": [
+                                "px"
+                              ]
+                            },
+                            "value": {
+                              "description": "Length in pixels",
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "type",
+                            "value"
+                          ]
+                        },
+                        {
+                          "description": "Length as a fraction",
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string",
+                              "enum": [
+                                "/"
+                              ]
+                            },
+                            "numerator": {
+                              "description": "Numerator of the fraction",
+                              "type": "number"
+                            },
+                            "denominator": {
+                              "description": "Denominator of the fraction",
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "type",
+                            "numerator",
+                            "denominator"
+                          ]
+                        }
+                      ]
+                    },
+                    "button": {
+                      "description": "Mouse button index",
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "x",
+                    "y",
+                    "button"
+                  ]
+                },
+                {
+                  "description": "Move the mouse to the specified coordinates",
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "mouse:move"
+                      ]
+                    },
+                    "x": {
+                      "description": "X coordinate",
+                      "oneOf": [
+                        {
+                          "description": "Length in pixels",
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "description": "Indicates the unit is pixel",
+                              "type": "string",
+                              "enum": [
+                                "px"
+                              ]
+                            },
+                            "value": {
+                              "description": "Length in pixels",
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "type",
+                            "value"
+                          ]
+                        },
+                        {
+                          "description": "Length as a fraction",
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string",
+                              "enum": [
+                                "/"
+                              ]
+                            },
+                            "numerator": {
+                              "description": "Numerator of the fraction",
+                              "type": "number"
+                            },
+                            "denominator": {
+                              "description": "Denominator of the fraction",
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "type",
+                            "numerator",
+                            "denominator"
+                          ]
+                        }
+                      ]
+                    },
+                    "y": {
+                      "description": "Y coordinate",
+                      "oneOf": [
+                        {
+                          "description": "Length in pixels",
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "description": "Indicates the unit is pixel",
+                              "type": "string",
+                              "enum": [
+                                "px"
+                              ]
+                            },
+                            "value": {
+                              "description": "Length in pixels",
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "type",
+                            "value"
+                          ]
+                        },
+                        {
+                          "description": "Length as a fraction",
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string",
+                              "enum": [
+                                "/"
+                              ]
+                            },
+                            "numerator": {
+                              "description": "Numerator of the fraction",
+                              "type": "number"
+                            },
+                            "denominator": {
+                              "description": "Denominator of the fraction",
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "type",
+                            "numerator",
+                            "denominator"
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "x",
+                    "y"
+                  ]
+                },
+                {
+                  "description": "Scroll the mouse",
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "mouse:scroll"
+                      ]
+                    },
+                    "x": {
+                      "description": "X coordinate",
+                      "oneOf": [
+                        {
+                          "description": "Length in pixels",
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "description": "Indicates the unit is pixel",
+                              "type": "string",
+                              "enum": [
+                                "px"
+                              ]
+                            },
+                            "value": {
+                              "description": "Length in pixels",
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "type",
+                            "value"
+                          ]
+                        },
+                        {
+                          "description": "Length as a fraction",
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string",
+                              "enum": [
+                                "/"
+                              ]
+                            },
+                            "numerator": {
+                              "description": "Numerator of the fraction",
+                              "type": "number"
+                            },
+                            "denominator": {
+                              "description": "Denominator of the fraction",
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "type",
+                            "numerator",
+                            "denominator"
+                          ]
+                        }
+                      ]
+                    },
+                    "y": {
+                      "description": "Y coordinate",
+                      "oneOf": [
+                        {
+                          "description": "Length in pixels",
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "description": "Indicates the unit is pixel",
+                              "type": "string",
+                              "enum": [
+                                "px"
+                              ]
+                            },
+                            "value": {
+                              "description": "Length in pixels",
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "type",
+                            "value"
+                          ]
+                        },
+                        {
+                          "description": "Length as a fraction",
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string",
+                              "enum": [
+                                "/"
+                              ]
+                            },
+                            "numerator": {
+                              "description": "Numerator of the fraction",
+                              "type": "number"
+                            },
+                            "denominator": {
+                              "description": "Denominator of the fraction",
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "type",
+                            "numerator",
+                            "denominator"
+                          ]
+                        }
+                      ]
+                    },
+                    "stepVertical": {
+                      "description": "Vertical scroll steps",
+                      "type": "number"
+                    },
+                    "stepHorizontal": {
+                      "description": "Horizontal scroll steps",
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "x",
+                    "y",
+                    "stepVertical",
+                    "stepHorizontal"
+                  ]
+                },
+                {
+                  "description": "Drag the mouse from start to end coordinates",
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "mouse:drag"
+                      ]
+                    },
+                    "startX": {
+                      "description": "Start X coordinate",
+                      "oneOf": [
+                        {
+                          "description": "Length in pixels",
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "description": "Indicates the unit is pixel",
+                              "type": "string",
+                              "enum": [
+                                "px"
+                              ]
+                            },
+                            "value": {
+                              "description": "Length in pixels",
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "type",
+                            "value"
+                          ]
+                        },
+                        {
+                          "description": "Length as a fraction",
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string",
+                              "enum": [
+                                "/"
+                              ]
+                            },
+                            "numerator": {
+                              "description": "Numerator of the fraction",
+                              "type": "number"
+                            },
+                            "denominator": {
+                              "description": "Denominator of the fraction",
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "type",
+                            "numerator",
+                            "denominator"
+                          ]
+                        }
+                      ]
+                    },
+                    "startY": {
+                      "description": "Start Y coordinate",
+                      "oneOf": [
+                        {
+                          "description": "Length in pixels",
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "description": "Indicates the unit is pixel",
+                              "type": "string",
+                              "enum": [
+                                "px"
+                              ]
+                            },
+                            "value": {
+                              "description": "Length in pixels",
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "type",
+                            "value"
+                          ]
+                        },
+                        {
+                          "description": "Length as a fraction",
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string",
+                              "enum": [
+                                "/"
+                              ]
+                            },
+                            "numerator": {
+                              "description": "Numerator of the fraction",
+                              "type": "number"
+                            },
+                            "denominator": {
+                              "description": "Denominator of the fraction",
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "type",
+                            "numerator",
+                            "denominator"
+                          ]
+                        }
+                      ]
+                    },
+                    "endX": {
+                      "description": "End X coordinate",
+                      "oneOf": [
+                        {
+                          "description": "Length in pixels",
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "description": "Indicates the unit is pixel",
+                              "type": "string",
+                              "enum": [
+                                "px"
+                              ]
+                            },
+                            "value": {
+                              "description": "Length in pixels",
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "type",
+                            "value"
+                          ]
+                        },
+                        {
+                          "description": "Length as a fraction",
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string",
+                              "enum": [
+                                "/"
+                              ]
+                            },
+                            "numerator": {
+                              "description": "Numerator of the fraction",
+                              "type": "number"
+                            },
+                            "denominator": {
+                              "description": "Denominator of the fraction",
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "type",
+                            "numerator",
+                            "denominator"
+                          ]
+                        }
+                      ]
+                    },
+                    "endY": {
+                      "description": "End Y coordinate",
+                      "oneOf": [
+                        {
+                          "description": "Length in pixels",
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "description": "Indicates the unit is pixel",
+                              "type": "string",
+                              "enum": [
+                                "px"
+                              ]
+                            },
+                            "value": {
+                              "description": "Length in pixels",
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "type",
+                            "value"
+                          ]
+                        },
+                        {
+                          "description": "Length as a fraction",
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string",
+                              "enum": [
+                                "/"
+                              ]
+                            },
+                            "numerator": {
+                              "description": "Numerator of the fraction",
+                              "type": "number"
+                            },
+                            "denominator": {
+                              "description": "Denominator of the fraction",
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "type",
+                            "numerator",
+                            "denominator"
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "startX",
+                    "startY",
+                    "endX",
+                    "endY"
+                  ]
+                },
+                {
+                  "description": "Type text content",
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "keyboard:type"
+                      ]
+                    },
+                    "content": {
+                      "description": "Text content to type",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "content"
+                  ]
+                },
+                {
+                  "description": "Press a keyboard hotkey",
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "keyboard:hotkey"
+                      ]
+                    },
+                    "keys": {
+                      "description": "Hotkey combination, in xdotool key syntax. Examples: \"a\", \"Return\", \"alt+Tab\", \"ctrl+s\", \"Up\", \"KP_0\" (for the numpad 0 key).",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "keys"
+                  ]
+                },
+                {
+                  "description": "Take a screenshot of the current screen",
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "screenshot"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "type"
+                  ]
+                },
+                {
+                  "description": "Wait for a specified duration",
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "wait"
+                      ]
+                    },
+                    "duration": {
+                      "description": "Duration in milliseconds",
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "duration"
+                  ]
+                },
+                {
+                  "description": "Indicates the action has finished",
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "finished"
+                      ]
+                    },
+                    "message": {
+                      "description": "Completion message",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "type"
+                  ]
+                },
+                {
+                  "description": "Indicates the action has failed",
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "failed"
+                      ]
+                    },
+                    "message": {
+                      "description": "Failure message",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "type"
+                  ]
+                }
+              ],
+              "type": "object",
+              "properties": {
+                "callId": {
+                  "description": "Optional call identifier",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "required": [
+          "actions"
+        ]
+      },
+      "StatsResponseDto": {
+        "type": "object",
+        "properties": {
+          "mcpServers": {
+            "type": "number"
+          },
+          "sandboxes": {
+            "type": "number"
+          },
+          "projects": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "mcpServers",
+          "sandboxes",
+          "projects"
+        ]
+      }
+    }
+  }
+}
