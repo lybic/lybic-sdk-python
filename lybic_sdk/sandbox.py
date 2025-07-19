@@ -43,7 +43,8 @@ class Sandbox:
             "DELETE",
             f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}")
 
-    def execute_computer_use_action(self, sandbox_id: str, data: dto.ComputerUseActionDto) -> dto.SandboxActionResponseDto:
+    def execute_computer_use_action(self, sandbox_id: str, data: dto.ComputerUseActionDto) \
+            -> dto.SandboxActionResponseDto:
         """
         Execute a computer use action
 
