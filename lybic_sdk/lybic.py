@@ -70,7 +70,6 @@ class LybicClient:
         """
         return f"{self.endpoint}/mcp/{mcp_server_id}"
 
-
 class Stats:
     """Stats are used for check"""
     def __init__(self, client: LybicClient):

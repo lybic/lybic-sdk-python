@@ -84,7 +84,7 @@ class MCP:
                     await session.initialize()
                     return await session.call_tool(tool_name, tool_args)
         except Exception as e:
-            raise RuntimeError(f"Failed to call tool: {e}")
+            raise RuntimeError(f"Failed to call tool: {e}") from e
 
 
 class ComputerUse:
