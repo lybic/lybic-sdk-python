@@ -168,7 +168,7 @@ class CursorPosition(BaseModel):
     screenIndex: int
 
 class SandboxActionResponseDto(BaseModel):
-    screenShot: str
+    screenShot: str # is a picture url of the screen eg. https://example.com/screen.webp
     cursorPosition: CursorPosition
 
 class ComputerUseParseRequestDto(BaseModel):
