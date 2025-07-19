@@ -2,7 +2,7 @@
 
 import dto
 
-from mcp import MCP, ComputerUse
+from lmcp import MCP, ComputerUse
 from project import Project
 from sandbox import Sandbox
 

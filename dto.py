@@ -154,9 +154,10 @@ ComputerUseAction = Union[
 ]
 
 class ComputerUseActionDto(BaseModel):
-    action: ComputerUseAction
+    action: ComputerUseAction | dict
     includeScreenShot: bool = True
     includeCursorPosition: bool = True
+
     callId: Optional[str] = None
 
 class CursorPosition(BaseModel):

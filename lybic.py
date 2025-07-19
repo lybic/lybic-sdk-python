@@ -3,7 +3,7 @@ import requests
 
 import dto
 
-from mcp import MCP, ComputerUse
+from lmcp import MCP, ComputerUse
 from project import Project
 from sandbox import Sandbox
 
@@ -58,6 +58,9 @@ class LybicClient:
         response = requests.request(method, url, headers=headers, **kwargs)
         response.raise_for_status()
         return response
+
+    def make_mcp_endpoint(self, mcp_server_id: str) -> str:
+        return f"{self.endpoint}/mcp/{mcp_server_id}"
 
 
 class Stats:
