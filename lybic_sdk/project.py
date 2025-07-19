@@ -1,11 +1,11 @@
-import dto
-from lybic import LybicClient
-
+# project.py provides the Project manager ability to use
+from lybic_sdk import dto
 
 class Project:
     """
     Projects class are used to organize Projects.
     """
+    from lybic_sdk.lybic import LybicClient
     def __init__(self, client: LybicClient):
         self.client = client
 
@@ -20,7 +20,9 @@ class Project:
         """
         Create a new project.
         """
-        response = self.client.request("POST", f"/api/orgs/{self.client.org_id}/projects", json=data.model_dump())
+        response = self.client.request(
+            "POST",
+            f"/api/orgs/{self.client.org_id}/projects", json=data.model_dump())
         return dto.SingleProjectResponseDto.model_validate_json(response.text)
 
     def delete(self, project_id: str) -> None:

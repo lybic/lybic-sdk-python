@@ -1,8 +1,9 @@
-import dto
-from lybic import LybicClient
-
+# lmcp.py: MCP client for lybic MCP(Model Context Protocol) and Restful Interface API.
 from mcp import ClientSession
 from mcp.client.streamable_http import streamablehttp_client
+
+from lybic_sdk import dto
+from lybic_sdk.lybic import LybicClient
 
 class MCP:
     """MCP is a client for lybic MCP(Model Context Protocol) and Restful Interface API."""
@@ -20,7 +21,9 @@ class MCP:
 
         :return:
         """
-        response = self.client.request("GET", f"/api/orgs/{self.client.org_id}/mcp-servers")
+        response = self.client.request(
+            "GET",
+            f"/api/orgs/{self.client.org_id}/mcp-servers")
         return dto.ListMcpServerResponse.model_validate_json(response.text)
 
     def create(self, data: dto.CreateMcpServerDto) -> dto.McpServerResponseDto:
@@ -30,7 +33,10 @@ class MCP:
         :param data:
         :return:
         """
-        response = self.client.request("POST", f"/api/orgs/{self.client.org_id}/mcp-servers", json=data.model_dump())
+        response = self.client.request(
+            "POST",
+            f"/api/orgs/{self.client.org_id}/mcp-servers",
+            json=data.model_dump())
         return dto.McpServerResponseDto.model_validate_json(response.text)
 
     def get_default(self) -> dto.McpServerResponseDto:
@@ -39,7 +45,9 @@ class MCP:
 
         :return:
         """
-        response = self.client.request("GET", f"/api/orgs/{self.client.org_id}/mcp-servers/default")
+        response = self.client.request(
+            "GET",
+            f"/api/orgs/{self.client.org_id}/mcp-servers/default")
         return dto.McpServerResponseDto.model_validate_json(response.text)
 
     def delete(self, mcp_server_id: str) -> None:
@@ -76,7 +84,7 @@ class MCP:
                     await session.initialize()
                     return await session.call_tool(tool_name, tool_args)
         except Exception as e:
-            raise RuntimeError(f"Failed to call tool: {e}")
+            raise RuntimeError(f"Failed to call tool: {e}") from e
 
 
 class ComputerUse:
@@ -92,7 +100,10 @@ class ComputerUse:
         :param data:
         :return:
         """
-        response = self.client.request("POST", "/api/computer-use/parse", json=data.model_dump())
+        response = self.client.request(
+            "POST",
+            "/api/computer-use/parse",
+            json=data.model_dump())
         return dto.ComputerUseActionResponseDto.model_validate_json(response.text)
 
     def execute_computer_use_action(self, sandbox_id: str,
@@ -106,5 +117,3 @@ class ComputerUse:
                                        f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/actions/computer-use",
                                        json=data.model_dump())
         return dto.SandboxActionResponseDto.model_validate_json(response.text)
-
-

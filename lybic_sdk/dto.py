@@ -1,14 +1,19 @@
-from pydantic import BaseModel, Field
+# dto.py provides all the data types used in the API.
 from typing import List, Optional, Union, Literal
+from pydantic import BaseModel, Field
 
-# General Schemas
 class StatsResponseDto(BaseModel):
+    """
+    Organization Stats response.
+    """
     mcpServers: int
     sandboxes: int
     projects: int
 
-# MCP Schemas
 class McpServerPolicy(BaseModel):
+    """
+    MCP server sandbox policy.
+    """
     sandboxMaxLifetimeSeconds: int = Field(3600, description="The maximum lifetime of a sandbox.")
     sandboxMaxIdleTimeSeconds: int = Field(3600, description="The maximum idle time of a sandbox.")
     sandboxAutoCreation: bool = Field(False, description="Whether to create a new sandbox automatically when old sandbox is deleted. If not, new sandboxes will be created when calling computer use tools.")
@@ -17,6 +22,9 @@ class McpServerPolicy(BaseModel):
     sandboxExposeDeleteTool: bool = Field(False, description="Whether to expose delete tool to LLMs.")
 
 class McpServerResponseDto(BaseModel):
+    """
+    MCP server response.
+    """
     id: str = Field(..., description="ID of the MCP server.")
     name: str = Field(..., description="Name of the MCP server.")
     createdAt: str = Field(..., description="Creation date of the MCP server.")
@@ -27,9 +35,14 @@ class McpServerResponseDto(BaseModel):
 class ListMcpServerResponse(BaseModel):
     __root__: List[McpServerResponseDto]
 
-class CreateMcpServerDto(McpServerPolicy, BaseModel):
+class CreateMcpServerDto(McpServerPolicy):
+    """
+    Create MCP server request.
+    Only name is needed, other fields are optional.
+    """
     name: str = Field(..., description="Name of the MCP server.")
     projectId: Optional[str] = Field(None, description="Project to which the MCP server belongs to.")
+
     sandboxMaxLifetimeSeconds: int = Field(3600, description="The maximum lifetime of a sandbox.")
     sandboxMaxIdleTimeSeconds: int = Field(3600, description="The maximum idle time of a sandbox.")
     sandboxAutoCreation: bool = Field(False, description="Whether to create a new sandbox automatically when old sandbox is deleted. If not, new sandboxes will be created when calling computer use tools.")
@@ -39,6 +52,9 @@ class CreateMcpServerDto(McpServerPolicy, BaseModel):
 
 # Sandbox Schemas
 class Sandbox(BaseModel):
+    """
+    Sandbox model
+    """
     id: str = Field(..., description="ID of the sandbox.")
     name: str = Field(..., description="Name of the sandbox.")
     expiredAt: str = Field(..., description="Expiration date of the sandbox.")
@@ -46,6 +62,9 @@ class Sandbox(BaseModel):
     projectId: str = Field(..., description="Project ID to which the sandbox belongs.")
 
 class GatewayAddress(BaseModel):
+    """
+    Gateway address model
+    """
     address: str
     port: int
     name: str
@@ -65,6 +84,9 @@ class SandboxListResponseDto(BaseModel):
     __root__: List[SandboxListItem]
 
 class CreateSandboxDto(BaseModel):
+    """
+    Create sandbox request.
+    """
     name: str = Field("sandbox", description="The name of the sandbox.")
     maxLifeSeconds: int = Field(3600, description="The maximum life time of the sandbox in seconds. Default is 1 hour, max is 1 day.", ge=1, le=86400)
     projectId: Optional[str] = Field(None, description="The project id to use for the sandbox. Use default if not provided.")
@@ -156,6 +178,9 @@ ComputerUseAction = Union[
 ]
 
 class ComputerUseActionDto(BaseModel):
+    """
+    Computer use action request.
+    """
     action: ComputerUseAction | dict
     includeScreenShot: bool = True
     includeCursorPosition: bool = True
@@ -170,6 +195,9 @@ class CursorPosition(BaseModel):
     screenIndex: int
 
 class SandboxActionResponseDto(BaseModel):
+    """
+    Computer use action response.
+    """
     screenShot: str # is a picture url of the screen eg. https://example.com/screen.webp
     cursorPosition: CursorPosition
 
@@ -183,6 +211,9 @@ class ComputerUseActionResponseDto(BaseModel):
 
 # Project Schemas
 class ProjectResponseDto(BaseModel):
+    """
+    Get Project Response
+    """
     id: str
     name: str
     createdAt: str
