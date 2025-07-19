@@ -1,5 +1,6 @@
-from pydantic import BaseModel, Field
+# dto.py provides all the data types used in the API.
 from typing import List, Optional, Union, Literal
+from pydantic import BaseModel, Field
 
 # General Schemas
 class StatsResponseDto(BaseModel):

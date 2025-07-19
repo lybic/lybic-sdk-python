@@ -1,12 +1,11 @@
+# lybic.py is the main entry point for Lybic API.
 import os
 import requests
 
-import dto
-
-from lmcp import MCP, ComputerUse
-from project import Project
-from sandbox import Sandbox
-
+from lybic_sdk import dto
+from lybic_sdk.project import Project
+from lybic_sdk.sandbox import Sandbox
+from lybic_sdk.lmcp import MCP, ComputerUse
 
 class LybicClient:
     """LybicClient is a client for all Lybic API."""
@@ -63,6 +62,12 @@ class LybicClient:
         return response
 
     def make_mcp_endpoint(self, mcp_server_id: str) -> str:
+        """
+        Make MCP endpoint for a MCP server
+
+        :param mcp_server_id:
+        :return:
+        """
         return f"{self.endpoint}/mcp/{mcp_server_id}"
 
 

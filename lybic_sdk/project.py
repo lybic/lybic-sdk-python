@@ -1,5 +1,6 @@
-import dto
-from lybic import LybicClient
+
+from lybic_sdk.lybic import LybicClient
+from lybic_sdk import dto
 
 
 class Project:
@@ -20,7 +21,9 @@ class Project:
         """
         Create a new project.
         """
-        response = self.client.request("POST", f"/api/orgs/{self.client.org_id}/projects", json=data.model_dump())
+        response = self.client.request(
+            "POST",
+            f"/api/orgs/{self.client.org_id}/projects", json=data.model_dump())
         return dto.SingleProjectResponseDto.model_validate_json(response.text)
 
     def delete(self, project_id: str) -> None:
