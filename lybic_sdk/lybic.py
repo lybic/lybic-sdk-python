@@ -3,9 +3,6 @@ import os
 import requests
 
 from lybic_sdk import dto
-from lybic_sdk.project import Project
-from lybic_sdk.sandbox import Sandbox
-from lybic_sdk.lmcp import MCP, ComputerUse
 
 class LybicClient:
     """LybicClient is a client for all Lybic API."""
@@ -34,12 +31,6 @@ class LybicClient:
             "x-api-key": api_key,
             "Content-Type": "application/json"
         }
-
-        self.mcp = MCP(self)
-        self.sandboxes = Sandbox(self)
-        self.projects = Project(self)
-        self.computer_use = ComputerUse(self)
-        self.stats = Stats(self)
 
         # Auth Test
         self.stats.get()
