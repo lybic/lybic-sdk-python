@@ -39,10 +39,24 @@ class Sandbox:
     def execute_computer_use_action(self, sandbox_id: str, data: dto.ComputerUseActionDto) -> dto.SandboxActionResponseDto:
         """
         Execute a computer use action
+
+        is same as mcp.ComputerUse.execute_computer_use_action
         """
         response = self.client.request("POST", f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/actions/computer-use", json=data.model_dump())
         return dto.SandboxActionResponseDto.model_validate_json(response.text)
 
     def preview(self, sandbox_id: str) -> dto.SandboxActionResponseDto:
+        """
+        Preview a sandbox
+        """
         response = self.client.request("POST", f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/preview")
         return dto.SandboxActionResponseDto.model_validate_json(response.text)
+
+    def get_connection_details(self, sandbox_id: str)-> dto.SandboxConnectionDetail:
+        """
+        Get connection details for a sandbox
+        """
+        response =  self.client.request(
+            "GET",
+            f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}")
+        return dto.SandboxConnectionDetail.model_validate_json(response.text)

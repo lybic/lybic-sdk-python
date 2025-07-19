@@ -3,7 +3,7 @@ import requests
 
 import dto
 
-from mcp import MCP, ComputerUse
+from lmcp import MCP, ComputerUse
 from project import Project
 from sandbox import Sandbox
 
@@ -25,6 +25,9 @@ class LybicClient:
         assert org_id, "LYBIC_ORG_ID is required"
         assert api_key, "LYBIC_API_KEY is required"
         assert endpoint, "LYBIC_API_ENDPOINT is required"
+
+        if endpoint.endswith("/"):
+            self.endpoint = endpoint[:-1]
 
         self.org_id = org_id
         self.endpoint = endpoint
@@ -59,6 +62,9 @@ class LybicClient:
         response.raise_for_status()
         return response
 
+    def make_mcp_endpoint(self, mcp_server_id: str) -> str:
+        return f"{self.endpoint}/mcp/{mcp_server_id}"
+
 
 class Stats:
     """Stats are used for check"""
@@ -66,5 +72,8 @@ class Stats:
         self.client = client
 
     def get(self) -> dto.StatsResponseDto:
+        """
+        Get the stats of the organization, such as number of members, computers, etc.
+        """
         response = self.client.request("GET", f"/api/orgs/{self.client.org_id}/stats")
         return dto.StatsResponseDto.model_validate_json(response.text)

@@ -3,7 +3,9 @@ from typing import List, Optional, Union, Literal
 
 # General Schemas
 class StatsResponseDto(BaseModel):
-    pass
+    mcpServers: int
+    sandboxes: int
+    projects: int
 
 # MCP Schemas
 class McpServerPolicy(BaseModel):
@@ -154,9 +156,10 @@ ComputerUseAction = Union[
 ]
 
 class ComputerUseActionDto(BaseModel):
-    action: ComputerUseAction
+    action: ComputerUseAction | dict
     includeScreenShot: bool = True
     includeCursorPosition: bool = True
+
     callId: Optional[str] = None
 
 class CursorPosition(BaseModel):
@@ -167,7 +170,7 @@ class CursorPosition(BaseModel):
     screenIndex: int
 
 class SandboxActionResponseDto(BaseModel):
-    screenShot: str
+    screenShot: str # is a picture url of the screen eg. https://example.com/screen.webp
     cursorPosition: CursorPosition
 
 class ComputerUseParseRequestDto(BaseModel):
@@ -192,4 +195,7 @@ class CreateProjectDto(BaseModel):
     name: str
 
 class SingleProjectResponseDto(ProjectResponseDto):
+    pass
+
+class SandboxConnectionDetail(SandboxListItem):
     pass
