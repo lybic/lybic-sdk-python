@@ -3,7 +3,9 @@ from typing import List, Optional, Union, Literal
 
 # General Schemas
 class StatsResponseDto(BaseModel):
-    pass
+    mcpServers: int
+    sandboxes: int
+    projects: int
 
 # MCP Schemas
 class McpServerPolicy(BaseModel):
@@ -193,4 +195,7 @@ class CreateProjectDto(BaseModel):
     name: str
 
 class SingleProjectResponseDto(ProjectResponseDto):
+    pass
+
+class SandboxConnectionDetail(SandboxListItem):
     pass

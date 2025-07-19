@@ -26,6 +26,9 @@ class LybicClient:
         assert api_key, "LYBIC_API_KEY is required"
         assert endpoint, "LYBIC_API_ENDPOINT is required"
 
+        if endpoint.endswith("/"):
+            self.endpoint = endpoint[:-1]
+
         self.org_id = org_id
         self.endpoint = endpoint
         self.headers = {
@@ -69,5 +72,8 @@ class Stats:
         self.client = client
 
     def get(self) -> dto.StatsResponseDto:
+        """
+        Get the stats of the organization, such as number of members, computers, etc.
+        """
         response = self.client.request("GET", f"/api/orgs/{self.client.org_id}/stats")
         return dto.StatsResponseDto.model_validate_json(response.text)
