@@ -3,13 +3,13 @@ requires = ["setuptools >= 77.0.3"]
 build-backend = "setuptools.build_meta"
 [project]
 name = "lybic"
-version = "0.0.3"
+version = "0.0.4"
 authors = [
   { name="Lybic Development Team", email="team@lybic.ai" },
 ]
 description = "Lybic sdk for python"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.12"
 classifiers = [
     "Programming Language :: Python :: 3",
     "Operating System :: OS Independent",
@@ -18,5 +18,5 @@ license = "MIT"
 license-files = ["LICENSE"]
 
 [project.urls]
-Homepage = "https://github.com/lybic/lybic-python-sdk"
-Issues = "https://github.com/lybic/lybic-python-sdk/issues"
+Homepage = "https://github.com/lybic/lybic-sdk-python"
+Issues = "https://github.com/lybic/lybic-sdk-python/issues"
