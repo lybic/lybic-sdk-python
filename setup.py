@@ -2,20 +2,21 @@ from setuptools import setup, find_packages
 
 setup(
     name='lybic',
-    version='0.0.2',
+    version='0.0.4',
     author='Lybic Development Team',
     author_email='team@lybic.ai',
     description='Lybic sdk for python',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
-    url='https://github.com/lybic/lybic-python-sdk',
+    url='https://github.com/lybic/lybic-sdk-python',
     packages=find_packages(),
     classifiers=[
         'Programming Language :: Python :: 3',
-        'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
+        'License :: OSI Approved :: MIT License',
     ],
-    python_requires='>=3.13',
+    license = "MIT",
+    python_requires='>=3.12',
     install_requires=[
         'requests',
         'pydantic',

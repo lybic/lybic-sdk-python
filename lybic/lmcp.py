@@ -2,8 +2,8 @@
 from mcp import ClientSession
 from mcp.client.streamable_http import streamablehttp_client
 
-from lybic_sdk import dto
-from lybic_sdk.lybic import LybicClient
+from lybic import dto
+from lybic.lybic import LybicClient
 
 class MCP:
     """MCP is a client for lybic MCP(Model Context Protocol) and Restful Interface API."""

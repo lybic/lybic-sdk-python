@@ -1,6 +1,6 @@
 # sandbox.py provides the Sandbox API
-from lybic_sdk import dto
-from lybic_sdk.lybic import LybicClient
+from lybic import dto
+from lybic.lybic import LybicClient
 
 class Sandbox:
     """
