@@ -1,6 +1,9 @@
 # Lybic SDK (Python)
 
 ## Install
+```bash
+pip install lybic
+```
 
 ## Use
 
