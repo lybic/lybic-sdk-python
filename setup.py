@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='lybic',
-    version='0.0.2',
+    version='0.0.3',
     author='Lybic Development Team',
     author_email='team@lybic.ai',
     description='Lybic sdk for python',

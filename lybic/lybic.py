@@ -2,7 +2,7 @@
 import os
 import requests
 
-from lybic_sdk import dto
+from lybic import dto
 
 class LybicClient:
     """LybicClient is a client for all Lybic API."""
@@ -10,7 +10,7 @@ class LybicClient:
     def __init__(self,
                  org_id: str = os.getenv("LYBIC_ORG_ID"),
                  api_key: str = os.getenv("LYBIC_API_KEY"),
-                 endpoint: str = os.getenv("LYBIC_API_ENDPOINT", "https://api.lybic.com/v1")):
+                 endpoint: str = os.getenv("LYBIC_API_ENDPOINT", "https://api.lybic.cn/")):
         """
         Init lybic client with org_id, api_key and endpoint
 

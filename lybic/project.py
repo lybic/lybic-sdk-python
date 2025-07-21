@@ -1,11 +1,11 @@
 # project.py provides the Project manager ability to use
-from lybic_sdk import dto
+from lybic import dto
+from lybic.lybic import LybicClient
 
 class Project:
     """
     Projects class are used to organize Projects.
     """
-    from lybic_sdk.lybic import LybicClient
     def __init__(self, client: LybicClient):
         self.client = client
 
