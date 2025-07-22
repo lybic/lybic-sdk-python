@@ -20,6 +20,7 @@ setup(
     install_requires=[
         'requests',
         'pydantic',
-        'mcp'
+        'mcp',
+        'pillow'
     ],
 )
