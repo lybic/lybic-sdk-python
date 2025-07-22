@@ -1,4 +1,10 @@
 # sandbox.py provides the Sandbox API
+import base64
+from io import BytesIO
+
+from PIL import Image
+from PIL.WebPImagePlugin import WebPImageFile
+
 from lybic import dto
 from lybic.lybic import LybicClient
 
@@ -72,3 +78,25 @@ class Sandbox:
             "GET",
             f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}")
         return dto.SandboxConnectionDetail.model_validate_json(response.text)
+
+    def get_screenshot(self, sandbox_id: str) -> (str, Image.Image, str):
+        """
+        Get screenshot of a sandbox
+
+        Return screenShot_Url, screenshot_image, base64_str
+        """
+        dto = self.preview(sandbox_id)
+        screenshot_url = dto.screenShot
+
+        screenshot_response = self.client.request("GET",screenshot_url)
+        screenshot_response.raise_for_status()
+
+        img = Image.open(BytesIO(screenshot_response.content))
+        base64_str=''
+
+        if isinstance(img, WebPImageFile):
+            buffer = BytesIO()
+            img.save(buffer, format="WebP")
+            base64_str = base64.b64encode(buffer.getvalue()).decode("utf-8")
+
+        return  screenshot_url,img,base64_str
