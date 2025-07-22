@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='lybic',
-    version='0.0.4',
+    version='0.1.0',
     author='Lybic Development Team',
     author_email='team@lybic.ai',
     description='Lybic sdk for python',
@@ -20,6 +20,7 @@ setup(
     install_requires=[
         'requests',
         'pydantic',
-        'mcp'
+        'mcp',
+        'pillow'
     ],
 )
