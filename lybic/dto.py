@@ -1,6 +1,34 @@
-# dto.py provides all the data types used in the API.
+# -*- coding: UTF-8 -*-
+#
+# Copyright (c) 2019-2025   Beijing Tingyu Technology Co., Ltd.
+# Copyright (c) 2025        Lybic Development Team <team@lybic.ai, lybic@tingyutech.com>
+# Copyright (c) 2025        Lu Yicheng <luyicheng@tingyutech.com>
+#
+# Author: AEnjoy <aenjoyable@163.com>
+#
+# These Terms of Service ("Terms") set forth the rules governing your access to and use of the website lybic.ai
+# ("Website"), our web applications, and other services (collectively, the "Services") provided by Beijing Tingyu
+# Technology Co., Ltd. ("Company," "we," "us," or "our"), a company registered in Haidian District, Beijing. Any
+# breach of these Terms may result in the suspension or termination of your access to the Services.
+# By accessing and using the Services and/or the Website, you represent that you are at least 18 years old,
+# acknowledge that you have read and understood these Terms, and agree to be bound by them. By using or accessing
+# the Services and/or the Website, you further represent and warrant that you have the legal capacity and authority
+# to agree to these Terms, whether as an individual or on behalf of a company. If you do not agree to all of these
+# Terms, do not access or use the Website or Services.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+
+"""dto.py provides all the data types used in the API."""
+
 from typing import List, Optional, Union, Literal
 from pydantic import BaseModel, Field
+
 
 class StatsResponseDto(BaseModel):
     """
@@ -10,16 +38,19 @@ class StatsResponseDto(BaseModel):
     sandboxes: int
     projects: int
 
+
 class McpServerPolicy(BaseModel):
     """
     MCP server sandbox policy.
     """
     sandboxMaxLifetimeSeconds: int = Field(3600, description="The maximum lifetime of a sandbox.")
     sandboxMaxIdleTimeSeconds: int = Field(3600, description="The maximum idle time of a sandbox.")
-    sandboxAutoCreation: bool = Field(False, description="Whether to create a new sandbox automatically when old sandbox is deleted. If not, new sandboxes will be created when calling computer use tools.")
+    sandboxAutoCreation: bool = Field(False,
+                                      description="Whether to create a new sandbox automatically when old sandbox is deleted. If not, new sandboxes will be created when calling computer use tools.")
     sandboxExposeRecreateTool: bool = Field(False, description="Whether to expose recreate tool to LLMs.")
     sandboxExposeRestartTool: bool = Field(False, description="Whether to expose restart tool to LLMs.")
     sandboxExposeDeleteTool: bool = Field(False, description="Whether to expose delete tool to LLMs.")
+
 
 class McpServerResponseDto(BaseModel):
     """
@@ -32,8 +63,13 @@ class McpServerResponseDto(BaseModel):
     projectId: str = Field(..., description="Project ID to which the MCP server belongs.")
     policy: McpServerPolicy
 
+
 class ListMcpServerResponse(BaseModel):
+    """
+    A list of MCP server responses.
+    """
     __root__: List[McpServerResponseDto]
+
 
 class CreateMcpServerDto(McpServerPolicy):
     """
@@ -45,15 +81,17 @@ class CreateMcpServerDto(McpServerPolicy):
 
     sandboxMaxLifetimeSeconds: int = Field(3600, description="The maximum lifetime of a sandbox.")
     sandboxMaxIdleTimeSeconds: int = Field(3600, description="The maximum idle time of a sandbox.")
-    sandboxAutoCreation: bool = Field(False, description="Whether to create a new sandbox automatically when old sandbox is deleted. If not, new sandboxes will be created when calling computer use tools.")
+    sandboxAutoCreation: bool = Field(False,
+                                      description="Whether to create a new sandbox automatically when old sandbox is deleted. If not, new sandboxes will be created when calling computer use tools.")
     sandboxExposeRecreateTool: bool = Field(False, description="Whether to expose recreate tool to LLMs.")
     sandboxExposeRestartTool: bool = Field(False, description="Whether to expose restart tool to LLMs.")
     sandboxExposeDeleteTool: bool = Field(False, description="Whether to expose delete tool to LLMs.")
 
+
 # Sandbox Schemas
 class Sandbox(BaseModel):
     """
-    Sandbox model
+    Represents a sandbox environment.
     """
     id: str = Field(..., description="ID of the sandbox.")
     name: str = Field(..., description="Name of the sandbox.")
@@ -61,9 +99,10 @@ class Sandbox(BaseModel):
     createdAt: str = Field(..., description="Creation date of the sandbox.")
     projectId: str = Field(..., description="Project ID to which the sandbox belongs.")
 
+
 class GatewayAddress(BaseModel):
     """
-    Gateway address model
+    Details of a gateway address for connecting to a sandbox.
     """
     address: str
     port: int
@@ -71,97 +110,171 @@ class GatewayAddress(BaseModel):
     preferredProviders: List[Literal["CHINA_MOBILE", "CHINA_UNICOM", "CHINA_TELECOM", "GLOBAL_BGP", 1, 2, 3, 4]]
     gatewayType: Literal["KCP", "QUIC", "WEB_TRANSPORT", 4, 5, 6]
 
+
 class ConnectDetails(BaseModel):
+    """
+    Connection details for a sandbox, including gateway addresses and authentication tokens.
+    """
     gatewayAddresses: List[GatewayAddress]
     certificateHashBase64: str
     endUserToken: str
 
+
 class SandboxListItem(BaseModel):
+    """
+    An item in a list of sandboxes, containing sandbox details and connection information.
+    """
     sandbox: Sandbox
     connectDetails: ConnectDetails
 
+
 class SandboxListResponseDto(BaseModel):
+    """
+    A response DTO containing a list of sandboxes.
+    """
     __root__: List[SandboxListItem]
+
 
 class CreateSandboxDto(BaseModel):
     """
     Create sandbox request.
     """
     name: str = Field("sandbox", description="The name of the sandbox.")
-    maxLifeSeconds: int = Field(3600, description="The maximum life time of the sandbox in seconds. Default is 1 hour, max is 1 day.", ge=1, le=86400)
+    maxLifeSeconds: int = Field(3600,
+                                description="The maximum life time of the sandbox in seconds. Default is 1 hour, max is 1 day.",
+                                ge=1, le=86400)
     projectId: Optional[str] = Field(None, description="The project id to use for the sandbox. Use default if not provided.")
     specId: Optional[str] = Field(None, description="The spec of the sandbox. Use default if not provided.")
-    datacenterId: Optional[str] = Field(None, description="The datacenter id to use for the sandbox. Use default if not provided.")
+    datacenterId: Optional[str] = Field(None,
+                                        description="The datacenter id to use for the sandbox. Use default if not provided.")
+
 
 class GetSandboxResponseDto(BaseModel):
+    """
+    A response DTO for a single sandbox, including connection details.
+    """
     sandbox: Sandbox
     connectDetails: ConnectDetails
 
+
 # Computer Use Schemas
 class PixelLength(BaseModel):
+    """
+    Represents a length in pixels.
+    """
     type: Literal["px"]
     value: int
 
+
 class FractionalLength(BaseModel):
+    """
+    Represents a length as a fraction of a total dimension.
+    """
     type: Literal["/"]
     numerator: int
     denominator: int
 
+
 Length = Union[PixelLength, FractionalLength]
 
+
 class MouseClickAction(BaseModel):
+    """
+    Represents a mouse click action at a specified location.
+    """
     type: Literal["mouse:click"]
     x: Length
     y: Length
     button: int
 
+
 class MouseDoubleClickAction(BaseModel):
+    """
+    Represents a mouse double-click action at a specified location.
+    """
     type: Literal["mouse:doubleClick"]
     x: Length
     y: Length
     button: int
 
+
 class MouseMoveAction(BaseModel):
+    """
+    Represents a mouse move action to a specified location.
+    """
     type: Literal["mouse:move"]
     x: Length
     y: Length
 
+
 class MouseScrollAction(BaseModel):
+    """
+    Represents a mouse scroll action.
+    """
     type: Literal["mouse:scroll"]
     x: Length
     y: Length
     stepVertical: int
     stepHorizontal: int
 
+
 class MouseDragAction(BaseModel):
+    """
+    Represents a mouse drag action from a start to an end point.
+    """
     type: Literal["mouse:drag"]
     startX: Length
     startY: Length
     endX: Length
     endY: Length
 
+
 class KeyboardTypeAction(BaseModel):
+    """
+    Represents a keyboard typing action.
+    """
     type: Literal["keyboard:type"]
     content: str
 
+
 class KeyboardHotkeyAction(BaseModel):
+    """
+    Represents a keyboard hotkey combination action.
+    """
     type: Literal["keyboard:hotkey"]
     keys: str
 
+
 class ScreenshotAction(BaseModel):
+    """
+    Represents an action to take a screenshot.
+    """
     type: Literal["screenshot"]
 
+
 class WaitAction(BaseModel):
+    """
+    Represents a wait action for a specified duration.
+    """
     type: Literal["wait"]
     duration: int
 
+
 class FinishedAction(BaseModel):
+    """
+    Represents a finished action, signaling successful completion of a task.
+    """
     type: Literal["finished"]
     message: Optional[str] = None
 
+
 class FailedAction(BaseModel):
+    """
+    Represents a failed action, signaling an error or failure in a task.
+    """
     type: Literal["failed"]
     message: Optional[str] = None
+
 
 ComputerUseAction = Union[
     MouseClickAction,
@@ -177,6 +290,7 @@ ComputerUseAction = Union[
     FailedAction,
 ]
 
+
 class ComputerUseActionDto(BaseModel):
     """
     Computer use action request.
@@ -187,27 +301,41 @@ class ComputerUseActionDto(BaseModel):
 
     callId: Optional[str] = None
 
+
 class CursorPosition(BaseModel):
+    """
+    Represents the position of the cursor on the screen.
+    """
     x: int
     y: int
     screenWidth: int
     screenHeight: int
     screenIndex: int
 
+
 class SandboxActionResponseDto(BaseModel):
     """
     Computer use action response.
     """
-    screenShot: str # is a picture url of the screen eg. https://example.com/screen.webp
+    screenShot: str  # is a picture url of the screen eg. https://example.com/screen.webp
     cursorPosition: CursorPosition
 
+
 class ComputerUseParseRequestDto(BaseModel):
+    """
+    Request DTO for parsing text content into computer use actions.
+    """
     model: Literal["ui-tars", "oai-compute-use"]
     textContent: str
     output: Optional[List] = None
 
+
 class ComputerUseActionResponseDto(BaseModel):
+    """
+    Response DTO containing a list of parsed computer use actions.
+    """
     actions: List[ComputerUseAction]
+
 
 # Project Schemas
 class ProjectResponseDto(BaseModel):
@@ -219,14 +347,27 @@ class ProjectResponseDto(BaseModel):
     createdAt: str
     defaultProject: bool
 
+
 class ListProjectsResponseDto(BaseModel):
+    """
+    A response DTO containing a list of projects.
+    """
     __root__: List[ProjectResponseDto]
 
+
 class CreateProjectDto(BaseModel):
+    """
+    Data transfer object for creating a new project.
+    """
     name: str
 
+
 class SingleProjectResponseDto(ProjectResponseDto):
-    pass
+    """
+    Response DTO for a single project.
+    """
 
 class SandboxConnectionDetail(SandboxListItem):
-    pass
+    """
+    Represents the connection details for a sandbox, inheriting from SandboxListItem.
+    """
