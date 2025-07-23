@@ -1,4 +1,4 @@
-name: Create Release
+name: Create and Promote Release
 
 on:
   workflow_dispatch:
@@ -33,9 +33,9 @@ jobs:
           git tag ${{ github.event.inputs.new_tag }}
           git push origin ${{ github.event.inputs.new_tag }}
         
-      - name: Create ci_release branch
+      - name: Create release branch
         run: |
-          git checkout -b ci_release_${{ github.event.inputs.new_tag }}
+          git checkout -b release_${{ github.event.inputs.new_tag }}
 
       - name: Generate changelog
         env:
@@ -53,12 +53,12 @@ jobs:
         run: |
           git add CHANGELOGS/${{ github.event.inputs.new_tag }}-release.md
           git commit -m "docs(changelog): Generate changelog for ${{ github.event.inputs.new_tag }}"
-          git push --set-upstream origin ci_release_${{ github.event.inputs.new_tag }}
+          git push --set-upstream origin release_${{ github.event.inputs.new_tag }}
 
       - name: Create Changelog Pull Request
         env:
           GH_TOKEN: ${{ github.token }}
           NEW_TAG: ${{ github.event.inputs.new_tag }}
         run:  |
-          gh pr create --title "docs(changelog): Generate changelog for ${NEW_TAG}" --body "Generate changelog for ${NEW_TAG}" --base master --head ci_release_${NEW_TAG}
-          gh pr merge --auto --squash # --delete-branch
+          gh pr create --title "docs(changelog): Generate changelog for ${NEW_TAG}" --body "Generate changelog for ${NEW_TAG}" --base master --head release_${{ github.event.inputs.new_tag }}
+          # gh pr merge --auto --squash # todo: To automatically merge, we need to enable the "Allow Automatic Merge" option in the repository Settings, but I couldn't find where this switch is
