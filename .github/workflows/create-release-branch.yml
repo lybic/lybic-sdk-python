@@ -14,7 +14,8 @@ jobs:
   create_release:
     runs-on: ubuntu-latest
     permissions:
-      contents: write # To push tags, branches, and commits
+      contents: write      # To push tags, branches, and commits
+      pull-requests: write # To create and merge pull requests
     steps:
       - name: Checkout master branch
         uses: actions/checkout@v4
