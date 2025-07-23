@@ -1,13 +1,22 @@
 name: Pylint
 
-on: [push, pull_request]
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "master", "develop" ]
+    paths:
+      - 'lybic/**/*.py'
+  pull_request:
+    branches: [ "master", "develop" ]
+    paths:
+      - 'lybic/**/*.py'
 
 jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.13"]
+        python-version: ["3.12","3.13"]
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
