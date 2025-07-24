@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://lybic.ai/">
-    <img src="https://avatars.githubusercontent.com/u/173191635" alt="Lybic Logo" width="120" height="120">
+    <img src="https://avatars.githubusercontent.com/lybic" alt="Lybic Logo" width="120" height="120">
   </a>
 </p>
 
@@ -8,8 +8,8 @@
 
 <p align="center">
   <a href="https://pypi.org/project/lybic/"><img alt="PyPI" src="https://img.shields.io/pypi/v/lybic"></a>
-  <a href="https://github.com/lybic/lybic-sdk-python/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/pypi/l/lybic"></a>
-  <a href="https://docs.lybic.ai/"><img alt="Documentation" src="https://img.shields.io/badge/documentation-Lybic-orange"></a>
+  <a href="https://github.com/lybic/lybic-sdk-python/blob/master/LICENSE"><img alt="License" src="https://img.shields.io/pypi/l/lybic"></a>
+  <a href="https://lybic.ai/docs"><img alt="Documentation" src="https://img.shields.io/badge/documentation-Lybic-orange"></a>
   <a href="https://github.com/lybic/lybic-sdk-python/actions/workflows/pylint.yml"><img alt="Pylint" src="https://github.com/lybic/lybic-sdk-python/actions/workflows/pylint.yml/badge.svg"></a>
 </p>
 
@@ -72,20 +72,22 @@ client = LybicClient()
 
 With the client initialized, the typical workflow follows these logical steps:
 
-1.  **Create a `Project`**: Projects are the primary way to organize your work. They act as containers for your sandboxes, team members, and secrets.
+1. **Register(Or be invited into) an Organization**: Lybic allows you to register a new organization to manage your projects and resources.
 
-2.  **Launch a `Sandbox`**: Within a project, you can launch a GUI sandbox from a variety of available images (e.g., `lybic/ubuntu-22.04-vnc`). This is your agent's secure, cloud-based home.
+2. **Create a `Project`**: Projects are the primary way to organize your work. They act as containers for your sandboxes, team members, and secrets.
 
-3.  **Automate and Interact**: Once the sandbox is running, your agent can begin its work. The SDK provides all the necessary tools to interact with the sandbox, from executing commands to capturing screenshots.
+3. **Launch a `Sandbox`**: Within a project, you can launch a GUI sandbox. This is your agent's secure, cloud-based home.
+
+4. **Automate and Interact**: Once the sandbox is running, your agent can begin its work. The SDK provides all the necessary tools to interact with the sandbox, from executing commands to capturing screenshots.
 
 ## 📚 Full Documentation & API Reference
 
-This README provides a high-level overview of Lybic's capabilities. For detailed, up-to-date code examples, tutorials, and a complete API reference, please visit our **[official documentation site](https://docs.lybic.ai/)**.
+This README provides a high-level overview of Lybic's capabilities. For detailed, up-to-date code examples, tutorials, and a complete API reference, please visit our **[official documentation site](https://lybic.ai/docs)**.
 
 ## 🤝 Contributing
 
-We welcome contributions from the community! Please see our [Contributing Guidelines](https://github.com/lybic/lybic-sdk-python/blob/main/CONTRIBUTING.md) for more details on how to get involved.
+We welcome contributions from the community! Please see our [Contributing Guidelines](https://github.com/lybic/lybic-sdk-python/blob/master/CONTRIBUTING.md) for more details on how to get involved.
 
 ## 📄 License
 
-This project is licensed under the MIT License. See the [LICENSE](https://github.com/lybic/lybic-sdk-python/blob/main/LICENSE) file for details.
+This project is licensed under the MIT License. See the [LICENSE](https://github.com/lybic/lybic-sdk-python/blob/master/LICENSE) file for details.
