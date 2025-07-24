@@ -81,9 +81,9 @@ class LybicClient:
         :return:
         """
         url = f"{self.endpoint}{path}"
-        headers = self.headers
+        headers = self.headers.copy()
         if method != "POST":
-            headers.pop("Content-Type")
+            headers.pop("Content-Type", None)
         response = requests.request(method, url, headers=headers,timeout=self.timeout, **kwargs)
         response.raise_for_status()
         return response
