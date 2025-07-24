@@ -26,6 +26,7 @@
 
 """sandbox.py provides the Sandbox API"""
 
+import requests
 import base64
 from io import BytesIO
 
@@ -115,7 +116,7 @@ class Sandbox:
         result = self.preview(sandbox_id)
         screenshot_url = result.screenShot
 
-        screenshot_response = self.client.request("GET",screenshot_url)
+        screenshot_response = requests.get(screenshot_url)
         screenshot_response.raise_for_status()
 
         img = Image.open(BytesIO(screenshot_response.content))
