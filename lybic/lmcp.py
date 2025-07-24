@@ -118,7 +118,6 @@ class ComputerUse:
     """ComputerUse is a client for lybic ComputerUse API(MCP and Restful)."""
     def __init__(self, client: LybicClient):
         self.client = client
-        self.mcp = client.mcp
 
     def parse_model_output(self, data: dto.ComputerUseParseRequestDto) -> dto.ComputerUseActionResponseDto:
         """
