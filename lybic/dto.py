@@ -27,7 +27,7 @@
 """dto.py provides all the data types used in the API."""
 
 from typing import List, Optional, Union, Literal
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, RootModel
 
 
 class StatsResponseDto(BaseModel):
@@ -64,11 +64,18 @@ class McpServerResponseDto(BaseModel):
     policy: McpServerPolicy
 
 
-class ListMcpServerResponse(BaseModel):
+class ListMcpServerResponse(RootModel):
     """
     A list of MCP server responses.
     """
-    __root__: List[McpServerResponseDto]
+    root: List[McpServerResponseDto]
+
+    def __iter__(self):
+        return iter(self.root)
+
+    def __getitem__(self, item):
+        return self.root[item]
+
 
 
 class CreateMcpServerDto(McpServerPolicy):
@@ -128,11 +135,17 @@ class SandboxListItem(BaseModel):
     connectDetails: ConnectDetails
 
 
-class SandboxListResponseDto(BaseModel):
+class SandboxListResponseDto(RootModel):
     """
     A response DTO containing a list of sandboxes.
     """
-    __root__: List[SandboxListItem]
+    root: List[SandboxListItem]
+
+    def __iter__(self):
+        return iter(self.root)
+
+    def __getitem__(self, item):
+        return self.root[item]
 
 
 class CreateSandboxDto(BaseModel):
@@ -348,11 +361,17 @@ class ProjectResponseDto(BaseModel):
     defaultProject: bool
 
 
-class ListProjectsResponseDto(BaseModel):
+class ListProjectsResponseDto(RootModel):
     """
     A response DTO containing a list of projects.
     """
-    __root__: List[ProjectResponseDto]
+    root: List[ProjectResponseDto]
+
+    def __iter__(self):
+        return iter(self.root)
+
+    def __getitem__(self, item):
+        return self.root[item]
 
 
 class CreateProjectDto(BaseModel):
