@@ -330,8 +330,8 @@ class SandboxActionResponseDto(BaseModel):
     """
     Computer use action response.
     """
-    screenShot: str  # is a picture url of the screen eg. https://example.com/screen.webp
-    cursorPosition: CursorPosition
+    screenShot: Optional[str]  # is a picture url of the screen eg. https://example.com/screen.webp
+    cursorPosition: Optional[CursorPosition]
 
 
 class ComputerUseParseRequestDto(BaseModel):
@@ -340,7 +340,7 @@ class ComputerUseParseRequestDto(BaseModel):
     """
     model: Literal["ui-tars", "oai-compute-use"]
     textContent: str
-    output: Optional[List] = None
+    output: list = [] # optional allowed but not null
 
 
 class ComputerUseActionResponseDto(BaseModel):
