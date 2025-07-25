@@ -179,11 +179,6 @@ client = LybicClient(
    mcp.delete(mcp_server_id="MCP-xxxx")
    ```
 
----
-
-The following content has not been **Secondary verification** temporarily
-
-
 ### Class ComputerUse
 
 `ComputerUse` is a client for the Lybic ComputerUse API, used for parsing model outputs and executing actions.
@@ -256,11 +251,13 @@ The following content has not been **Secondary verification** temporarily
    ```
    It will out put something like this:(an action list object,and length is 1)
 
-  ```
-  actions=[MouseDoubleClickAction(type='mouse:doubleClick', x=FractionalLength(type='/', numerator=213, denominator=1000), y=FractionalLength(type='/', numerator=257, denominator=1000), button=1)]
-  ```
+   ```
+   actions=[MouseDoubleClickAction(type='mouse:doubleClick', x=FractionalLength(type='/', numerator=213, denominator=1000), y=FractionalLength(type='/', numerator=257, denominator=1000), button=1)]
+   ```
 
 2. Execute a computer use action
+
+   This interface enables `Planner` to perform actions on the sandbox through Restful calls
 
    method: `execute_computer_use_action(sandbox_id: str, data: dto.ComputerUseActionDto)`
    - args:
@@ -272,9 +269,18 @@ The following content has not been **Secondary verification** temporarily
    from lybic import dto, ComputerUse
 
    computer_use = ComputerUse(client)
+   actions = computer_use.parse_model_output(
+       dto.ComputerUseParseRequestDto(
+           model="ui-tars",
+           textContent="""Thought: The task requires double-left-clicking the "images" folder. In the File Explorer window, the "images" folder is visible under the Desktop directory. The target element is the folder named "images" with a yellow folder icon. Double-left-clicking this folder will open it.
+
+   Next action: Left - double - click on the "images" folder icon located in the File Explorer window, under the Desktop directory, with the name "images" and yellow folder icon.
+   Action: left_double(point='<point>213 257</point>')"""
+       )
+   )
    response = computer_use.execute_computer_use_action(
        sandbox_id="SBX-xxxx",
-       data=dto.ComputerUseActionDto(action={"type": "screenshot"})
+       data=dto.ComputerUseActionDto(action=actions[0])
    )
    print(response)
    ```
@@ -296,6 +302,10 @@ The following content has not been **Secondary verification** temporarily
    sandboxes = sandbox.list()
    for s in sandboxes:
        print(s.sandbox)
+   ```
+   It will out put something like this:
+   ```
+   sandboxes=[SandboxDto(sandbox='SBX-xxxx', name='my-sandbox', status='running', maxLifeSeconds=3600, createdAt='2023-07-05T08:00:00Z', updatedAt='2023-07-05T08:00:00Z')]
    ```
 
 2. Create a new sandbox
@@ -348,7 +358,7 @@ The following content has not been **Secondary verification** temporarily
    method: `get_screenshot(sandbox_id: str)`
    - args:
      - *sandbox_id: str ID of the sandbox
-   - return: tuple (screenshot_url, PIL.Image.Image, base64_string)
+   - return: tuple (screenshot_url, PIL.Image.Image, webp_image_base64_string)
 
    ```python
    from lybic import Sandbox
