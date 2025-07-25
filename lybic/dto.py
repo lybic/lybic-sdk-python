@@ -95,6 +95,9 @@ class CreateMcpServerDto(McpServerPolicy):
     sandboxExposeDeleteTool: Optional[bool] = Field(False, description="Whether to expose delete tool to LLMs.")
 
     class Config:
+        """
+        Configuration for Pydantic model.
+        """
         extra = "ignore"
         # Allow population of fields with default values
         validate_assignment = True
