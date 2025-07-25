@@ -348,7 +348,6 @@ class ComputerUseParseRequestDto(BaseModel):
     """
     model: Literal["ui-tars", "oai-compute-use"]
     textContent: str
-    output: list = [] # optional allowed but not null
 
 
 class ComputerUseActionResponseDto(BaseModel):
