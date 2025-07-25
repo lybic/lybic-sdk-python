@@ -84,15 +84,20 @@ class CreateMcpServerDto(McpServerPolicy):
     Only name is needed, other fields are optional.
     """
     name: str = Field(..., description="Name of the MCP server.")
-    projectId: Optional[str] = Field(None, description="Project to which the MCP server belongs to.")
+    projectId: Optional[str] = Field('', description="Project to which the MCP server belongs to.")
 
-    sandboxMaxLifetimeSeconds: int = Field(3600, description="The maximum lifetime of a sandbox.")
-    sandboxMaxIdleTimeSeconds: int = Field(3600, description="The maximum idle time of a sandbox.")
-    sandboxAutoCreation: bool = Field(False,
+    sandboxMaxLifetimeSeconds: Optional[int] = Field(3600, description="The maximum lifetime of a sandbox.")
+    sandboxMaxIdleTimeSeconds: Optional[int] = Field(3600, description="The maximum idle time of a sandbox.")
+    sandboxAutoCreation: Optional[bool] = Field(False,
                                       description="Whether to create a new sandbox automatically when old sandbox is deleted. If not, new sandboxes will be created when calling computer use tools.")
-    sandboxExposeRecreateTool: bool = Field(False, description="Whether to expose recreate tool to LLMs.")
-    sandboxExposeRestartTool: bool = Field(False, description="Whether to expose restart tool to LLMs.")
-    sandboxExposeDeleteTool: bool = Field(False, description="Whether to expose delete tool to LLMs.")
+    sandboxExposeRecreateTool: Optional[bool] = Field(False, description="Whether to expose recreate tool to LLMs.")
+    sandboxExposeRestartTool: Optional[bool] = Field(False, description="Whether to expose restart tool to LLMs.")
+    sandboxExposeDeleteTool: Optional[bool] = Field(False, description="Whether to expose delete tool to LLMs.")
+
+    class Config:
+        extra = "ignore"
+        # Allow population of fields with default values
+        validate_assignment = True
 
 
 # Sandbox Schemas
