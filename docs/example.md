@@ -188,13 +188,56 @@ The following content has not been **Secondary verification** temporarily
 
 `ComputerUse` is a client for the Lybic ComputerUse API, used for parsing model outputs and executing actions.
 
-1. Parse model output into computer actions
+1. Parse model output into computer action.(support `ui-tars` and `oai-compute-use`[openai])
+
+   if you want to parse the model output, you can use this method.
 
    method: `parse_model_output(data: dto.ComputerUseParseRequestDto)`
    - args: class dto.ComputerUseParseRequestDto
      - *model: str The model to use (e.g., "ui-tars")
      - *textContent: str The text content to parse
    - return: class dto.ComputerUseActionResponseDto
+
+   if the model you use is "ui-tars", and its prompts like this:
+
+   ```markdown
+   You are a GUI agent. You are given a task and your action history, with screenshots. You need to perform the next action to complete the task.
+
+   ## Output Format
+    \```
+    Thought: ...
+    Action: ...
+    \```
+   
+   ## Action Space
+   click(point='<point>x1 y1</point>')
+   left_double(point='<point>x1 y1</point>')
+   right_single(point='<point>x1 y1</point>')
+   drag(start_point='<point>x1 y1</point>', end_point='<point>x2 y2</point>')
+   hotkey(key='ctrl c') # Split keys with a space and use lowercase. Also, do not use more than 3 keys in one hotkey action.
+   type(content='xxx') # Use escape characters \\', \\\", and \\n in content part to ensure we can parse the content in normal python string format. If you want to submit your input, use \\n at the end of content. 
+   scroll(point='<point>x1 y1</point>', direction='down or up or right or left') # Show more information on the `direction` side.
+   wait() #Sleep for 5s and take a screenshot to check for any changes.
+   finished(content='xxx') # Use escape characters \\', \\", and \\n in content part to ensure we can parse the content in normal python string format.
+   
+   ## Note
+   - Use {language} in `Thought` part.
+     - Write a small plan and finally summarize your next action (with its target element) in one sentence in `Thought` part.
+   
+   ## User Instruction
+   {instruction}
+   ```
+
+   The model output like this:
+
+   ```
+   Thought: The task requires double-left-clicking the "images" folder. In the File Explorer window, the "images" folder is visible under the Desktop directory. The target element is the folder named "images" with a yellow folder icon. Double-left-clicking this folder will open it.
+
+   Next action: Left - double - click on the "images" folder icon located in the File Explorer window, under the Desktop directory, with the name "images" and yellow folder icon.
+   Action: left_double(point='<point>213 257</point>')
+   ```
+
+   This api will parse this model output format and return a list of computer use actions.
 
    ```python
    from lybic import dto, ComputerUse
@@ -203,11 +246,19 @@ The following content has not been **Secondary verification** temporarily
    actions = computer_use.parse_model_output(
        dto.ComputerUseParseRequestDto(
            model="ui-tars",
-           textContent="click the button"
+           textContent="""Thought: The task requires double-left-clicking the "images" folder. In the File Explorer window, the "images" folder is visible under the Desktop directory. The target element is the folder named "images" with a yellow folder icon. Double-left-clicking this folder will open it.
+
+   Next action: Left - double - click on the "images" folder icon located in the File Explorer window, under the Desktop directory, with the name "images" and yellow folder icon.
+   Action: left_double(point='<point>213 257</point>')"""
        )
    )
    print(actions)
    ```
+   It will out put something like this:(an action list object,and length is 1)
+
+  ```
+  actions=[MouseDoubleClickAction(type='mouse:doubleClick', x=FractionalLength(type='/', numerator=213, denominator=1000), y=FractionalLength(type='/', numerator=257, denominator=1000), button=1)]
+  ```
 
 2. Execute a computer use action
 
