@@ -301,19 +301,23 @@ client = LybicClient(
    sandbox = Sandbox(client)
    sandboxes = sandbox.list()
    for s in sandboxes:
-       print(s.sandbox)
+       print(s)
    ```
    It will out put something like this:
    ```
-   sandboxes=[SandboxDto(sandbox='SBX-xxxx', name='my-sandbox', status='running', maxLifeSeconds=3600, createdAt='2023-07-05T08:00:00Z', updatedAt='2023-07-05T08:00:00Z')]
+   id='SBX-xxxxx' name='xxxx' expiredAt='2025-07-25T07:21:31.026Z' createdAt='2025-07-25T06:21:31.027Z' projectId='PRJ-xxxxxxx'
+   id='SBX-xxxxx' name='xxxx' expiredAt='2025-07-26T08:24:11.198Z' createdAt='2025-07-26T07:24:11.199Z' projectId='PRJ-xxxxxxx'
    ```
 
 2. Create a new sandbox
 
    method: `create(data: dto.CreateSandboxDto)`
    - args: class dto.CreateSandboxDto
-     - name: str (optional) Name for the sandbox
-     - maxLifeSeconds: int (optional) Lifetime in seconds
+     - name: str (optional) Name for the sandbox, if not provided, it will use a default name(sandbox).
+     - maxLifeSeconds: int (optional) Lifetime in seconds, if not provided, it will use the default value of 3600 seconds (1 hour).
+     - projectId: str (optional) Project ID to associate with the sandbox,if not provided, it will use the default project.
+     - specId: str (optional) ID of the sandbox spec to use, if not provided, it will use the default spec.
+     - datacenterId: str (optional) ID of the datacenter to use, if not provided, it will use the default datacenter.
    - return: class dto.GetSandboxResponseDto
 
    ```python
@@ -337,6 +341,12 @@ client = LybicClient(
    sandbox = Sandbox(client)
    details = sandbox.get(sandbox_id="SBX-xxxx")
    print(details)
+   ```
+
+   It will out put something like this:
+
+   ```
+   sandbox=Sandbox(id='SBX-xxxx', name='xxxx', expiredAt='2025-07-26T08:24:11.198Z', createdAt='2025-07-26T07:24:11.199Z', projectId='PRJ-xxxx'), connectDetails=ConnectDetails(gatewayAddresses=[GatewayAddress(address='1.2.3.4', port=12345, name='0197e397-5394-7880-a314-d8a7e981f9e4', preferredProviders=[1], gatewayType=4)], certificateHashBase64='baes64str==', endUserToken='jwttokenbase64str')
    ```
 
 4. Delete a sandbox
