@@ -179,6 +179,21 @@ client = LybicClient(
    mcp.delete(mcp_server_id="MCP-xxxx")
    ```
 
+5. Set MCP server to a sandbox
+
+   method: `set_sandbox(mcp_server_id: str, sandbox_id: str)`
+   - args:
+     - *mcp_server_id: str ID of the MCP server
+     - *sandbox_id: str ID of the sandbox to connect the MCP server to
+   - return: None(If No http error)
+
+   ```python
+   from lybic import MCP
+
+   mcp = MCP(client)
+   mcp.set_sandbox(mcp_server_id="MCP-xxxx", sandbox_id="SBX-xxxx")
+   ```
+
 ### Class ComputerUse
 
 `ComputerUse` is a client for the Lybic ComputerUse API, used for parsing model outputs and executing actions.
