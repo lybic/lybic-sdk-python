@@ -3,6 +3,9 @@ name: Create and Promote Release
 on:
   workflow_dispatch:
     inputs:
+      base_branch:
+        description: 'The base branch to create the release from (e.g., master)'
+        required: true
       new_tag:
         description: 'The new tag to create (e.g., v0.4.0)'
         required: true
@@ -20,7 +23,7 @@ jobs:
       - name: Checkout master branch
         uses: actions/checkout@v4
         with:
-          ref: 'master'
+          ref: ${{ github.event.inputs.base_branch }}
           fetch-depth: 0 # Required for changelog generation from git history
 
       - name: Configure Git user
