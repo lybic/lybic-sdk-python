@@ -135,12 +135,10 @@ class ConnectDetails(BaseModel):
     endUserToken: str
 
 
-class SandboxListItem(BaseModel):
+class SandboxListItem(Sandbox):
     """
     An item in a list of sandboxes, containing sandbox details and connection information.
     """
-    sandbox: Sandbox
-    connectDetails: ConnectDetails
 
 
 class SandboxListResponseDto(RootModel):
