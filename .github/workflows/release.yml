@@ -67,7 +67,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           NEW_TAG: ${{ github.event.inputs.new_tag }}
         run:  |
-          gh pr create --title "docs(changelog): Generate changelog for ${NEW_TAG}" --body "Generate changelog for ${NEW_TAG}" --base master --head release_${{ github.event.inputs.new_tag }} --label "changelog" --draft
+          gh pr create --title "docs(changelog): Generate changelog for ${NEW_TAG}" --body "Generate changelog for ${NEW_TAG}" --base master --head release_${{ github.event.inputs.new_tag }}
           # gh pr merge --auto --squash # todo: To automatically merge, we need to enable the "Allow Automatic Merge" option in the repository Settings, but I couldn't find where this switch is
 
   publish:
