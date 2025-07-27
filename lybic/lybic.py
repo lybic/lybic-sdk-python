@@ -40,7 +40,9 @@ class LybicClient:
                  org_id: str = os.getenv("LYBIC_ORG_ID"),
                  api_key: str = os.getenv("LYBIC_API_KEY"),
                  endpoint: str = os.getenv("LYBIC_API_ENDPOINT", "https://api.lybic.cn/"),
-                 timeout: int = 10):
+                 timeout: int = 10,
+                 extra_headers: dict = None
+                 ):
         """
         Init lybic client with org_id, api_key and endpoint
 
@@ -62,10 +64,10 @@ class LybicClient:
 
         self.org_id = org_id
         self.endpoint = endpoint
-        self.headers = {
-            "x-api-key": api_key,
-            "Content-Type": "application/json"
-        }
+
+        self.headers = extra_headers.copy() if extra_headers else {}
+        self.headers["x-api-key"]= api_key
+        self.headers["Content-Type"]= "application/json"
 
         self.stats = Stats(self)
         # Auth Test
