@@ -91,6 +91,38 @@
         }
       }
     },
+    "/api/orgs/{orgId}/mcp-servers/{mcpServerId}/sandbox": {
+      "post": {
+        "operationId": "setMcpServerToSandbox",
+        "summary": "Set MCP server to Sandbox",
+        "description": "Sets the specified MCP server to the given Sandbox.",
+        "parameters": [
+          {
+            "name": "mcpServerId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetMcpServerToSandboxResponseDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        }
+      }
+    },
     "/api/orgs/{orgId}/sandboxes": {
       "get": {
         "operationId": "listSandboxes",
@@ -446,6 +478,11 @@
                   "default": false
                 }
               }
+            },
+            "currentSandboxId": {
+              "description": "ID of the currently connected sandbox.",
+              "type": "string",
+              "nullable": true
             }
           },
           "required": [
@@ -454,7 +491,8 @@
             "createdAt",
             "defaultMcpServer",
             "projectId",
-            "policy"
+            "policy",
+            "currentSandboxId"
           ]
         }
       },
@@ -515,6 +553,11 @@
                 "default": false
               }
             }
+          },
+          "currentSandboxId": {
+            "description": "ID of the currently connected sandbox.",
+            "type": "string",
+            "nullable": true
           }
         },
         "required": [
@@ -523,7 +566,8 @@
           "createdAt",
           "defaultMcpServer",
           "projectId",
-          "policy"
+          "policy",
+          "currentSandboxId"
         ]
       },
       "CreateMcpServerDto": {
@@ -572,123 +616,42 @@
           "name"
         ]
       },
+      "SetMcpServerToSandboxResponseDto": {
+        "type": "object",
+        "properties": {
+          "sandboxId": {
+            "description": "The ID of the sandbox to connect the MCP server to.",
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "sandboxId"
+        ]
+      },
       "SandboxListResponseDto": {
         "type": "array",
         "items": {
           "type": "object",
           "properties": {
-            "sandbox": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "type": "string"
-                },
-                "name": {
-                  "type": "string"
-                },
-                "expiredAt": {},
-                "createdAt": {},
-                "projectId": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "id",
-                "name",
-                "expiredAt",
-                "createdAt",
-                "projectId"
-              ]
+            "id": {
+              "type": "string"
             },
-            "connectDetails": {
-              "type": "object",
-              "properties": {
-                "gatewayAddresses": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "address": {
-                        "type": "string"
-                      },
-                      "port": {
-                        "type": "number"
-                      },
-                      "name": {
-                        "type": "string"
-                      },
-                      "preferredProviders": {
-                        "type": "array",
-                        "items": {
-                          "type": "string",
-                          "enum": [
-                            "CHINA_MOBILE",
-                            "CHINA_UNICOM",
-                            "CHINA_TELECOM",
-                            "GLOBAL_BGP",
-                            1,
-                            2,
-                            3,
-                            4
-                          ],
-                          "x-enumNames": [
-                            "1",
-                            "2",
-                            "3",
-                            "4",
-                            "CHINA_MOBILE",
-                            "CHINA_UNICOM",
-                            "CHINA_TELECOM",
-                            "GLOBAL_BGP"
-                          ]
-                        }
-                      },
-                      "gatewayType": {
-                        "type": "string",
-                        "enum": [
-                          "KCP",
-                          "QUIC",
-                          "WEB_TRANSPORT",
-                          4,
-                          5,
-                          6
-                        ],
-                        "x-enumNames": [
-                          "4",
-                          "5",
-                          "6",
-                          "KCP",
-                          "QUIC",
-                          "WEB_TRANSPORT"
-                        ]
-                      }
-                    },
-                    "required": [
-                      "address",
-                      "port",
-                      "name",
-                      "preferredProviders",
-                      "gatewayType"
-                    ]
-                  }
-                },
-                "certificateHashBase64": {
-                  "type": "string"
-                },
-                "endUserToken": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "gatewayAddresses",
-                "certificateHashBase64",
-                "endUserToken"
-              ]
+            "name": {
+              "type": "string"
+            },
+            "expiredAt": {},
+            "createdAt": {},
+            "projectId": {
+              "type": "string"
             }
           },
           "required": [
-            "sandbox",
-            "connectDetails"
+            "id",
+            "name",
+            "expiredAt",
+            "createdAt",
+            "projectId"
           ]
         }
       },
@@ -771,9 +734,9 @@
                       "items": {
                         "type": "string",
                         "enum": [
-                          "CHINA_MOBILE",
-                          "CHINA_UNICOM",
                           "CHINA_TELECOM",
+                          "CHINA_UNICOM",
+                          "CHINA_MOBILE",
                           "GLOBAL_BGP",
                           1,
                           2,
@@ -785,9 +748,9 @@
                           "2",
                           "3",
                           "4",
-                          "CHINA_MOBILE",
-                          "CHINA_UNICOM",
                           "CHINA_TELECOM",
+                          "CHINA_UNICOM",
+                          "CHINA_MOBILE",
                           "GLOBAL_BGP"
                         ]
                       }
@@ -826,12 +789,16 @@
               },
               "endUserToken": {
                 "type": "string"
+              },
+              "roomId": {
+                "type": "string"
               }
             },
             "required": [
               "gatewayAddresses",
               "certificateHashBase64",
-              "endUserToken"
+              "endUserToken",
+              "roomId"
             ]
           }
         },
@@ -959,8 +926,12 @@
                     ]
                   },
                   "button": {
-                    "description": "Mouse button index",
+                    "description": "Mouse button flag combination. 1: left, 2: right, 4: middle, 8: back, 16: forward; add them together to press multiple buttons at once.",
                     "type": "number"
+                  },
+                  "holdKey": {
+                    "description": "Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\".",
+                    "type": "string"
                   }
                 },
                 "required": [
@@ -1085,6 +1056,10 @@
                   "button": {
                     "description": "Mouse button index",
                     "type": "number"
+                  },
+                  "holdKey": {
+                    "description": "Key to hold down during double click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\".",
+                    "type": "string"
                   }
                 },
                 "required": [
@@ -1205,6 +1180,10 @@
                         ]
                       }
                     ]
+                  },
+                  "holdKey": {
+                    "description": "Key to hold down during move, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\".",
+                    "type": "string"
                   }
                 },
                 "required": [
@@ -1332,6 +1311,10 @@
                   "stepHorizontal": {
                     "description": "Horizontal scroll steps",
                     "type": "number"
+                  },
+                  "holdKey": {
+                    "description": "Key to hold down during scroll, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\".",
+                    "type": "string"
                   }
                 },
                 "required": [
@@ -1555,6 +1538,10 @@
                         ]
                       }
                     ]
+                  },
+                  "holdKey": {
+                    "description": "Key to hold down during drag, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\".",
+                    "type": "string"
                   }
                 },
                 "required": [
@@ -1578,11 +1565,18 @@
                   "content": {
                     "description": "Text content to type",
                     "type": "string"
+                  },
+                  "treatNewLineAsEnter": {
+                    "description": "Whether to treat line breaks as enter. If true, any line breaks(\\n) in content will be treated as enter key press, and content will be split into multiple lines.",
+                    "type": "boolean",
+                    "default": false,
+                    "nullable": true
                   }
                 },
                 "required": [
                   "type",
-                  "content"
+                  "content",
+                  "treatNewLineAsEnter"
                 ]
               },
               {
@@ -1598,6 +1592,14 @@
                   "keys": {
                     "description": "Hotkey combination, in xdotool key syntax. Examples: \"a\", \"Return\", \"alt+Tab\", \"ctrl+s\", \"Up\", \"KP_0\" (for the numpad 0 key).",
                     "type": "string"
+                  },
+                  "duration": {
+                    "description": "Duration in milliseconds. If specified, the hotkey will be held for a while and then released.",
+                    "type": "number",
+                    "minimum": 1,
+                    "exclusiveMinimum": false,
+                    "maximum": 5000,
+                    "exclusiveMaximum": false
                   }
                 },
                 "required": [
@@ -1688,10 +1690,12 @@
             }
           },
           "includeScreenShot": {
+            "description": "Whether to include the screenshot url after action in the response",
             "type": "boolean",
             "default": true
           },
           "includeCursorPosition": {
+            "description": "Whether to include the cursor position after action in the response",
             "type": "boolean",
             "default": true
           }
@@ -1740,11 +1744,7 @@
               "screenIndex"
             ]
           }
-        },
-        "required": [
-          "screenShot",
-          "cursorPosition"
-        ]
+        }
       },
       "ListProjectsResponseDto": {
         "type": "array",
@@ -1821,13 +1821,6 @@
           "textContent": {
             "description": "The text content to parse",
             "type": "string"
-          },
-          "output": {
-            "description": "The response output from the model, if available",
-            "type": "array",
-            "items": {
-              "description": "A single item from the model output"
-            }
           }
         },
         "required": [
@@ -1956,8 +1949,12 @@
                       ]
                     },
                     "button": {
-                      "description": "Mouse button index",
+                      "description": "Mouse button flag combination. 1: left, 2: right, 4: middle, 8: back, 16: forward; add them together to press multiple buttons at once.",
                       "type": "number"
+                    },
+                    "holdKey": {
+                      "description": "Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\".",
+                      "type": "string"
                     }
                   },
                   "required": [
@@ -2082,6 +2079,10 @@
                     "button": {
                       "description": "Mouse button index",
                       "type": "number"
+                    },
+                    "holdKey": {
+                      "description": "Key to hold down during double click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\".",
+                      "type": "string"
                     }
                   },
                   "required": [
@@ -2202,6 +2203,10 @@
                           ]
                         }
                       ]
+                    },
+                    "holdKey": {
+                      "description": "Key to hold down during move, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\".",
+                      "type": "string"
                     }
                   },
                   "required": [
@@ -2329,6 +2334,10 @@
                     "stepHorizontal": {
                       "description": "Horizontal scroll steps",
                       "type": "number"
+                    },
+                    "holdKey": {
+                      "description": "Key to hold down during scroll, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\".",
+                      "type": "string"
                     }
                   },
                   "required": [
@@ -2552,6 +2561,10 @@
                           ]
                         }
                       ]
+                    },
+                    "holdKey": {
+                      "description": "Key to hold down during drag, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\".",
+                      "type": "string"
                     }
                   },
                   "required": [
@@ -2575,11 +2588,18 @@
                     "content": {
                       "description": "Text content to type",
                       "type": "string"
+                    },
+                    "treatNewLineAsEnter": {
+                      "description": "Whether to treat line breaks as enter. If true, any line breaks(\\n) in content will be treated as enter key press, and content will be split into multiple lines.",
+                      "type": "boolean",
+                      "default": false,
+                      "nullable": true
                     }
                   },
                   "required": [
                     "type",
-                    "content"
+                    "content",
+                    "treatNewLineAsEnter"
                   ]
                 },
                 {
@@ -2595,6 +2615,14 @@
                     "keys": {
                       "description": "Hotkey combination, in xdotool key syntax. Examples: \"a\", \"Return\", \"alt+Tab\", \"ctrl+s\", \"Up\", \"KP_0\" (for the numpad 0 key).",
                       "type": "string"
+                    },
+                    "duration": {
+                      "description": "Duration in milliseconds. If specified, the hotkey will be held for a while and then released.",
+                      "type": "number",
+                      "minimum": 1,
+                      "exclusiveMinimum": false,
+                      "maximum": 5000,
+                      "exclusiveMaximum": false
                     }
                   },
                   "required": [
@@ -2694,12 +2722,15 @@
         "type": "object",
         "properties": {
           "mcpServers": {
+            "description": "Number of MCP servers",
             "type": "number"
           },
           "sandboxes": {
+            "description": "Number of sandboxes",
             "type": "number"
           },
           "projects": {
+            "description": "Number of projects",
             "type": "number"
           }
         },
