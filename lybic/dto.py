@@ -62,6 +62,7 @@ class McpServerResponseDto(BaseModel):
     defaultMcpServer: bool = Field(..., description="Whether this is the default MCP server for the organization.")
     projectId: str = Field(..., description="Project ID to which the MCP server belongs.")
     policy: McpServerPolicy
+    currentSandboxId: Optional[str] = Field(None, description="ID of the currently connected sandbox.")
 
 
 class ListMcpServerResponse(RootModel):
@@ -133,6 +134,7 @@ class ConnectDetails(BaseModel):
     gatewayAddresses: List[GatewayAddress]
     certificateHashBase64: str
     endUserToken: str
+    roomId: str
 
 
 class SandboxListItem(Sandbox):
@@ -207,7 +209,16 @@ class MouseClickAction(BaseModel):
     type: Literal["mouse:click"]
     x: Length
     y: Length
-    button: int
+    button: int = Field(..., description="Mouse button flag combination. 1: left, 2: right, 4: middle, 8: back, 16: forward; add them together to press multiple buttons at once.")
+    holdKey: Optional[str] = Field(None, description="Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = "forbid"
+        # Allow population of fields with default values
+        validate_assignment = True
+        exclude_none = True
 
 
 class MouseDoubleClickAction(BaseModel):
@@ -217,7 +228,16 @@ class MouseDoubleClickAction(BaseModel):
     type: Literal["mouse:doubleClick"]
     x: Length
     y: Length
-    button: int
+    button: int = Field(..., description="Mouse button flag combination. 1: left, 2: right, 4: middle, 8: back, 16: forward; add them together to press multiple buttons at once.")
+    holdKey: Optional[str] = Field(None, description="Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = "forbid"
+        # Allow population of fields with default values
+        validate_assignment = True
+        exclude_none = True
 
 
 class MouseMoveAction(BaseModel):
@@ -227,7 +247,15 @@ class MouseMoveAction(BaseModel):
     type: Literal["mouse:move"]
     x: Length
     y: Length
-
+    holdKey: Optional[str] = Field(None, description="Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = "forbid"
+        # Allow population of fields with default values
+        validate_assignment = True
+        exclude_none = True
 
 class MouseScrollAction(BaseModel):
     """
@@ -238,7 +266,15 @@ class MouseScrollAction(BaseModel):
     y: Length
     stepVertical: int
     stepHorizontal: int
-
+    holdKey: Optional[str] = Field(None, description="Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = "forbid"
+        # Allow population of fields with default values
+        validate_assignment = True
+        exclude_none = True
 
 class MouseDragAction(BaseModel):
     """
@@ -249,7 +285,15 @@ class MouseDragAction(BaseModel):
     startY: Length
     endX: Length
     endY: Length
-
+    holdKey: Optional[str] = Field(None, description="Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = "forbid"
+        # Allow population of fields with default values
+        validate_assignment = True
+        exclude_none = True
 
 class KeyboardTypeAction(BaseModel):
     """
@@ -257,6 +301,7 @@ class KeyboardTypeAction(BaseModel):
     """
     type: Literal["keyboard:type"]
     content: str
+    treatNewLineAsEnter: bool = Field(False, description="Whether to treat line breaks as enter. If true, any line breaks(\\n) in content will be treated as enter key press, and content will be split into multiple lines.")
 
 
 class KeyboardHotkeyAction(BaseModel):
@@ -265,6 +310,15 @@ class KeyboardHotkeyAction(BaseModel):
     """
     type: Literal["keyboard:hotkey"]
     keys: str
+    duration: Optional[int] = Field(None, description="Duration in milliseconds. If specified, the hotkey will be held for a while and then released.")
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = "forbid"
+        # Allow population of fields with default values
+        validate_assignment = True
+        exclude_none = True
 
 
 class ScreenshotAction(BaseModel):
@@ -398,3 +452,9 @@ class SandboxConnectionDetail(SandboxListItem):
     """
     Represents the connection details for a sandbox, inheriting from SandboxListItem.
     """
+
+class SetMcpServerToSandboxResponseDto(BaseModel):
+    """
+    Response DTO for setting a MCP server to a sandbox.
+    """
+    sandboxId: Optional[str] = Field(None, description="The ID of the sandbox to connect the MCP server to.")
