@@ -62,6 +62,7 @@ class McpServerResponseDto(BaseModel):
     defaultMcpServer: bool = Field(..., description="Whether this is the default MCP server for the organization.")
     projectId: str = Field(..., description="Project ID to which the MCP server belongs.")
     policy: McpServerPolicy
+    currentSandboxId: Optional[str] = Field(None, description="ID of the currently connected sandbox.")
 
 
 class ListMcpServerResponse(RootModel):
@@ -84,15 +85,23 @@ class CreateMcpServerDto(McpServerPolicy):
     Only name is needed, other fields are optional.
     """
     name: str = Field(..., description="Name of the MCP server.")
-    projectId: Optional[str] = Field(None, description="Project to which the MCP server belongs to.")
+    projectId: Optional[str] = Field('', description="Project to which the MCP server belongs to.")
 
-    sandboxMaxLifetimeSeconds: int = Field(3600, description="The maximum lifetime of a sandbox.")
-    sandboxMaxIdleTimeSeconds: int = Field(3600, description="The maximum idle time of a sandbox.")
-    sandboxAutoCreation: bool = Field(False,
+    sandboxMaxLifetimeSeconds: Optional[int] = Field(3600, description="The maximum lifetime of a sandbox.")
+    sandboxMaxIdleTimeSeconds: Optional[int] = Field(3600, description="The maximum idle time of a sandbox.")
+    sandboxAutoCreation: Optional[bool] = Field(False,
                                       description="Whether to create a new sandbox automatically when old sandbox is deleted. If not, new sandboxes will be created when calling computer use tools.")
-    sandboxExposeRecreateTool: bool = Field(False, description="Whether to expose recreate tool to LLMs.")
-    sandboxExposeRestartTool: bool = Field(False, description="Whether to expose restart tool to LLMs.")
-    sandboxExposeDeleteTool: bool = Field(False, description="Whether to expose delete tool to LLMs.")
+    sandboxExposeRecreateTool: Optional[bool] = Field(False, description="Whether to expose recreate tool to LLMs.")
+    sandboxExposeRestartTool: Optional[bool] = Field(False, description="Whether to expose restart tool to LLMs.")
+    sandboxExposeDeleteTool: Optional[bool] = Field(False, description="Whether to expose delete tool to LLMs.")
+
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = "ignore"
+        # Allow population of fields with default values
+        validate_assignment = True
 
 
 # Sandbox Schemas
@@ -125,14 +134,13 @@ class ConnectDetails(BaseModel):
     gatewayAddresses: List[GatewayAddress]
     certificateHashBase64: str
     endUserToken: str
+    roomId: str
 
 
-class SandboxListItem(BaseModel):
+class SandboxListItem(Sandbox):
     """
     An item in a list of sandboxes, containing sandbox details and connection information.
     """
-    sandbox: Sandbox
-    connectDetails: ConnectDetails
 
 
 class SandboxListResponseDto(RootModel):
@@ -158,9 +166,12 @@ class CreateSandboxDto(BaseModel):
                                 ge=1, le=86400)
     projectId: Optional[str] = Field(None, description="The project id to use for the sandbox. Use default if not provided.")
     specId: Optional[str] = Field(None, description="The spec of the sandbox. Use default if not provided.")
-    datacenterId: Optional[str] = Field(None,
-                                        description="The datacenter id to use for the sandbox. Use default if not provided.")
-
+    datacenterId: Optional[str] = Field(None, description="The datacenter id to use for the sandbox. Use default if not provided.")
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        exclude_none = True
 
 class GetSandboxResponseDto(BaseModel):
     """
@@ -198,7 +209,16 @@ class MouseClickAction(BaseModel):
     type: Literal["mouse:click"]
     x: Length
     y: Length
-    button: int
+    button: int = Field(..., description="Mouse button flag combination. 1: left, 2: right, 4: middle, 8: back, 16: forward; add them together to press multiple buttons at once.")
+    holdKey: Optional[str] = Field(None, description="Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = "forbid"
+        # Allow population of fields with default values
+        validate_assignment = True
+        exclude_none = True
 
 
 class MouseDoubleClickAction(BaseModel):
@@ -208,7 +228,16 @@ class MouseDoubleClickAction(BaseModel):
     type: Literal["mouse:doubleClick"]
     x: Length
     y: Length
-    button: int
+    button: int = Field(..., description="Mouse button flag combination. 1: left, 2: right, 4: middle, 8: back, 16: forward; add them together to press multiple buttons at once.")
+    holdKey: Optional[str] = Field(None, description="Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = "forbid"
+        # Allow population of fields with default values
+        validate_assignment = True
+        exclude_none = True
 
 
 class MouseMoveAction(BaseModel):
@@ -218,7 +247,15 @@ class MouseMoveAction(BaseModel):
     type: Literal["mouse:move"]
     x: Length
     y: Length
-
+    holdKey: Optional[str] = Field(None, description="Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = "forbid"
+        # Allow population of fields with default values
+        validate_assignment = True
+        exclude_none = True
 
 class MouseScrollAction(BaseModel):
     """
@@ -229,7 +266,15 @@ class MouseScrollAction(BaseModel):
     y: Length
     stepVertical: int
     stepHorizontal: int
-
+    holdKey: Optional[str] = Field(None, description="Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = "forbid"
+        # Allow population of fields with default values
+        validate_assignment = True
+        exclude_none = True
 
 class MouseDragAction(BaseModel):
     """
@@ -240,7 +285,15 @@ class MouseDragAction(BaseModel):
     startY: Length
     endX: Length
     endY: Length
-
+    holdKey: Optional[str] = Field(None, description="Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = "forbid"
+        # Allow population of fields with default values
+        validate_assignment = True
+        exclude_none = True
 
 class KeyboardTypeAction(BaseModel):
     """
@@ -248,6 +301,7 @@ class KeyboardTypeAction(BaseModel):
     """
     type: Literal["keyboard:type"]
     content: str
+    treatNewLineAsEnter: bool = Field(False, description="Whether to treat line breaks as enter. If true, any line breaks(\\n) in content will be treated as enter key press, and content will be split into multiple lines.")
 
 
 class KeyboardHotkeyAction(BaseModel):
@@ -256,6 +310,15 @@ class KeyboardHotkeyAction(BaseModel):
     """
     type: Literal["keyboard:hotkey"]
     keys: str
+    duration: Optional[int] = Field(None, description="Duration in milliseconds. If specified, the hotkey will be held for a while and then released.")
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = "forbid"
+        # Allow population of fields with default values
+        validate_assignment = True
+        exclude_none = True
 
 
 class ScreenshotAction(BaseModel):
@@ -330,8 +393,8 @@ class SandboxActionResponseDto(BaseModel):
     """
     Computer use action response.
     """
-    screenShot: str  # is a picture url of the screen eg. https://example.com/screen.webp
-    cursorPosition: CursorPosition
+    screenShot: Optional[str]  # is a picture url of the screen eg. https://example.com/screen.webp
+    cursorPosition: Optional[CursorPosition]
 
 
 class ComputerUseParseRequestDto(BaseModel):
@@ -340,7 +403,6 @@ class ComputerUseParseRequestDto(BaseModel):
     """
     model: Literal["ui-tars", "oai-compute-use"]
     textContent: str
-    output: Optional[List] = None
 
 
 class ComputerUseActionResponseDto(BaseModel):
@@ -390,3 +452,9 @@ class SandboxConnectionDetail(SandboxListItem):
     """
     Represents the connection details for a sandbox, inheriting from SandboxListItem.
     """
+
+class SetMcpServerToSandboxResponseDto(BaseModel):
+    """
+    Response DTO for setting a MCP server to a sandbox.
+    """
+    sandboxId: Optional[str] = Field(None, description="The ID of the sandbox to connect the MCP server to.")

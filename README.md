@@ -80,6 +80,10 @@ With the client initialized, the typical workflow follows these logical steps:
 
 4. **Automate and Interact**: Once the sandbox is running, your agent can begin its work. The SDK provides all the necessary tools to interact with the sandbox, from executing commands to capturing screenshots.
 
+## 📔 Examples:
+
+Please refer to [example](docs/example.md)
+
 ## 📚 Full Documentation & API Reference
 
 This README provides a high-level overview of Lybic's capabilities. For detailed, up-to-date code examples, tutorials, and a complete API reference, please visit our **[official documentation site](https://lybic.ai/docs)**.

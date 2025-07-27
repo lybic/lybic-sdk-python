@@ -86,6 +86,20 @@ class MCP:
         """
         self.client.request("DELETE", f"/api/orgs/{self.client.org_id}/mcp-servers/{mcp_server_id}")
 
+    def set_sandbox(self, mcp_server_id: str, sandbox_id: str) -> None:
+        """
+        Set MCP server to a specific sandbox
+
+        :param mcp_server_id: The ID of the MCP server
+        :param sandbox_id: The ID of the sandbox to connect the MCP server to
+        :return: None
+        """
+        data = dto.SetMcpServerToSandboxResponseDto(sandboxId=sandbox_id)
+        self.client.request(
+            "POST",
+            f"/api/orgs/{self.client.org_id}/mcp-servers/{mcp_server_id}/sandbox",
+            json=data.model_dump())
+
     async def call_tool_async(self,
                               mcp_server_id: str,
                               tool_name: str = "computer-use",

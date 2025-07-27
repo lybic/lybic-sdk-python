@@ -57,7 +57,7 @@ class Sandbox:
         """
         response = self.client.request(
             "POST",
-            f"/api/orgs/{self.client.org_id}/sandboxes", json=data.model_dump())
+            f"/api/orgs/{self.client.org_id}/sandboxes", json=data.model_dump(exclude_none=True))
         return dto.GetSandboxResponseDto.model_validate_json(response.text)
 
     def get(self, sandbox_id: str) -> dto.GetSandboxResponseDto:
