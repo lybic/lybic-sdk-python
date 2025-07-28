@@ -66,7 +66,28 @@ from lybic import LybicClient
 
 # The client automatically picks up credentials from your environment
 client = LybicClient()
+
+# or initialize with explicit credentials
+client = LybicClient(
+    org_id="your_org_id", 
+    api_key="your_api_key",
+    endpoint="https://api.lybic.cn",
+    timeout=10,
+    extra_headers={"User-Agent": "MyAgent/1.0"},
+)
 ```
+
+Then, you can start using the `client`.
+
+```python
+from lybic import dto, Sandbox
+
+sandbox = Sandbox(client)
+new_sandbox = sandbox.create(dto.CreateSandboxDto(name="my-sandbox"))
+print(new_sandbox)
+```
+
+Completed, you're ready to start building your agent!
 
 ### 2. Core Workflow
 
@@ -82,7 +103,7 @@ With the client initialized, the typical workflow follows these logical steps:
 
 ## 📔 Examples:
 
-Please refer to [example](docs/example.md)
+Please read our [example](docs/example.md).
 
 ## 📚 Full Documentation & API Reference
 
