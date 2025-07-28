@@ -25,7 +25,7 @@
 # THE SOFTWARE.
 
 """dto.py provides all the data types used in the API."""
-
+import uuid
 from typing import List, Optional, Union, Literal
 from pydantic import BaseModel, Field, RootModel
 
@@ -211,7 +211,7 @@ class MouseClickAction(BaseModel):
     y: Length
     button: int = Field(..., description="Mouse button flag combination. 1: left, 2: right, 4: middle, 8: back, 16: forward; add them together to press multiple buttons at once.")
     holdKey: Optional[str] = Field(None, description="Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
-    callId: Optional[str] = None
+    callId: Optional[str] = Field(str(uuid.uuid4()), alias="callId", description="Call ID to associate with the action.")
     class Config:
         """
         Configuration for Pydantic model.
@@ -231,7 +231,7 @@ class MouseDoubleClickAction(BaseModel):
     y: Length
     button: int = Field(..., description="Mouse button flag combination. 1: left, 2: right, 4: middle, 8: back, 16: forward; add them together to press multiple buttons at once.")
     holdKey: Optional[str] = Field(None, description="Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
-    callId: Optional[str] = None
+    callId: Optional[str] = Field(str(uuid.uuid4()), alias="callId", description="Call ID to associate with the action.")
     class Config:
         """
         Configuration for Pydantic model.
@@ -250,7 +250,7 @@ class MouseMoveAction(BaseModel):
     x: Length
     y: Length
     holdKey: Optional[str] = Field(None, description="Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
-    callId: Optional[str] = None
+    callId: Optional[str] = Field(str(uuid.uuid4()), alias="callId", description="Call ID to associate with the action.")
     class Config:
         """
         Configuration for Pydantic model.
@@ -270,7 +270,7 @@ class MouseScrollAction(BaseModel):
     stepVertical: int
     stepHorizontal: int
     holdKey: Optional[str] = Field(None, description="Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
-    callId: Optional[str] = None
+    callId: Optional[str] = Field(str(uuid.uuid4()), alias="callId", description="Call ID to associate with the action.")
     class Config:
         """
         Configuration for Pydantic model.
@@ -290,7 +290,7 @@ class MouseDragAction(BaseModel):
     endX: Length
     endY: Length
     holdKey: Optional[str] = Field(None, description="Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
-    callId: Optional[str] = None
+    callId: Optional[str] = Field(str(uuid.uuid4()), alias="callId", description="Call ID to associate with the action.")
     class Config:
         """
         Configuration for Pydantic model.
@@ -306,7 +306,7 @@ class KeyboardTypeAction(BaseModel):
     """
     type: Literal["keyboard:type"]
     content: str
-    callId: Optional[str] = None
+    callId: Optional[str] = Field(str(uuid.uuid4()), alias="callId", description="Call ID to associate with the action.")
     treatNewLineAsEnter: bool = Field(False, description="Whether to treat line breaks as enter. If true, any line breaks(\\n) in content will be treated as enter key press, and content will be split into multiple lines.")
 
 
@@ -317,7 +317,7 @@ class KeyboardHotkeyAction(BaseModel):
     type: Literal["keyboard:hotkey"]
     keys: str
     duration: Optional[int] = Field(None, description="Duration in milliseconds. If specified, the hotkey will be held for a while and then released.")
-    callId: Optional[str] = None
+    callId: Optional[str] = Field(str(uuid.uuid4()), alias="callId", description="Call ID to associate with the action.")
     class Config:
         """
         Configuration for Pydantic model.
@@ -333,7 +333,7 @@ class ScreenshotAction(BaseModel):
     Represents an action to take a screenshot.
     """
     type: Literal["screenshot"]
-    callId: Optional[str] = None
+    callId: Optional[str] = Field(str(uuid.uuid4()), alias="callId", description="Call ID to associate with the action.")
 
 
 class WaitAction(BaseModel):
@@ -342,7 +342,7 @@ class WaitAction(BaseModel):
     """
     type: Literal["wait"]
     duration: int
-    callId: Optional[str] = None
+    callId: Optional[str] = Field(str(uuid.uuid4()), alias="callId", description="Call ID to associate with the action.")
 
 
 class FinishedAction(BaseModel):
@@ -351,7 +351,7 @@ class FinishedAction(BaseModel):
     """
     type: Literal["finished"]
     message: Optional[str] = None
-    callId: Optional[str] = None
+    callId: Optional[str] = Field(str(uuid.uuid4()), alias="callId", description="Call ID to associate with the action.")
 
 
 class FailedAction(BaseModel):
@@ -360,7 +360,7 @@ class FailedAction(BaseModel):
     """
     type: Literal["failed"]
     message: Optional[str] = None
-    callId: Optional[str] = None
+    callId: Optional[str] = Field(str(uuid.uuid4()), alias="callId", description="Call ID to associate with the action.")
 
 
 ComputerUseAction = Union[
