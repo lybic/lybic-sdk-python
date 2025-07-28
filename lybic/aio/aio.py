@@ -30,6 +30,7 @@ import os
 from sys import stderr
 import base64
 from io import BytesIO
+from typing import Tuple
 
 import httpx
 from PIL import Image
@@ -74,13 +75,13 @@ class LybicAsyncClient:
         if timeout < 0:
             print("Warning: Timeout cannot be negative, set to 10",file=stderr)
             timeout = 10
-        
+
         self.timeout = timeout
         self.org_id = org_id
         self.endpoint = endpoint
 
         self.headers["Content-Type"]= "application/json"
-        
+
         self.client = httpx.AsyncClient(headers=self.headers, timeout=self.timeout)
         self.stats = AsyncStats(self)
         self.mcp = AsyncMCP(self)
@@ -101,7 +102,7 @@ class LybicAsyncClient:
         headers = self.headers.copy()
         if method.upper() != "POST":
             headers.pop("Content-Type", None)
-        
+
         response = await self.client.request(method, url, headers=headers, **kwargs)
         response.raise_for_status()
         return response
@@ -353,7 +354,7 @@ class AsyncSandbox:
             f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}")
         return dto.SandboxConnectionDetail.model_validate_json(response.text)
 
-    async def get_screenshot(self, sandbox_id: str) -> (str, Image.Image, str):
+    async def get_screenshot(self, sandbox_id: str) -> Tuple[str, Image.Image, str]:
         """
         Get screenshot of a sandbox
 
@@ -377,7 +378,7 @@ class AsyncSandbox:
             img.save(buffer, format="WebP")
             base64_str = base64.b64encode(buffer.getvalue()).decode("utf-8")
 
-        return  screenshot_url,img,base64_str
+        return screenshot_url,img,base64_str
 
 
     async def get_screenshot_base64(self, sandbox_id: str) -> str:

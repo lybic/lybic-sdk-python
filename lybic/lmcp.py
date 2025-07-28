@@ -25,9 +25,7 @@
 # THE SOFTWARE.
 
 """lmcp.py: MCP client for lybic MCP(Model Context Protocol) and Restful Interface API."""
-
-from mcp import ClientSession
-from mcp.client.streamable_http import streamablehttp_client
+import asyncio
 
 from lybic import dto
 from lybic.lybic import LybicClient
@@ -48,10 +46,7 @@ class MCP:
 
         :return:
         """
-        response = self.client.request(
-            "GET",
-            f"/api/orgs/{self.client.org_id}/mcp-servers")
-        return dto.ListMcpServerResponse.model_validate_json(response.text)
+        return asyncio.run(self.client.get_async_client().mcp.list())
 
     def create(self, data: dto.CreateMcpServerDto) -> dto.McpServerResponseDto:
         """
@@ -60,11 +55,7 @@ class MCP:
         :param data:
         :return:
         """
-        response = self.client.request(
-            "POST",
-            f"/api/orgs/{self.client.org_id}/mcp-servers",
-            json=data.model_dump())
-        return dto.McpServerResponseDto.model_validate_json(response.text)
+        return asyncio.run(self.client.get_async_client().mcp.create(data))
 
     def get_default(self) -> dto.McpServerResponseDto:
         """
@@ -72,10 +63,7 @@ class MCP:
 
         :return:
         """
-        response = self.client.request(
-            "GET",
-            f"/api/orgs/{self.client.org_id}/mcp-servers/default")
-        return dto.McpServerResponseDto.model_validate_json(response.text)
+        return asyncio.run(self.client.get_async_client().mcp.get_default())
 
     def delete(self, mcp_server_id: str) -> None:
         """
@@ -84,7 +72,7 @@ class MCP:
         :param mcp_server_id:
         :return:
         """
-        self.client.request("DELETE", f"/api/orgs/{self.client.org_id}/mcp-servers/{mcp_server_id}")
+        return asyncio.run(self.client.get_async_client().mcp.delete(mcp_server_id))
 
     def set_sandbox(self, mcp_server_id: str, sandbox_id: str) -> None:
         """
@@ -95,10 +83,7 @@ class MCP:
         :return: None
         """
         data = dto.SetMcpServerToSandboxResponseDto(sandboxId=sandbox_id)
-        self.client.request(
-            "POST",
-            f"/api/orgs/{self.client.org_id}/mcp-servers/{mcp_server_id}/sandbox",
-            json=data.model_dump())
+        return asyncio.run(self.client.get_async_client().mcp.set_sandbox(mcp_server_id, data))
 
     async def call_tool_async(self,
                               mcp_server_id: str,
@@ -112,21 +97,7 @@ class MCP:
         :param tool_args:
         :return:
         """
-        try:
-            async with streamablehttp_client(self.client.make_mcp_endpoint(mcp_server_id),
-                                             headers=self.client.headers,
-                                             timeout=30
-            ) as (
-                    read_stream,
-                    write_stream,
-                    _,
-            ):
-                async with ClientSession(read_stream, write_stream) as session:
-                    await session.initialize()
-                    return await session.call_tool(tool_name, tool_args)
-        except Exception as e:
-            raise RuntimeError(f"Failed to call tool: {e}") from e
-
+        return self.client.get_async_client().mcp.call_tool_async(mcp_server_id, tool_name, tool_args)
 
 class ComputerUse:
     """ComputerUse is a client for lybic ComputerUse API(MCP and Restful)."""
@@ -140,11 +111,7 @@ class ComputerUse:
         :param data:
         :return:
         """
-        response = self.client.request(
-            "POST",
-            "/api/computer-use/parse",
-            json=data.model_dump(exclude_none=True))
-        return dto.ComputerUseActionResponseDto.model_validate_json(response.text)
+        return asyncio.run(self.client.get_async_client().computer_use.parse_model_output(data))
 
     def execute_computer_use_action(self, sandbox_id: str,
                                     data: dto.ComputerUseActionDto) -> dto.SandboxActionResponseDto:
@@ -153,7 +120,4 @@ class ComputerUse:
 
         is same as sandbox.Sandbox.execute_computer_use_action
         """
-        response = self.client.request("POST",
-                                       f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/actions/computer-use",
-                                       json=data.model_dump(exclude_none=True))
-        return dto.SandboxActionResponseDto.model_validate_json(response.text)
+        return asyncio.run(self.client.get_async_client().computer_use.execute_computer_use_action(sandbox_id, data))
