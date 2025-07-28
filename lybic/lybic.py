@@ -32,6 +32,8 @@ from sys import stderr
 import requests
 
 from lybic import dto
+from lybic.aio.aio import LybicAsyncClient
+
 
 class LybicClient:
     """LybicClient is a client for all Lybic API."""
@@ -78,6 +80,14 @@ class LybicClient:
         self.stats = Stats(self)
         # Auth Test
         self.stats.get()
+
+    @classmethod
+    def get_async_client(cls, *args, **kwargs) -> "LybicAsyncClient":
+        """
+        Get an async client for Lybic API.
+        """
+        from lybic.aio.aio import LybicAsyncClient
+        return LybicAsyncClient(*args, **kwargs)
 
     def request(self, method: str, path: str, **kwargs) -> requests.Response:
         """
