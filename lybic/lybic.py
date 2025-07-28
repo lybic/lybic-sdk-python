@@ -56,7 +56,7 @@ class LybicClient:
         self.headers = {}
         if extra_headers:
             self.headers.update(extra_headers)
-        
+
         # if x-trial-session-token is provided, use it instead of api_key
         if not (extra_headers and 'x-trial-session-token' in extra_headers):
             assert api_key, "LYBIC_API_KEY is required when x-trial-session-token is not provided"
