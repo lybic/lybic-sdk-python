@@ -1,4 +1,4 @@
-name: Create and Promote Release
+name: Create Release
 
 on:
   workflow_dispatch:
@@ -30,11 +30,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-
-      - name: Create and push new tag
-        run: |
-          git tag ${{ github.event.inputs.new_tag }}
-          git push origin ${{ github.event.inputs.new_tag }}
         
       - name: Create release branch
         run: |
@@ -62,13 +57,32 @@ jobs:
           git commit -m "docs(changelog): Generate changelog for ${{ github.event.inputs.new_tag }}"
           git push --set-upstream origin release_${{ github.event.inputs.new_tag }}
 
+      - name: Update version in pyproject.toml
+        run: |
+          # Remove 'v' prefix from tag if present (e.g., v0.4.0 -> 0.4.0)
+          VERSION=${{ github.event.inputs.new_tag }}
+          VERSION=${VERSION#v}
+          
+          # Update version in pyproject.toml
+          sed -i "s/^version = \".*\"/version = \"$VERSION\"/" pyproject.toml
+          
+          # Commit the version update
+          git add pyproject.toml
+          git commit -m "build: bump pypi package version to $VERSION"
+          git push --set-upstream origin release_${{ github.event.inputs.new_tag }}
+
       - name: Create Changelog Pull Request
         env:
           GH_TOKEN: ${{ github.token }}
           NEW_TAG: ${{ github.event.inputs.new_tag }}
         run:  |
-          gh pr create --title "docs(changelog): Generate changelog for ${NEW_TAG}" --body "Generate changelog for ${NEW_TAG}" --base master --head release_${{ github.event.inputs.new_tag }}
+          gh pr create --title "build: bump lybic-sdk-version to ${NEW_TAG}" --body "build: bump lybic-sdk-version to ${NEW_TAG}" --base master --head release_${{ github.event.inputs.new_tag }}
           # gh pr merge --auto --squash # todo: To automatically merge, we need to enable the "Allow Automatic Merge" option in the repository Settings, but I couldn't find where this switch is
+
+      - name: Create and push new tag
+        run: |
+          git tag ${{ github.event.inputs.new_tag }}
+          git push origin ${{ github.event.inputs.new_tag }}
 
   publish:
     name: Publish Python Package to PyPI
