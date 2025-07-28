@@ -39,8 +39,9 @@ from mcp import ClientSession
 from mcp.client.streamable_http import streamablehttp_client
 
 from lybic import dto
+from lybic.base import _LybicBaseClient
 
-class LybicAsyncClient:
+class LybicAsyncClient(_LybicBaseClient):
     """LybicAsyncClient is a client for all Lybic API."""
 
     def __init__(self,
@@ -57,30 +58,10 @@ class LybicAsyncClient:
         :param api_key:
         :param endpoint:
         """
-        assert org_id, "LYBIC_ORG_ID is required"
-        assert endpoint, "LYBIC_API_ENDPOINT is required"
-
-        self.headers = {}
-        if extra_headers:
-            self.headers.update(extra_headers)
-
-        # if x-trial-session-token is provided, use it instead of api_key
-        if not (extra_headers and 'x-trial-session-token' in extra_headers):
-            assert api_key, "LYBIC_API_KEY is required when x-trial-session-token is not provided"
-            self.headers["x-api-key"] = api_key
-
-        if endpoint.endswith("/"):
-            self.endpoint = endpoint[:-1]
-
-        if timeout < 0:
-            print("Warning: Timeout cannot be negative, set to 10",file=stderr)
-            timeout = 10
-
-        self.timeout = timeout
-        self.org_id = org_id
-        self.endpoint = endpoint
-
-        self.headers["Content-Type"]= "application/json"
+        super().__init__(
+            org_id=org_id, api_key=api_key, endpoint=endpoint,
+            timeout=timeout, extra_headers=extra_headers
+        )
 
         self.client = httpx.AsyncClient(headers=self.headers, timeout=self.timeout)
         self.stats = AsyncStats(self)
@@ -106,15 +87,6 @@ class LybicAsyncClient:
         response = await self.client.request(method, url, headers=headers, **kwargs)
         response.raise_for_status()
         return response
-
-    def make_mcp_endpoint(self, mcp_server_id: str) -> str:
-        """
-        Make MCP endpoint for a MCP server
-
-        :param mcp_server_id:
-        :return:
-        """
-        return f"{self.endpoint}/mcp/{mcp_server_id}"
 
 class AsyncStats:
     """Stats are used for check"""

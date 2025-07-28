@@ -24,20 +24,14 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-"""lybic.py is the main entry point for Lybic API."""
-import asyncio
+"""base.py holds the base client for Lybic API."""
+
 import os
 from sys import stderr
 
-import requests
 
-from lybic import dto
-from lybic.aio.aio import LybicAsyncClient
-from lybic.base import _LybicBaseClient
-
-
-class LybicClient(_LybicBaseClient):
-    """LybicClient is a client for all Lybic API."""
+class _LybicBaseClient:
+    """_LybicBaseClient is a base client for all Lybic API."""
 
     def __init__(self,
                  org_id: str = os.getenv("LYBIC_ORG_ID"),
@@ -53,46 +47,37 @@ class LybicClient(_LybicBaseClient):
         :param api_key:
         :param endpoint:
         """
-        super().__init__(
-            org_id=org_id, api_key=api_key, endpoint=endpoint,
-            timeout=timeout, extra_headers=extra_headers
-        )
+        assert org_id, "LYBIC_ORG_ID is required"
+        assert endpoint, "LYBIC_API_ENDPOINT is required"
 
-        self.stats = Stats(self)
-        # Auth Test
-        self.stats.get()
+        self.headers = {}
+        if extra_headers:
+            self.headers.update(extra_headers)
 
-    @classmethod
-    def get_async_client(cls, *args, **kwargs) -> "LybicAsyncClient":
+        # if x-trial-session-token is provided, use it instead of api_key
+        if not (extra_headers and 'x-trial-session-token' in extra_headers):
+            assert api_key, "LYBIC_API_KEY is required when x-trial-session-token is not provided"
+            self.headers["x-api-key"] = api_key
+
+        if endpoint.endswith("/"):
+            self.endpoint = endpoint[:-1]
+        else:
+            self.endpoint = endpoint
+
+        if timeout < 0:
+            print("Warning: Timeout cannot be negative, set to 10", file=stderr)
+            timeout = 10
+        self.timeout = timeout
+
+        self.org_id = org_id
+
+        self.headers["Content-Type"] = "application/json"
+
+    def make_mcp_endpoint(self, mcp_server_id: str) -> str:
         """
-        Get an async client for Lybic API.
-        """
-        return LybicAsyncClient(*args, **kwargs)
+        Make MCP endpoint for a MCP server
 
-    def request(self, method: str, path: str, **kwargs) -> requests.Response:
-        """
-        Make a request to Lybic Restful API
-
-        :param method:
-        :param path:
-        :param kwargs:
+        :param mcp_server_id:
         :return:
         """
-        url = f"{self.endpoint}{path}"
-        headers = self.headers.copy()
-        if method != "POST":
-            headers.pop("Content-Type", None)
-        response = requests.request(method, url, headers=headers, timeout=self.timeout, **kwargs)
-        response.raise_for_status()
-        return response
-
-class Stats:
-    """Stats are used for check"""
-    def __init__(self, client: LybicClient):
-        self.client = client
-
-    def get(self) -> dto.StatsResponseDto:
-        """
-        Get the stats of the organization, such as number of members, computers, etc.
-        """
-        return asyncio.run(self.client.get_async_client().stats.get())
+        return f"{self.endpoint}/mcp/{mcp_server_id}"
