@@ -13,6 +13,18 @@
   <a href="https://github.com/lybic/lybic-sdk-python/actions/workflows/pylint.yml"><img alt="Pylint" src="https://github.com/lybic/lybic-sdk-python/actions/workflows/pylint.yml/badge.svg"></a>
 </p>
 
+## Table of Contents
+
+- [How It Works](#how-it-works)
+- [✨ Why Lybic?](#-why-lybic)
+- [🚀 Getting Started](#-getting-started)
+  - [1. Installation & Setup](#1-installation--setup)
+  - [2. Core Workflow](#2-core-workflow)
+- [📔 Examples](#-examples)
+- [📚 Full Documentation & API Reference](#-full-documentation--api-reference)
+- [🤝 Contributing](#-contributing)
+- [📄 License](#-license)
+
 Developing, testing, and deploying GUI-based AI agents is complex. Developers waste precious time wrestling with cloud instances, VNC servers, and environment configurations instead of focusing on what matters: building intelligent agents.
 
 **Lybic is the infrastructure layer for your GUI agents.**
@@ -66,7 +78,28 @@ from lybic import LybicClient
 
 # The client automatically picks up credentials from your environment
 client = LybicClient()
+
+# or initialize with explicit credentials
+client = LybicClient(
+    org_id="your_org_id", 
+    api_key="your_api_key",
+    endpoint="https://api.lybic.cn",
+    timeout=10,
+    extra_headers={"User-Agent": "MyAgent/1.0"},
+)
 ```
+
+Then, you can start using the `client`.
+
+```python
+from lybic import dto, Sandbox
+
+sandbox = Sandbox(client)
+new_sandbox = sandbox.create(dto.CreateSandboxDto(name="my-sandbox"))
+print(new_sandbox)
+```
+
+Completed, you're ready to start building your agent!
 
 ### 2. Core Workflow
 
@@ -82,7 +115,7 @@ With the client initialized, the typical workflow follows these logical steps:
 
 ## 📔 Examples:
 
-Please refer to [example](docs/example.md)
+Please read our [example](docs/example.md).
 
 ## 📚 Full Documentation & API Reference
 

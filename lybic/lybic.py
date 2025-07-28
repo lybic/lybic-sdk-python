@@ -39,7 +39,7 @@ class LybicClient:
     def __init__(self,
                  org_id: str = os.getenv("LYBIC_ORG_ID"),
                  api_key: str = os.getenv("LYBIC_API_KEY"),
-                 endpoint: str = os.getenv("LYBIC_API_ENDPOINT", "https://api.lybic.cn/"),
+                 endpoint: str = os.getenv("LYBIC_API_ENDPOINT", "https://api.lybic.cn"),
                  timeout: int = 10,
                  extra_headers: dict = None
                  ):
@@ -51,22 +51,28 @@ class LybicClient:
         :param endpoint:
         """
         assert org_id, "LYBIC_ORG_ID is required"
-        assert api_key, "LYBIC_API_KEY is required"
         assert endpoint, "LYBIC_API_ENDPOINT is required"
+
+        self.headers = {}
+        if extra_headers:
+            self.headers.update(extra_headers)
+
+        # if x-trial-session-token is provided, use it instead of api_key
+        if not (extra_headers and 'x-trial-session-token' in extra_headers):
+            assert api_key, "LYBIC_API_KEY is required when x-trial-session-token is not provided"
+            self.headers["x-api-key"] = api_key
 
         if endpoint.endswith("/"):
             self.endpoint = endpoint[:-1]
 
         if timeout < 0:
-            print("Timeout cannot be negative, set to 10",file=stderr)
+            print("Warning: Timeout cannot be negative, set to 10",file=stderr)
             timeout = 10
         self.timeout = timeout
 
         self.org_id = org_id
         self.endpoint = endpoint
 
-        self.headers = extra_headers.copy() if extra_headers else {}
-        self.headers["x-api-key"]= api_key
         self.headers["Content-Type"]= "application/json"
 
         self.stats = Stats(self)
