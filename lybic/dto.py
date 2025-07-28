@@ -211,7 +211,7 @@ class MouseClickAction(BaseModel):
     y: Length
     button: int = Field(..., description="Mouse button flag combination. 1: left, 2: right, 4: middle, 8: back, 16: forward; add them together to press multiple buttons at once.")
     holdKey: Optional[str] = Field(None, description="Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
-    callId: Optional[str] = Field(str(uuid.uuid4()), alias="callId", description="Call ID to associate with the action.")
+    callId: Optional[str] = str(uuid.uuid4())
     class Config:
         """
         Configuration for Pydantic model.
@@ -231,7 +231,7 @@ class MouseDoubleClickAction(BaseModel):
     y: Length
     button: int = Field(..., description="Mouse button flag combination. 1: left, 2: right, 4: middle, 8: back, 16: forward; add them together to press multiple buttons at once.")
     holdKey: Optional[str] = Field(None, description="Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
-    callId: Optional[str] = Field(str(uuid.uuid4()), alias="callId", description="Call ID to associate with the action.")
+    callId: Optional[str] = str(uuid.uuid4())
     class Config:
         """
         Configuration for Pydantic model.
@@ -250,7 +250,7 @@ class MouseMoveAction(BaseModel):
     x: Length
     y: Length
     holdKey: Optional[str] = Field(None, description="Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
-    callId: Optional[str] = Field(str(uuid.uuid4()), alias="callId", description="Call ID to associate with the action.")
+    callId: Optional[str] = str(uuid.uuid4())
     class Config:
         """
         Configuration for Pydantic model.
@@ -270,7 +270,7 @@ class MouseScrollAction(BaseModel):
     stepVertical: int
     stepHorizontal: int
     holdKey: Optional[str] = Field(None, description="Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
-    callId: Optional[str] = Field(str(uuid.uuid4()), alias="callId", description="Call ID to associate with the action.")
+    callId: Optional[str] = str(uuid.uuid4())
     class Config:
         """
         Configuration for Pydantic model.
@@ -290,7 +290,7 @@ class MouseDragAction(BaseModel):
     endX: Length
     endY: Length
     holdKey: Optional[str] = Field(None, description="Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
-    callId: Optional[str] = Field(str(uuid.uuid4()), alias="callId", description="Call ID to associate with the action.")
+    callId: Optional[str] = str(uuid.uuid4())
     class Config:
         """
         Configuration for Pydantic model.
@@ -306,9 +306,8 @@ class KeyboardTypeAction(BaseModel):
     """
     type: Literal["keyboard:type"]
     content: str
-    callId: Optional[str] = Field(str(uuid.uuid4()), alias="callId", description="Call ID to associate with the action.")
     treatNewLineAsEnter: bool = Field(False, description="Whether to treat line breaks as enter. If true, any line breaks(\\n) in content will be treated as enter key press, and content will be split into multiple lines.")
-
+    callId: Optional[str] = str(uuid.uuid4())
 
 class KeyboardHotkeyAction(BaseModel):
     """
@@ -317,7 +316,7 @@ class KeyboardHotkeyAction(BaseModel):
     type: Literal["keyboard:hotkey"]
     keys: str
     duration: Optional[int] = Field(None, description="Duration in milliseconds. If specified, the hotkey will be held for a while and then released.")
-    callId: Optional[str] = Field(str(uuid.uuid4()), alias="callId", description="Call ID to associate with the action.")
+    callId: Optional[str] = str(uuid.uuid4())
     class Config:
         """
         Configuration for Pydantic model.
@@ -333,8 +332,15 @@ class ScreenshotAction(BaseModel):
     Represents an action to take a screenshot.
     """
     type: Literal["screenshot"]
-    callId: Optional[str] = Field(str(uuid.uuid4()), alias="callId", description="Call ID to associate with the action.")
-
+    callId: Optional[str] = str(uuid.uuid4())
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = "forbid"
+        # Allow population of fields with default values
+        validate_assignment = True
+        exclude_none = True
 
 class WaitAction(BaseModel):
     """
@@ -342,8 +348,15 @@ class WaitAction(BaseModel):
     """
     type: Literal["wait"]
     duration: int
-    callId: Optional[str] = Field(str(uuid.uuid4()), alias="callId", description="Call ID to associate with the action.")
-
+    callId: Optional[str] = str(uuid.uuid4())
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = "ignored"
+        # Allow population of fields with default values
+        validate_assignment = True
+        exclude_none = True
 
 class FinishedAction(BaseModel):
     """
@@ -351,8 +364,15 @@ class FinishedAction(BaseModel):
     """
     type: Literal["finished"]
     message: Optional[str] = None
-    callId: Optional[str] = Field(str(uuid.uuid4()), alias="callId", description="Call ID to associate with the action.")
-
+    callId: Optional[str] = str(uuid.uuid4())
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = "ignored"
+        # Allow population of fields with default values
+        validate_assignment = True
+        exclude_none = True
 
 class FailedAction(BaseModel):
     """
@@ -360,8 +380,15 @@ class FailedAction(BaseModel):
     """
     type: Literal["failed"]
     message: Optional[str] = None
-    callId: Optional[str] = Field(str(uuid.uuid4()), alias="callId", description="Call ID to associate with the action.")
-
+    callId: Optional[str] = str(uuid.uuid4())
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = "ignored"
+        # Allow population of fields with default values
+        validate_assignment = True
+        exclude_none = True
 
 ComputerUseAction = Union[
     MouseClickAction,
@@ -385,9 +412,15 @@ class ComputerUseActionDto(BaseModel):
     action: ComputerUseAction | dict
     includeScreenShot: bool = True
     includeCursorPosition: bool = True
-
-    callId: Optional[str] = None
-
+    callId: Optional[str] = str(uuid.uuid4())
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = "forbid"
+        # Allow population of fields with default values
+        validate_assignment = True
+        exclude_none = True
 
 class CursorPosition(BaseModel):
     """

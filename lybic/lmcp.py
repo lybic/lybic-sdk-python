@@ -143,7 +143,7 @@ class ComputerUse:
         response = self.client.request(
             "POST",
             "/api/computer-use/parse",
-            json=data.model_dump())
+            json=data.model_dump(exclude_none=True))
         return dto.ComputerUseActionResponseDto.model_validate_json(response.text)
 
     def execute_computer_use_action(self, sandbox_id: str,
@@ -155,5 +155,5 @@ class ComputerUse:
         """
         response = self.client.request("POST",
                                        f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/actions/computer-use",
-                                       json=data.model_dump())
+                                       json=data.model_dump(exclude_none=True))
         return dto.SandboxActionResponseDto.model_validate_json(response.text)
