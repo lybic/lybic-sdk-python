@@ -13,6 +13,18 @@
   <a href="https://github.com/lybic/lybic-sdk-python/actions/workflows/pylint.yml"><img alt="Pylint" src="https://github.com/lybic/lybic-sdk-python/actions/workflows/pylint.yml/badge.svg"></a>
 </p>
 
+## Table of Contents
+
+- [How It Works](#how-it-works)
+- [✨ Why Lybic?](#-why-lybic)
+- [🚀 Getting Started](#-getting-started)
+  - [1. Installation & Setup](#1-installation--setup)
+  - [2. Core Workflow](#2-core-workflow)
+- [📔 Examples](#-examples)
+- [📚 Full Documentation & API Reference](#-full-documentation--api-reference)
+- [🤝 Contributing](#-contributing)
+- [📄 License](#-license)
+
 Developing, testing, and deploying GUI-based AI agents is complex. Developers waste precious time wrestling with cloud instances, VNC servers, and environment configurations instead of focusing on what matters: building intelligent agents.
 
 **Lybic is the infrastructure layer for your GUI agents.**
