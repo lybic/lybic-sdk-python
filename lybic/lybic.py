@@ -83,5 +83,7 @@ class Stats:
         """
         Get the stats of the organization, such as number of members, computers, etc.
         """
+        self.client.logger.debug("Get stats requests")
         response = await self.client.request("GET", f"/api/orgs/{self.client.org_id}/stats")
+        self.client.logger.debug("Get stats response: %s", response.text)
         return dto.StatsResponseDto.model_validate_json(response.text)

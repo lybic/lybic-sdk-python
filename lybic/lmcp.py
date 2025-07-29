@@ -27,6 +27,7 @@
 """lmcp.py: MCP client for lybic MCP(Model Context Protocol) and Restful Interface API."""
 from mcp import ClientSession
 from mcp.client.streamable_http import streamablehttp_client
+from mcp.types import CallToolResult
 
 from lybic import dto
 from lybic.lybic import LybicClient
@@ -47,9 +48,11 @@ class MCP:
 
         :return:
         """
+        self.client.logger.debug("List MCP servers request")
         response = await self.client.request(
             "GET",
             f"/api/orgs/{self.client.org_id}/mcp-servers")
+        self.client.logger.debug(f"List MCP servers response: {response.text}")
         return dto.ListMcpServerResponse.model_validate_json(response.text)
 
     async def create(self, data: dto.CreateMcpServerDto) -> dto.McpServerResponseDto:
@@ -59,10 +62,12 @@ class MCP:
         :param data:
         :return:
         """
+        self.client.logger.debug(f"Create MCP server request: {data.model_dump_json()}")
         response = await self.client.request(
             "POST",
             f"/api/orgs/{self.client.org_id}/mcp-servers",
             json=data.model_dump())
+        self.client.logger.debug(f"Create MCP server response: {response.text}")
         return dto.McpServerResponseDto.model_validate_json(response.text)
 
     async def get_default(self) -> dto.McpServerResponseDto:
@@ -71,9 +76,11 @@ class MCP:
 
         :return:
         """
+        self.client.logger.debug("Get default MCP server request")
         response = await self.client.request(
             "GET",
             f"/api/orgs/{self.client.org_id}/mcp-servers/default")
+        self.client.logger.debug(f"Get default MCP server response: {response.text}")
         return dto.McpServerResponseDto.model_validate_json(response.text)
 
     async def delete(self, mcp_server_id: str) -> None:
@@ -83,6 +90,7 @@ class MCP:
         :param mcp_server_id:
         :return:
         """
+        self.client.logger.debug(f"Delete MCP server request: {mcp_server_id}")
         await self.client.request("DELETE", f"/api/orgs/{self.client.org_id}/mcp-servers/{mcp_server_id}")
 
     async def set_sandbox(self, mcp_server_id: str, sandbox_id: str) -> None:
@@ -94,6 +102,7 @@ class MCP:
         :return: None
         """
         data = dto.SetMcpServerToSandboxResponseDto(sandboxId=sandbox_id)
+        self.client.logger.debug(f"Set MCP server to sandbox request: {data.model_dump_json()}")
         await self.client.request(
             "POST",
             f"/api/orgs/{self.client.org_id}/mcp-servers/{mcp_server_id}/sandbox",
@@ -102,7 +111,7 @@ class MCP:
     async def call_tool_async(self,
                               mcp_server_id: str,
                               tool_name: str = "computer-use",
-                              tool_args: dict = None):
+                              tool_args: dict = None)->CallToolResult:
         """
         Call a tool on mcp server
 
@@ -111,6 +120,7 @@ class MCP:
         :param tool_args:
         :return:
         """
+        self.client.logger.debug(f"Call tool request: {tool_name} with arguments: {tool_args}")
         try:
             async with streamablehttp_client(self.client.make_mcp_endpoint(mcp_server_id),
                                              headers=self.client.headers,
@@ -122,7 +132,10 @@ class MCP:
             ):
                 async with ClientSession(read_stream, write_stream) as session:
                     await session.initialize()
-                    return await session.call_tool(tool_name, tool_args)
+                    result = await session.call_tool(tool_name, tool_args)
+                    self.client.logger.debug(f"Call tool response: {result.model_dump_json()}")
+                    return result
+
         except Exception as e:
             raise RuntimeError(f"Failed to call tool: {e}") from e
 
@@ -138,10 +151,12 @@ class ComputerUse:
         :param data:
         :return:
         """
+        self.client.logger.debug(f"Parse model output request: {data.model_dump_json()}")
         response = await self.client.request(
             "POST",
             "/api/computer-use/parse",
             json=data.model_dump(exclude_none=True))
+        self.client.logger.debug(f"Parse model output response: {response.text}")
         return dto.ComputerUseActionResponseDto.model_validate_json(response.text)
 
     async def execute_computer_use_action(self, sandbox_id: str,
@@ -151,7 +166,9 @@ class ComputerUse:
 
         is same as sandbox.Sandbox.execute_computer_use_action
         """
+        self.client.logger.debug(f"Execute computer use action request: {data.model_dump_json()}")
         response = await self.client.request("POST",
                                        f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/actions/computer-use",
                                        json=data.model_dump(exclude_none=True))
+        self.client.logger.debug(f"Execute computer use action response: {response.text}")
         return dto.SandboxActionResponseDto.model_validate_json(response.text)

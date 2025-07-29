@@ -25,7 +25,7 @@
 # THE SOFTWARE.
 
 """base.py holds the base client for Lybic API."""
-
+import logging
 import os
 from sys import stderr
 
@@ -68,10 +68,10 @@ class _LybicBaseClient:
             print("Warning: Timeout cannot be negative, set to 10", file=stderr)
             timeout = 10
         self.timeout = timeout
-
         self.org_id = org_id
-
         self.headers["Content-Type"] = "application/json"
+
+        self.logger = logging.getLogger(__name__)
 
     def make_mcp_endpoint(self, mcp_server_id: str) -> str:
         """

@@ -39,20 +39,25 @@ class Project:
         """
         List all projects in the organization.
         """
+        self.client.logger.debug("Listing projects request")
         response = await self.client.request("GET", f"/api/orgs/{self.client.org_id}/projects")
+        self.client.logger.debug("Listing projects response: %s", response.text)
         return dto.ListProjectsResponseDto.model_validate_json(response.text)
 
     async def create(self, data: dto.CreateProjectDto) -> dto.SingleProjectResponseDto:
         """
         Create a new project.
         """
+        self.client.logger.debug("Creating project request with data: %s", data)
         response = await self.client.request(
             "POST",
             f"/api/orgs/{self.client.org_id}/projects", json=data.model_dump())
+        self.client.logger.debug("Create project response: %s", response.text)
         return dto.SingleProjectResponseDto.model_validate_json(response.text)
 
     async def delete(self, project_id: str) -> None:
         """
         Delete a project.
         """
+        self.client.logger.debug("Deleting project request with project_id: %s", project_id)
         await self.client.request("DELETE", f"/api/orgs/{self.client.org_id}/projects/{project_id}")
