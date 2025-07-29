@@ -77,25 +77,32 @@ Then, initialize the client in your Python application. For better security, we 
 from lybic import LybicClient
 
 # The client automatically picks up credentials from your environment
+# def __init__(self,
+#             org_id: str = os.getenv("LYBIC_ORG_ID"),
+#             api_key: str = os.getenv("LYBIC_API_KEY"),
+#             endpoint: str = os.getenv("LYBIC_API_ENDPOINT", "https://api.lybic.cn"),
+#             timeout: int = 10,
+#             extra_headers: dict | None = None) -> None
 client = LybicClient()
 
 # or initialize with explicit credentials
 client = LybicClient(
-    org_id="your_org_id", 
-    api_key="your_api_key",
-    endpoint="https://api.lybic.cn",
-    timeout=10,
-    extra_headers={"User-Agent": "MyAgent/1.0"},
+    org_id="your_org_id", # Lybic organization ID
+    api_key="your_api_key", # Lybic API key
+    endpoint="https://api.lybic.cn", # Lybic API endpoint
+    timeout=10, # Timeout for API requests
+    extra_headers={"User-Agent": "MyAgent/1.0"}, # Custom headers
 )
 ```
 
 Then, you can start using the `client`.
 
 ```python
+import asyncio
 from lybic import dto, Sandbox
 
 sandbox = Sandbox(client)
-new_sandbox = sandbox.create(dto.CreateSandboxDto(name="my-sandbox"))
+new_sandbox = asyncio.run(sandbox.create(dto.CreateSandboxDto(name="my-sandbox")))
 print(new_sandbox)
 ```
 
