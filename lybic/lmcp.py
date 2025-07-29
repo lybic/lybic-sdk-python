@@ -48,7 +48,7 @@ class MCP:
 
         :return:
         """
-        self.client.logger.debug(f"List MCP servers request")
+        self.client.logger.debug("List MCP servers request")
         response = await self.client.request(
             "GET",
             f"/api/orgs/{self.client.org_id}/mcp-servers")
@@ -76,7 +76,7 @@ class MCP:
 
         :return:
         """
-        self.client.logger.debug(f"Get default MCP server request")
+        self.client.logger.debug("Get default MCP server request")
         response = await self.client.request(
             "GET",
             f"/api/orgs/{self.client.org_id}/mcp-servers/default")
