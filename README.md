@@ -20,6 +20,7 @@
 - [🚀 Getting Started](#-getting-started)
   - [1. Installation & Setup](#1-installation--setup)
   - [2. Core Workflow](#2-core-workflow)
+  - [3. Debug Request](#3-debug-request)
 - [📔 Examples](#-examples)
 - [📚 Full Documentation & API Reference](#-full-documentation--api-reference)
 - [🤝 Contributing](#-contributing)
@@ -77,25 +78,32 @@ Then, initialize the client in your Python application. For better security, we 
 from lybic import LybicClient
 
 # The client automatically picks up credentials from your environment
+# def __init__(self,
+#             org_id: str = os.getenv("LYBIC_ORG_ID"),
+#             api_key: str = os.getenv("LYBIC_API_KEY"),
+#             endpoint: str = os.getenv("LYBIC_API_ENDPOINT", "https://api.lybic.cn"),
+#             timeout: int = 10,
+#             extra_headers: dict | None = None) -> None
 client = LybicClient()
 
 # or initialize with explicit credentials
 client = LybicClient(
-    org_id="your_org_id", 
-    api_key="your_api_key",
-    endpoint="https://api.lybic.cn",
-    timeout=10,
-    extra_headers={"User-Agent": "MyAgent/1.0"},
+    org_id="your_org_id", # Lybic organization ID
+    api_key="your_api_key", # Lybic API key
+    endpoint="https://api.lybic.cn", # Lybic API endpoint
+    timeout=10, # Timeout for API requests
+    extra_headers={"User-Agent": "MyAgent/1.0"}, # Custom headers
 )
 ```
 
 Then, you can start using the `client`.
 
 ```python
+import asyncio
 from lybic import dto, Sandbox
 
 sandbox = Sandbox(client)
-new_sandbox = sandbox.create(dto.CreateSandboxDto(name="my-sandbox"))
+new_sandbox = asyncio.run(sandbox.create(dto.CreateSandboxDto(name="my-sandbox")))
 print(new_sandbox)
 ```
 
@@ -113,9 +121,22 @@ With the client initialized, the typical workflow follows these logical steps:
 
 4. **Automate and Interact**: Once the sandbox is running, your agent can begin its work. The SDK provides all the necessary tools to interact with the sandbox, from executing commands to capturing screenshots.
 
+### 3. Debug Request
+
+You can set logging level to debug request.
+
+```python
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger('lybic')
+```
+
 ## 📔 Examples:
 
-Please read our [example](docs/example.md).
+Please read our [SDK example](docs/example.md).
+
+If you are using MCP, you can read our [MCP Documentation](docs/mcp.md).
 
 ## 📚 Full Documentation & API Reference
 

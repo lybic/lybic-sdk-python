@@ -23,10 +23,11 @@ client = LybicClient(
     - return: class dto.StatsResponseDto
 
     ```python
+    import asyncio
     from lybic import Stats
     
     stats = Stats(client)
-    print(stats.get())
+    print(asyncio.run(stats.get()))
     ```
     
     It will out put something like this:
@@ -46,10 +47,11 @@ client = LybicClient(
    - return: class dto.ProjectListResponseDto
 
    ```python
+   import asyncio
    from lybic import Project
 
    project = Project(client)
-   list_result = project.list()
+   list_result = asyncio.run(project.list())
    ```
 
    The returned is a traversable data model list[dto.ProjectResponseDto]
@@ -74,11 +76,12 @@ client = LybicClient(
    - return: class dto.SingleProjectResponseDto
 
    ```python
+   import asyncio
    from lybic import dto
    from lybic import Project
    
    project = Project(client)
-   print(project.create(dto.CreateProjectDto(name="test_project"))) 
+   print(asyncio.run(project.create(dto.CreateProjectDto(name="test_project")))) 
    ```
    
    It will out put something like this:
@@ -95,10 +98,11 @@ client = LybicClient(
    - return: None(If No http error)
 
    ```python
+   import asyncio
    from lybic import Project
    
    project = Project(client)
-   project.delete(project_id="PRJ-xxxx") 
+   asyncio.run(project.delete(project_id="PRJ-xxxx")) 
    ```
 
 ### Class MCP
@@ -112,10 +116,11 @@ client = LybicClient(
    - return: class dto.ListMcpServerResponse
 
    ```python
+   import asyncio
    from lybic import MCP
 
    mcp = MCP(client)
-   mcp_servers = mcp.list()
+   mcp_servers = asyncio.run(mcp.list())
    for server in mcp_servers:
        print(server)
    ```
@@ -136,10 +141,11 @@ client = LybicClient(
    - return: class dto.McpServerResponseDto
 
    ```python
+   import asyncio
    from lybic import dto, MCP
 
    mcp = MCP(client)
-   new_server = mcp.create(dto.CreateMcpServerDto(name="my-mcp-server"))
+   new_server = asyncio.run(mcp.create(dto.CreateMcpServerDto(name="my-mcp-server")))
    print(new_server)
    ```
    It will out put something like this:
@@ -154,10 +160,11 @@ client = LybicClient(
    - return: class dto.McpServerResponseDto
 
    ```python
+   import asyncio
    from lybic import MCP
 
    mcp = MCP(client)
-   default_server = mcp.get_default()
+   default_server = asyncio.run(mcp.get_default())
    print(default_server)
    ```
    It will out put something like this:
@@ -173,10 +180,11 @@ client = LybicClient(
    - return: None(If No http error)
 
    ```python
+   import asyncio
    from lybic import MCP
 
    mcp = MCP(client)
-   mcp.delete(mcp_server_id="MCP-xxxx")
+   asyncio.run(mcp.delete(mcp_server_id="MCP-xxxx"))
    ```
 
 5. Set MCP server to a sandbox
@@ -188,10 +196,11 @@ client = LybicClient(
    - return: None(If No http error)
 
    ```python
+   import asyncio
    from lybic import MCP
 
    mcp = MCP(client)
-   mcp.set_sandbox(mcp_server_id="MCP-xxxx", sandbox_id="SBX-xxxx")
+   asyncio.run(mcp.set_sandbox(mcp_server_id="MCP-xxxx", sandbox_id="SBX-xxxx"))
    ```
 
 ### Class ComputerUse
@@ -250,10 +259,11 @@ client = LybicClient(
    This api will parse this model output format and return a list of computer use actions.
 
    ```python
+   import asyncio
    from lybic import dto, ComputerUse
 
    computer_use = ComputerUse(client)
-   actions = computer_use.parse_model_output(
+   actions = asyncio.run(computer_use.parse_model_output(
        dto.ComputerUseParseRequestDto(
            model="ui-tars",
            textContent="""Thought: The task requires double-left-clicking the "images" folder. In the File Explorer window, the "images" folder is visible under the Desktop directory. The target element is the folder named "images" with a yellow folder icon. Double-left-clicking this folder will open it.
@@ -261,7 +271,7 @@ client = LybicClient(
    Next action: Left - double - click on the "images" folder icon located in the File Explorer window, under the Desktop directory, with the name "images" and yellow folder icon.
    Action: left_double(point='<point>213 257</point>')"""
        )
-   )
+   ))
    print(actions)
    ```
    It will out put something like this:(an action list object,and length is 1)
@@ -281,10 +291,11 @@ client = LybicClient(
    - return: class dto.SandboxActionResponseDto
 
    ```python
+   import asyncio
    from lybic import dto, ComputerUse
 
    computer_use = ComputerUse(client)
-   actions = computer_use.parse_model_output(
+   actions = asyncio.run(computer_use.parse_model_output(
        dto.ComputerUseParseRequestDto(
            model="ui-tars",
            textContent="""Thought: The task requires double-left-clicking the "images" folder. In the File Explorer window, the "images" folder is visible under the Desktop directory. The target element is the folder named "images" with a yellow folder icon. Double-left-clicking this folder will open it.
@@ -292,11 +303,11 @@ client = LybicClient(
    Next action: Left - double - click on the "images" folder icon located in the File Explorer window, under the Desktop directory, with the name "images" and yellow folder icon.
    Action: left_double(point='<point>213 257</point>')"""
        )
-   )
-   response = computer_use.execute_computer_use_action(
+   ))
+   response = asyncio.run(computer_use.execute_computer_use_action(
        sandbox_id="SBX-xxxx",
        data=dto.ComputerUseActionDto(action=actions[0])
-   )
+   ))
    print(response)
    ```
 
@@ -311,10 +322,11 @@ client = LybicClient(
    - return: class dto.SandboxListResponseDto
 
    ```python
+   import asyncio
    from lybic import Sandbox
 
    sandbox = Sandbox(client)
-   sandboxes = sandbox.list()
+   sandboxes = asyncio.run(sandbox.list())
    for s in sandboxes:
        print(s)
    ```
@@ -336,10 +348,11 @@ client = LybicClient(
    - return: class dto.GetSandboxResponseDto
 
    ```python
+   import asyncio
    from lybic import dto, Sandbox
 
    sandbox = Sandbox(client)
-   new_sandbox = sandbox.create(dto.CreateSandboxDto(name="my-sandbox"))
+   new_sandbox = asyncio.run(sandbox.create(dto.CreateSandboxDto(name="my-sandbox")))
    print(new_sandbox)
    ```
 
@@ -351,10 +364,11 @@ client = LybicClient(
    - return: class dto.GetSandboxResponseDto
 
    ```python
+   import asyncio
    from lybic import Sandbox
 
    sandbox = Sandbox(client)
-   details = sandbox.get(sandbox_id="SBX-xxxx")
+   details = asyncio.run(sandbox.get(sandbox_id="SBX-xxxx"))
    print(details)
    ```
 
@@ -372,10 +386,11 @@ client = LybicClient(
    - return: None
 
    ```python
+   import asyncio
    from lybic import Sandbox
 
    sandbox = Sandbox(client)
-   sandbox.delete(sandbox_id="SBX-xxxx")
+   asyncio.run(sandbox.delete(sandbox_id="SBX-xxxx"))
    ```
 
 5. Get a sandbox screenshot
@@ -386,10 +401,11 @@ client = LybicClient(
    - return: tuple (screenshot_url, PIL.Image.Image, webp_image_base64_string)
 
    ```python
+   import asyncio
    from lybic import Sandbox
 
    sandbox = Sandbox(client)
-   url, image, b64_str = sandbox.get_screenshot(sandbox_id="SBX-xxxx")
+   url, image, b64_str = asyncio.run(sandbox.get_screenshot(sandbox_id="SBX-xxxx"))
    print(f"Screenshot URL: {url}")
    image.show()
    ```
