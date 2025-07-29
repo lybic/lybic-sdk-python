@@ -46,7 +46,7 @@ with open('README.md', encoding='utf-8') as f:
         license = "MIT",
         python_requires='>=3.12',
         install_requires=[
-            'requests',
+            'httpx',
             'pydantic',
             'mcp',
             'pillow'

@@ -26,7 +26,7 @@
 
 """ Lybic SDK import header"""
 
-__version__ = "0.2.0"
+__version__ = "0.4.0"
 
 # Lybic Client
 from .lybic import LybicClient,Stats

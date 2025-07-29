@@ -353,7 +353,6 @@ class WaitAction(BaseModel):
         """
         Configuration for Pydantic model.
         """
-        extra = "ignored"
         # Allow population of fields with default values
         validate_assignment = True
         exclude_none = True
@@ -369,7 +368,6 @@ class FinishedAction(BaseModel):
         """
         Configuration for Pydantic model.
         """
-        extra = "ignored"
         # Allow population of fields with default values
         validate_assignment = True
         exclude_none = True
@@ -385,7 +383,6 @@ class FailedAction(BaseModel):
         """
         Configuration for Pydantic model.
         """
-        extra = "ignored"
         # Allow population of fields with default values
         validate_assignment = True
         exclude_none = True
