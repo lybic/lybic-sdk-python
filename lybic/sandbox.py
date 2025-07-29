@@ -48,31 +48,38 @@ class Sandbox:
         """
         List all sandboxes
         """
+        self.client.logger.debug("Listing sandboxes requests")
         response = await self.client.request("GET", f"/api/orgs/{self.client.org_id}/sandboxes")
+        self.client.logger.debug(f"Listing sandboxes response: {response.text}")
         return dto.SandboxListResponseDto.model_validate_json(response.text)
 
     async def create(self, data: dto.CreateSandboxDto) -> dto.GetSandboxResponseDto:
         """
         Create a new sandbox
         """
+        self.client.logger.debug(f"Creating sandbox with data: {data}")
         response = await self.client.request(
             "POST",
             f"/api/orgs/{self.client.org_id}/sandboxes", json=data.model_dump(exclude_none=True))
+        self.client.logger.debug(f"Create sandbox response: {response.text}")
         return dto.GetSandboxResponseDto.model_validate_json(response.text)
 
     async def get(self, sandbox_id: str) -> dto.GetSandboxResponseDto:
         """
         Get a sandbox
         """
+        self.client.logger.debug(f"Get sandbox {sandbox_id}")
         response = await self.client.request(
             "GET",
             f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}")
+        self.client.logger.debug(f"Get sandbox response: {response.text}")
         return dto.GetSandboxResponseDto.model_validate_json(response.text)
 
     async def delete(self, sandbox_id: str) -> None:
         """
         Delete a sandbox
         """
+        self.client.logger.debug(f"Delete sandbox {sandbox_id}")
         await self.client.request(
             "DELETE",
             f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}")
@@ -84,28 +91,34 @@ class Sandbox:
 
         is same as mcp.ComputerUse.execute_computer_use_action
         """
+        self.client.logger.debug(f"Executing computer use action for sandbox {sandbox_id}")
         response = await self.client.request(
             "POST",
             f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/actions/computer-use",
             json=data.model_dump())
+        self.client.logger.debug(f"Computer use action executed for sandbox {sandbox_id}")
         return dto.SandboxActionResponseDto.model_validate_json(response.text)
 
     async def preview(self, sandbox_id: str) -> dto.SandboxActionResponseDto:
         """
         Preview a sandbox
         """
+        self.client.logger.debug(f"Previewing sandbox {sandbox_id}")
         response = await self.client.request(
             "POST",
             f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/preview")
+        self.client.logger.debug(f"Previewed sandbox {sandbox_id}")
         return dto.SandboxActionResponseDto.model_validate_json(response.text)
 
     async def get_connection_details(self, sandbox_id: str)-> dto.SandboxConnectionDetail:
         """
         Get connection details for a sandbox
         """
+        self.client.logger.debug(f"Getting connection details for sandbox {sandbox_id}")
         response =  await self.client.request(
             "GET",
             f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}")
+        self.client.logger.debug(f"Got connection details for sandbox {sandbox_id}")
         return dto.SandboxConnectionDetail.model_validate_json(response.text)
 
     async def get_screenshot(self, sandbox_id: str) -> Tuple[str, Image.Image, str]:

@@ -20,6 +20,7 @@
 - [🚀 Getting Started](#-getting-started)
   - [1. Installation & Setup](#1-installation--setup)
   - [2. Core Workflow](#2-core-workflow)
+  - [3. Debug Request](#3-debug-request)
 - [📔 Examples](#-examples)
 - [📚 Full Documentation & API Reference](#-full-documentation--api-reference)
 - [🤝 Contributing](#-contributing)
@@ -119,6 +120,17 @@ With the client initialized, the typical workflow follows these logical steps:
 3. **Launch a `Sandbox`**: Within a project, you can launch a GUI sandbox. This is your agent's secure, cloud-based home.
 
 4. **Automate and Interact**: Once the sandbox is running, your agent can begin its work. The SDK provides all the necessary tools to interact with the sandbox, from executing commands to capturing screenshots.
+
+### 3. Debug Request
+
+You can set logging level to debug request.
+
+```python
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger('lybic')
+```
 
 ## 📔 Examples:
 
