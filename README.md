@@ -134,7 +134,9 @@ logger = logging.getLogger('lybic')
 
 ## 📔 Examples:
 
-Please read our [example](docs/example.md).
+Please read our [SDK example](docs/example.md).
+
+If you are using MCP, you can read our [MCP Documentation](docs/mcp.md).
 
 ## 📚 Full Documentation & API Reference
 
