@@ -25,8 +25,6 @@
 # THE SOFTWARE.
 
 """project.py provides the Project manager ability to use"""
-import asyncio
-
 from lybic import dto
 from lybic.lybic import LybicClient
 
@@ -37,20 +35,24 @@ class Project:
     def __init__(self, client: LybicClient):
         self.client = client
 
-    def list(self) -> dto.ListProjectsResponseDto:
+    async def list(self) -> dto.ListProjectsResponseDto:
         """
         List all projects in the organization.
         """
-        return asyncio.run(self.client.get_async_client().project.list())
+        response = await self.client.request("GET", f"/api/orgs/{self.client.org_id}/projects")
+        return dto.ListProjectsResponseDto.model_validate_json(response.text)
 
-    def create(self, data: dto.CreateProjectDto) -> dto.SingleProjectResponseDto:
+    async def create(self, data: dto.CreateProjectDto) -> dto.SingleProjectResponseDto:
         """
         Create a new project.
         """
-        return asyncio.run(self.client.get_async_client().project.create(data))
+        response = await self.client.request(
+            "POST",
+            f"/api/orgs/{self.client.org_id}/projects", json=data.model_dump())
+        return dto.SingleProjectResponseDto.model_validate_json(response.text)
 
-    def delete(self, project_id: str) -> None:
+    async def delete(self, project_id: str) -> None:
         """
         Delete a project.
         """
-        return asyncio.run(self.client.get_async_client().project.delete(project_id))
+        await self.client.request("DELETE", f"/api/orgs/{self.client.org_id}/projects/{project_id}")

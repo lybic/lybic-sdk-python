@@ -25,8 +25,14 @@
 # THE SOFTWARE.
 
 """sandbox.py provides the Sandbox API"""
-import asyncio
+import base64
+from io import BytesIO
+from typing import Tuple
+
+import httpx
+
 from PIL import Image
+from PIL.WebPImagePlugin import WebPImageFile
 
 from lybic import dto
 from lybic.lybic import LybicClient
@@ -38,55 +44,100 @@ class Sandbox:
     def __init__(self, client: LybicClient):
         self.client = client
 
-    def list(self) -> dto.SandboxListResponseDto:
+    async def list(self) -> dto.SandboxListResponseDto:
         """
         List all sandboxes
         """
-        return asyncio.run(self.client.get_async_client().sandbox.list())
+        response = await self.client.request("GET", f"/api/orgs/{self.client.org_id}/sandboxes")
+        return dto.SandboxListResponseDto.model_validate_json(response.text)
 
-    def create(self, data: dto.CreateSandboxDto) -> dto.GetSandboxResponseDto:
+    async def create(self, data: dto.CreateSandboxDto) -> dto.GetSandboxResponseDto:
         """
         Create a new sandbox
         """
-        return asyncio.run(self.client.get_async_client().sandbox.create(data))
+        response = await self.client.request(
+            "POST",
+            f"/api/orgs/{self.client.org_id}/sandboxes", json=data.model_dump(exclude_none=True))
+        return dto.GetSandboxResponseDto.model_validate_json(response.text)
 
-    def get(self, sandbox_id: str) -> dto.GetSandboxResponseDto:
+    async def get(self, sandbox_id: str) -> dto.GetSandboxResponseDto:
         """
         Get a sandbox
         """
-        return asyncio.run(self.client.get_async_client().sandbox.get(sandbox_id))
+        response = await self.client.request(
+            "GET",
+            f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}")
+        return dto.GetSandboxResponseDto.model_validate_json(response.text)
 
-    def delete(self, sandbox_id: str) -> None:
+    async def delete(self, sandbox_id: str) -> None:
         """
         Delete a sandbox
         """
-        return asyncio.run(self.client.get_async_client().sandbox.delete(sandbox_id))
+        await self.client.request(
+            "DELETE",
+            f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}")
 
-    def execute_computer_use_action(self, sandbox_id: str, data: dto.ComputerUseActionDto) \
+    async def execute_computer_use_action(self, sandbox_id: str, data: dto.ComputerUseActionDto) \
             -> dto.SandboxActionResponseDto:
         """
         Execute a computer use action
 
         is same as mcp.ComputerUse.execute_computer_use_action
         """
-        return asyncio.run(self.client.get_async_client().sandbox.execute_computer_use_action(sandbox_id, data))
+        response = await self.client.request(
+            "POST",
+            f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/actions/computer-use",
+            json=data.model_dump())
+        return dto.SandboxActionResponseDto.model_validate_json(response.text)
 
-    def preview(self, sandbox_id: str) -> dto.SandboxActionResponseDto:
+    async def preview(self, sandbox_id: str) -> dto.SandboxActionResponseDto:
         """
         Preview a sandbox
         """
-        return asyncio.run(self.client.get_async_client().sandbox.preview(sandbox_id))
+        response = await self.client.request(
+            "POST",
+            f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/preview")
+        return dto.SandboxActionResponseDto.model_validate_json(response.text)
 
-    def get_connection_details(self, sandbox_id: str)-> dto.SandboxConnectionDetail:
+    async def get_connection_details(self, sandbox_id: str)-> dto.SandboxConnectionDetail:
         """
         Get connection details for a sandbox
         """
-        return asyncio.run(self.client.get_async_client().sandbox.get_connection_details(sandbox_id))
+        response =  await self.client.request(
+            "GET",
+            f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}")
+        return dto.SandboxConnectionDetail.model_validate_json(response.text)
 
-    def get_screenshot(self, sandbox_id: str) -> (str, Image.Image, str):
+    async def get_screenshot(self, sandbox_id: str) -> Tuple[str, Image.Image, str]:
         """
         Get screenshot of a sandbox
 
         Return screenShot_Url, screenshot_image, base64_str
         """
-        return asyncio.run(self.client.get_async_client().sandbox.get_screenshot(sandbox_id))
+        result = await self.preview(sandbox_id)
+        screenshot_url = result.screenShot
+
+        async with httpx.AsyncClient() as client:
+            screenshot_response = await client.get(
+                screenshot_url,
+                timeout=self.client.timeout
+            )
+            screenshot_response.raise_for_status()
+
+            img = Image.open(BytesIO(screenshot_response.content))
+            base64_str=''
+
+            if isinstance(img, WebPImageFile):
+                buffer = BytesIO()
+                img.save(buffer, format="WebP")
+                base64_str = base64.b64encode(buffer.getvalue()).decode("utf-8")
+
+        return screenshot_url,img,base64_str
+
+
+    async def get_screenshot_base64(self, sandbox_id: str) -> str:
+        """
+        Get screenshot of a sandbox in base64 format
+        """
+        _, _, base64_str = await self.get_screenshot(sandbox_id)
+        return base64_str

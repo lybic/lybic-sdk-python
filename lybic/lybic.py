@@ -25,19 +25,15 @@
 # THE SOFTWARE.
 
 """lybic.py is the main entry point for Lybic API."""
-import asyncio
 import os
-from sys import stderr
-
-import requests
+import httpx
 
 from lybic import dto
-from lybic.aio.aio import LybicAsyncClient
 from lybic.base import _LybicBaseClient
 
 
 class LybicClient(_LybicBaseClient):
-    """LybicClient is a client for all Lybic API."""
+    """LybicAsyncClient is a client for all Lybic API."""
 
     def __init__(self,
                  org_id: str = os.getenv("LYBIC_ORG_ID"),
@@ -58,18 +54,9 @@ class LybicClient(_LybicBaseClient):
             timeout=timeout, extra_headers=extra_headers
         )
 
-        self.stats = Stats(self)
-        # Auth Test
-        self.stats.get()
+        self.client = httpx.AsyncClient(headers=self.headers, timeout=self.timeout)
 
-    @classmethod
-    def get_async_client(cls, *args, **kwargs) -> "LybicAsyncClient":
-        """
-        Get an async client for Lybic API.
-        """
-        return LybicAsyncClient(*args, **kwargs)
-
-    def request(self, method: str, path: str, **kwargs) -> requests.Response:
+    async def request(self, method: str, path: str, **kwargs) -> httpx.Response:
         """
         Make a request to Lybic Restful API
 
@@ -80,9 +67,10 @@ class LybicClient(_LybicBaseClient):
         """
         url = f"{self.endpoint}{path}"
         headers = self.headers.copy()
-        if method != "POST":
+        if method.upper() != "POST":
             headers.pop("Content-Type", None)
-        response = requests.request(method, url, headers=headers, timeout=self.timeout, **kwargs)
+
+        response = await self.client.request(method, url, headers=headers, **kwargs)
         response.raise_for_status()
         return response
 
@@ -91,8 +79,9 @@ class Stats:
     def __init__(self, client: LybicClient):
         self.client = client
 
-    def get(self) -> dto.StatsResponseDto:
+    async def get(self) -> dto.StatsResponseDto:
         """
         Get the stats of the organization, such as number of members, computers, etc.
         """
-        return asyncio.run(self.client.get_async_client().stats.get())
+        response = await self.client.request("GET", f"/api/orgs/{self.client.org_id}/stats")
+        return dto.StatsResponseDto.model_validate_json(response.text)
