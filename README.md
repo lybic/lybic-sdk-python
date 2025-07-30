@@ -21,6 +21,7 @@
   - [1. Installation & Setup](#1-installation--setup)
   - [2. Core Workflow](#2-core-workflow)
   - [3. Debug Request](#3-debug-request)
+  - [4. Exception Handling](#4-exception-handling)
 - [📔 Examples](#-examples)
 - [📚 Full Documentation & API Reference](#-full-documentation--api-reference)
 - [🤝 Contributing](#-contributing)
@@ -130,6 +131,49 @@ import logging
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger('lybic')
+```
+
+### 4. Exception Handling
+
+To ensure that each method in the SDK has **valid and definite** return content, we **DO NOT** handle any errors for 
+exception requests.
+
+For the robustness of the program code, all exceptions need to be handled by the user themselves.
+
+Where will the exception occur?
+
+1. init LybicClient()
+  
+   If you do not pass in a valid `org_id` and `endpoint`, an exception will occur.
+
+2. call all `http` and `mcp` methods
+
+   If the request fails(HTTPCode is 4xx or 5xx, or the request timeout), an exception will occur.
+
+How to handle exceptions?
+
+you can catch exceptions in the `try` block
+
+```python
+# may be not required?
+try:
+  LybicClient(org_id, endpoint)
+except Exception as e:
+  print(e)
+```
+
+```python
+import asyncio
+from lybic import LybicClient, Sandbox
+
+client = LybicClient()
+sandbox = Sandbox(client)
+
+try:
+    preview_result = asyncio.run(sandbox.preview('sandbox_id'))
+    print(preview_result)
+except Exception as e:
+    print(f"An error occurred: {e}")
 ```
 
 ## 📔 Examples:
