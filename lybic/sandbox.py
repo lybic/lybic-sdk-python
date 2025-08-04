@@ -27,7 +27,7 @@
 """sandbox.py provides the Sandbox API"""
 import base64
 from io import BytesIO
-from typing import Tuple
+from typing import Tuple, overload
 
 import httpx
 
@@ -53,10 +53,20 @@ class Sandbox:
         self.client.logger.debug(f"Listing sandboxes response: {response.text}")
         return dto.SandboxListResponseDto.model_validate_json(response.text)
 
-    async def create(self, data: dto.CreateSandboxDto) -> dto.GetSandboxResponseDto:
+    @overload
+    async def create(self, data: dto.CreateSandboxDto) -> dto.GetSandboxResponseDto: ...
+
+    @overload
+    async def create(self, **kwargs) -> dto.GetSandboxResponseDto: ...
+
+    async def create(self, *args, **kwargs) -> dto.GetSandboxResponseDto:
         """
         Create a new sandbox
         """
+        if args and isinstance(args[0], dto.CreateSandboxDto):
+            data = args[0]
+        else:
+            data = dto.CreateSandboxDto(**kwargs)
         self.client.logger.debug(f"Creating sandbox with data: {data}")
         response = await self.client.request(
             "POST",
@@ -84,13 +94,22 @@ class Sandbox:
             "DELETE",
             f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}")
 
-    async def execute_computer_use_action(self, sandbox_id: str, data: dto.ComputerUseActionDto) \
-            -> dto.SandboxActionResponseDto:
+    @overload
+    async def execute_computer_use_action(self, sandbox_id: str, data: dto.ComputerUseActionDto) -> dto.SandboxActionResponseDto: ...
+
+    @overload
+    async def execute_computer_use_action(self, sandbox_id: str, **kwargs) -> dto.SandboxActionResponseDto: ...
+
+    async def execute_computer_use_action(self, sandbox_id: str, *args, **kwargs) -> dto.SandboxActionResponseDto:
         """
         Execute a computer use action
 
         is same as mcp.ComputerUse.execute_computer_use_action
         """
+        if args and isinstance(args[0], dto.ComputerUseActionDto):
+            data = args[0]
+        else:
+            data = dto.ComputerUseActionDto(**kwargs)
         self.client.logger.debug(f"Executing computer use action for sandbox {sandbox_id}")
         response = await self.client.request(
             "POST",

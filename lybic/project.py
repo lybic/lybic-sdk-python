@@ -25,6 +25,8 @@
 # THE SOFTWARE.
 
 """project.py provides the Project manager ability to use"""
+from typing import overload
+
 from lybic import dto
 from lybic.lybic import LybicClient
 
@@ -44,10 +46,20 @@ class Project:
         self.client.logger.debug("Listing projects response: %s", response.text)
         return dto.ListProjectsResponseDto.model_validate_json(response.text)
 
-    async def create(self, data: dto.CreateProjectDto) -> dto.SingleProjectResponseDto:
+    @overload
+    async def create(self, data: dto.CreateProjectDto) -> dto.SingleProjectResponseDto: ...
+
+    @overload
+    async def create(self, **kwargs) -> dto.SingleProjectResponseDto: ...
+
+    async def create(self, *args, **kwargs) -> dto.SingleProjectResponseDto:
         """
         Create a new project.
         """
+        if args and isinstance(args[0], dto.CreateProjectDto):
+            data = args[0]
+        else:
+            data = dto.CreateProjectDto(**kwargs)
         self.client.logger.debug("Creating project request with data: %s", data)
         response = await self.client.request(
             "POST",
