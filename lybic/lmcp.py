@@ -25,6 +25,8 @@
 # THE SOFTWARE.
 
 """lmcp.py: MCP client for lybic MCP(Model Context Protocol) and Restful Interface API."""
+from typing import overload
+
 from mcp import ClientSession
 from mcp.client.streamable_http import streamablehttp_client
 from mcp.types import CallToolResult
@@ -55,13 +57,23 @@ class MCP:
         self.client.logger.debug(f"List MCP servers response: {response.text}")
         return dto.ListMcpServerResponse.model_validate_json(response.text)
 
-    async def create(self, data: dto.CreateMcpServerDto) -> dto.McpServerResponseDto:
+    @overload
+    async def create(self, data: dto.CreateMcpServerDto) -> dto.McpServerResponseDto: ...
+
+    @overload
+    async def create(self, **kwargs) -> dto.McpServerResponseDto: ...
+
+    async def create(self, *args, **kwargs) -> dto.McpServerResponseDto:
         """
         Create a mcp server
 
         :param data:
         :return:
         """
+        if args and isinstance(args[0], dto.CreateMcpServerDto):
+            data = args[0]
+        else:
+            data = dto.CreateMcpServerDto(**kwargs)
         self.client.logger.debug(f"Create MCP server request: {data.model_dump_json()}")
         response = await self.client.request(
             "POST",
@@ -144,13 +156,23 @@ class ComputerUse:
     def __init__(self, client: LybicClient):
         self.client = client
 
-    async def parse_model_output(self, data: dto.ComputerUseParseRequestDto) -> dto.ComputerUseActionResponseDto:
+    @overload
+    async def parse_model_output(self, data: dto.ComputerUseParseRequestDto) -> dto.ComputerUseActionResponseDto: ...
+
+    @overload
+    async def parse_model_output(self, **kwargs) -> dto.ComputerUseActionResponseDto: ...
+
+    async def parse_model_output(self, *args, **kwargs) -> dto.ComputerUseActionResponseDto:
         """
         parse doubao-ui-tars output
 
         :param data:
         :return:
         """
+        if args and isinstance(args[0], dto.ComputerUseParseRequestDto):
+            data = args[0]
+        else:
+            data = dto.ComputerUseParseRequestDto(**kwargs)
         self.client.logger.debug(f"Parse model output request: {data.model_dump_json()}")
         response = await self.client.request(
             "POST",
@@ -159,13 +181,22 @@ class ComputerUse:
         self.client.logger.debug(f"Parse model output response: {response.text}")
         return dto.ComputerUseActionResponseDto.model_validate_json(response.text)
 
+    @overload
     async def execute_computer_use_action(self, sandbox_id: str,
-                                    data: dto.ComputerUseActionDto) -> dto.SandboxActionResponseDto:
+                                    data: dto.ComputerUseActionDto) -> dto.SandboxActionResponseDto: ...
+    @overload
+    async def execute_computer_use_action(self, sandbox_id: str, **kwargs) -> dto.SandboxActionResponseDto: ...
+
+    async def execute_computer_use_action(self, sandbox_id: str, *args, **kwargs) -> dto.SandboxActionResponseDto:
         """
         Execute a computer use action
 
         is same as sandbox.Sandbox.execute_computer_use_action
         """
+        if args and isinstance(args[0], dto.ComputerUseActionDto):
+            data = args[0]
+        else:
+            data = dto.ComputerUseActionDto(**kwargs)
         self.client.logger.debug(f"Execute computer use action request: {data.model_dump_json()}")
         response = await self.client.request("POST",
                                        f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/actions/computer-use",
