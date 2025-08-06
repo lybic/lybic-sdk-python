@@ -101,10 +101,10 @@ Then, you can start using the `client`.
 
 ```python
 import asyncio
-from lybic import dto, Sandbox
+from lybic import Sandbox
 
 sandbox = Sandbox(client)
-new_sandbox = asyncio.run(sandbox.create(dto.CreateSandboxDto(name="my-sandbox")))
+new_sandbox = asyncio.run(sandbox.create(name="my-sandbox"))
 print(new_sandbox)
 ```
 
