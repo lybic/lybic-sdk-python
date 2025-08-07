@@ -442,7 +442,7 @@ class ComputerUseParseRequestDto(BaseModel):
     """
     Request DTO for parsing text content into computer use actions.
     """
-    model: Literal["ui-tars", "oai-compute-use"]
+    model: Literal["ui-tars", "oai-compute-use", "seed"]
     textContent: str
 
 
