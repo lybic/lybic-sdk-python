@@ -61,7 +61,8 @@ class LybicClient(_LybicBaseClient):
         return self
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
-        await self.client.aclose()
+        if self.client:
+            await self.client.aclose()
 
     async def request(self, method: str, path: str, **kwargs) -> httpx.Response:
         """
