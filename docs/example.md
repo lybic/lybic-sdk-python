@@ -274,9 +274,9 @@ async def main():
 
    async def main():
        async with LybicClient(
-            org_id="ORG-xxxx",
-            api_key="lysk-xxxxxxxxxxx",
-            endpoint="https://api.lybic.cn/",
+           org_id="ORG-xxxx",
+           api_key="lysk-xxxxxxxxxxx",
+           endpoint="https://api.lybic.cn/",
        ) as client:
            computer_use = ComputerUse(client)
            text_content = """Thought: The task requires double-left-clicking the "images" folder. In the File Explorer window, the "images" folder is visible under the Desktop directory. The target element is the folder named "images" with a yellow folder icon. Double-left-clicking this folder will open it.

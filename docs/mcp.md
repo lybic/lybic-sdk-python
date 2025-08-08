@@ -117,7 +117,8 @@ view_range: The range to be viewed.
 1. Get the screenshot via MCP
 
     ```python
-    import asyncio,base64
+    import asyncio
+    import base64
     from io import BytesIO
     from PIL import Image
     from lybic import LybicClient, MCP
@@ -131,8 +132,8 @@ view_range: The range to be viewed.
             i = Image.open(BytesIO(img_bytes))
             i.show()
             print(result)
-   if __name__ == '__main__':
-       asyncio.run(main())
+    if __name__ == '__main__':
+        asyncio.run(main())
     ```
 
 2. Input text to textbox:
@@ -146,8 +147,8 @@ view_range: The range to be viewed.
             mcp = MCP(client)
             result = await mcp.call_tool_async(mcp_server_id='server_id',tool_args={"action": "type", "text": "This is a English text,and 这是一个中文文本"})
             print(result)
-   if __name__ == '__main__':
-       asyncio.run(main())
+    if __name__ == '__main__':
+        asyncio.run(main())
     ```
    
 3. Click a button:
@@ -161,7 +162,7 @@ view_range: The range to be viewed.
             mcp = MCP(client)
             result = await mcp.call_tool_async(mcp_server_id='server_id', tool_args={"action": "click", "coordinate": [100, 200]})
             print(result)
-   if __name__ == '__main__':
-       asyncio.run(main()) 
+    if __name__ == '__main__':
+        asyncio.run(main()) 
    ```
    

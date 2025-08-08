@@ -117,7 +117,7 @@ async def main():
         new_sandbox = await sandbox.create(name="my-sandbox")
         print(new_sandbox)
 
-if __name__=='__main__':
+if __name__ == '__main__':
     asyncio.run(main())
 ```
 
