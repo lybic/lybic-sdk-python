@@ -125,7 +125,7 @@ view_range: The range to be viewed.
     async def main():
         async with LybicClient() as client:
             mcp = MCP(client)
-            result = asyncio.run(mcp.call_tool_async(mcp_server_id='server_id',tool_args={"action": "screenShot"}))
+            result = await mcp.call_tool_async(mcp_server_id='server_id',tool_args={"action": "screenShot"})
             img_b64 = result.content[0].data
             img_bytes = base64.b64decode(img_b64)
             i = Image.open(BytesIO(img_bytes))
