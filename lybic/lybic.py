@@ -54,7 +54,14 @@ class LybicClient(_LybicBaseClient):
             timeout=timeout, extra_headers=extra_headers
         )
 
+        self.client = None
+
+    async def __aenter__(self):
         self.client = httpx.AsyncClient(headers=self.headers, timeout=self.timeout)
+        return self
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        await self.client.aclose()
 
     async def request(self, method: str, path: str, **kwargs) -> httpx.Response:
         """
@@ -65,6 +72,9 @@ class LybicClient(_LybicBaseClient):
         :param kwargs:
         :return:
         """
+        if not self.client or self.client.is_closed:
+            raise RuntimeError("Client is not connected. Please use 'async with LybicClient(...)' context manager.")
+
         url = f"{self.endpoint}{path}"
         headers = self.headers.copy()
         if method.upper() != "POST":
