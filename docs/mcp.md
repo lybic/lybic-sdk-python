@@ -117,39 +117,52 @@ view_range: The range to be viewed.
 1. Get the screenshot via MCP
 
     ```python
-    import asyncio,base64
+    import asyncio
+    import base64
     from io import BytesIO
     from PIL import Image
-    from lybic import MCP
+    from lybic import LybicClient, MCP
     
-    mcp = MCP(client)
-    
-    result = asyncio.run(mcp.call_tool_async(mcp_server_id='server_id',tool_args={"action": "screenShot"}))
-    img_b64 = result.content[0].data
-    img_bytes = base64.b64decode(img_b64)
-    i = Image.open(BytesIO(img_bytes))
-    i.show()
+    async def main():
+        async with LybicClient() as client:
+            mcp = MCP(client)
+            result = await mcp.call_tool_async(mcp_server_id='server_id',tool_args={"action": "screenShot"})
+            img_b64 = result.content[0].data
+            img_bytes = base64.b64decode(img_b64)
+            i = Image.open(BytesIO(img_bytes))
+            i.show()
+            print(result)
+    if __name__ == '__main__':
+        asyncio.run(main())
     ```
 
 2. Input text to textbox:
 
     ```python
     import asyncio
-    from lybic import MCP
+    from lybic import LybicClient, MCP
     
-    mcp = MCP(client)
-   
-    result = asyncio.run(mcp.call_tool_async(mcp_server_id='server_id',tool_args={"action": "type", "text": "This is a English text,and 这是一个中文文本"}))
+    async def main():
+        async with LybicClient() as client:
+            mcp = MCP(client)
+            result = await mcp.call_tool_async(mcp_server_id='server_id',tool_args={"action": "type", "text": "This is a English text,and 这是一个中文文本"})
+            print(result)
+    if __name__ == '__main__':
+        asyncio.run(main())
     ```
    
 3. Click a button:
 
     ```python
     import asyncio
-    from lybic import MCP
+    from lybic import LybicClient, MCP
     
-    mcp = MCP(client)
-   
-    result = asyncio.run(mcp.call_tool_async(mcp_server_id='server_id',tool_args={"action": "click","coordinate": [100, 200]}))
-    ```
+    async def main():
+        async with LybicClient() as client:
+            mcp = MCP(client)
+            result = await mcp.call_tool_async(mcp_server_id='server_id', tool_args={"action": "click", "coordinate": [100, 200]})
+            print(result)
+    if __name__ == '__main__':
+        asyncio.run(main()) 
+   ```
    

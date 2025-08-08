@@ -76,36 +76,49 @@ pip install lybic
 Then, initialize the client in your Python application. For better security, we recommend using environment variables (`LYBIC_ORG_ID`, `LYBIC_API_KEY`).
 
 ```python
+import asyncio
 from lybic import LybicClient
 
-# The client automatically picks up credentials from your environment
+# The LybicClient automatically picks up credentials from your environment
 # def __init__(self,
 #             org_id: str = os.getenv("LYBIC_ORG_ID"),
 #             api_key: str = os.getenv("LYBIC_API_KEY"),
 #             endpoint: str = os.getenv("LYBIC_API_ENDPOINT", "https://api.lybic.cn"),
 #             timeout: int = 10,
 #             extra_headers: dict | None = None) -> None
-client = LybicClient()
+async def main():
+    # Initialize with environment variables
+    async with LybicClient() as client:
+        pass
 
-# or initialize with explicit credentials
-client = LybicClient(
-    org_id="your_org_id", # Lybic organization ID
-    api_key="your_api_key", # Lybic API key
-    endpoint="https://api.lybic.cn", # Lybic API endpoint
-    timeout=10, # Timeout for API requests
-    extra_headers={"User-Agent": "MyAgent/1.0"}, # Custom headers
-)
+    # Or, initialize with explicit credentials
+    async with LybicClient(
+        org_id="your_org_id", # Lybic organization ID
+        api_key="your_api_key", # Lybic API key
+        endpoint="https://api.lybic.cn", # Lybic API endpoint
+        timeout=10, # Timeout for API requests
+        extra_headers={"User-Agent": "MyAgent/1.0"}, # Custom headers
+    ) as client:
+        pass
+
+if __name__=='__main__':
+    asyncio.run(main())
 ```
 
 Then, you can start using the `client`.
 
 ```python
 import asyncio
-from lybic import Sandbox
+from lybic import LybicClient, Sandbox
 
-sandbox = Sandbox(client)
-new_sandbox = asyncio.run(sandbox.create(name="my-sandbox"))
-print(new_sandbox)
+async def main():
+    async with LybicClient() as client:
+        sandbox = Sandbox(client)
+        new_sandbox = await sandbox.create(name="my-sandbox")
+        print(new_sandbox)
+
+if __name__ == '__main__':
+    asyncio.run(main())
 ```
 
 Completed, you're ready to start building your agent!
@@ -155,25 +168,23 @@ How to handle exceptions?
 you can catch exceptions in the `try` block
 
 ```python
-# may be not required?
-try:
-  LybicClient(org_id, endpoint)
-except Exception as e:
-  print(e)
-```
-
-```python
 import asyncio
 from lybic import LybicClient, Sandbox
 
-client = LybicClient()
-sandbox = Sandbox(client)
+async def main():
+    # Use async with to ensure the client is properly managed.
+    async with LybicClient() as client:
+        sandbox = Sandbox(client)
+        try:
+            # `await` the asynchronous method call inside the async function.
+            preview_result = await sandbox.preview('sandbox_id')
+            print(preview_result)
+        except Exception as e:
+            # Handle potential exceptions from the API call.
+            print(f"An error occurred: {e}")
 
-try:
-    preview_result = asyncio.run(sandbox.preview('sandbox_id'))
-    print(preview_result)
-except Exception as e:
-    print(f"An error occurred: {e}")
+if __name__ == "__main__":
+    asyncio.run(main())
 ```
 
 ## 📔 Examples:
