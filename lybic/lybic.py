@@ -74,7 +74,11 @@ class LybicClient(_LybicBaseClient):
         :return:
         """
         if not self.client or self.client.is_closed:
-            raise RuntimeError("Client is not connected. Please use 'async with LybicClient(...)' context manager.")
+            raise RuntimeError(
+                 "Client is not connected. Use:\n"
+                 "  async with LybicClient(...) as client:\n"
+                 "      await client.method(...)  # inside this block"
+            )
 
         url = f"{self.endpoint}{path}"
         headers = self.headers.copy()
