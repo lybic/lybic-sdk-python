@@ -3,11 +3,13 @@
 ```python
 from lybic import  LybicClient
 
-client = LybicClient(
-    org_id="ORG-xxxx",
-    api_key="lysk-xxxxxxxxxxx",
-    endpoint="https://api.lybic.cn/",
-)
+async def main():
+    async with LybicClient(
+        org_id="ORG-xxxx",
+        api_key="lysk-xxxxxxxxxxx",
+        endpoint="https://api.lybic.cn/",
+    ) as client:
+        pass
 ```
 
 ### Class Stats
@@ -23,11 +25,10 @@ client = LybicClient(
     - return: class dto.StatsResponseDto
 
     ```python
-    import asyncio
     from lybic import Stats
-    
+    # Inside your async main function, with the client initialized:
     stats = Stats(client)
-    print(asyncio.run(stats.get()))
+    print(await stats.get())
     ```
     
     It will out put something like this:
@@ -49,9 +50,9 @@ client = LybicClient(
    ```python
    import asyncio
    from lybic import Project
-
+   # Inside your async main function, with the client initialized:
    project = Project(client)
-   list_result = asyncio.run(project.list())
+   list_result = await project.list()
    ```
 
    The returned is a traversable data model list[dto.ProjectResponseDto]
@@ -80,11 +81,12 @@ client = LybicClient(
    from lybic import dto
    from lybic import Project
    
+   # Inside your async main function, with the client initialized:
    project = Project(client)
    # Using DTO
-   print(asyncio.run(project.create(dto.CreateProjectDto(name="test_project")))) 
+   print(await project.create(dto.CreateProjectDto(name="test_project")))
    # Using keyword arguments
-   print(asyncio.run(project.create(name="test_project_2")))
+   print(await project.create(name="test_project_2"))
    ```
    
    It will out put something like this:
@@ -103,9 +105,9 @@ client = LybicClient(
    ```python
    import asyncio
    from lybic import Project
-   
+   # Inside your async main function, with the client initialized:
    project = Project(client)
-   asyncio.run(project.delete(project_id="PRJ-xxxx")) 
+   await project.delete(project_id="PRJ-xxxx")
    ```
 
 ### Class MCP
@@ -144,15 +146,15 @@ client = LybicClient(
    - return: class dto.McpServerResponseDto
 
    ```python
-   import asyncio
    from lybic import dto, MCP
 
+   # Inside your async main function, with the client initialized:
    mcp = MCP(client)
    # Using DTO
-   new_server = asyncio.run(mcp.create(dto.CreateMcpServerDto(name="my-mcp-server")))
+   new_server = await mcp.create(dto.CreateMcpServerDto(name="my-mcp-server"))
    print(new_server)
    # Using keyword arguments
-   new_server_2 = asyncio.run(mcp.create(name="my-mcp-server-2"))
+   new_server_2 = await mcp.create(name="my-mcp-server-2")
    print(new_server_2)
    ```
    It will out put something like this:
@@ -169,9 +171,10 @@ client = LybicClient(
    ```python
    import asyncio
    from lybic import MCP
-
+   
+   # Inside your async main function, with the client initialized:
    mcp = MCP(client)
-   default_server = asyncio.run(mcp.get_default())
+   default_server = await mcp.get_default()
    print(default_server)
    ```
    It will out put something like this:
@@ -187,11 +190,11 @@ client = LybicClient(
    - return: None(If No http error)
 
    ```python
-   import asyncio
    from lybic import MCP
 
+   # Inside your async main function, with the client initialized:
    mcp = MCP(client)
-   asyncio.run(mcp.delete(mcp_server_id="MCP-xxxx"))
+   await mcp.delete(mcp_server_id="MCP-xxxx")
    ```
 
 5. Set MCP server to a sandbox
@@ -203,11 +206,11 @@ client = LybicClient(
    - return: None(If No http error)
 
    ```python
-   import asyncio
    from lybic import MCP
 
+   # Inside your async main function, with the client initialized:
    mcp = MCP(client)
-   asyncio.run(mcp.set_sandbox(mcp_server_id="MCP-xxxx", sandbox_id="SBX-xxxx"))
+   await mcp.set_sandbox(mcp_server_id="MCP-xxxx", sandbox_id="SBX-xxxx")
    ```
 
 ### Class ComputerUse
@@ -248,7 +251,7 @@ client = LybicClient(
    
    ## Note
    - Use {language} in `Thought` part.
-     - Write a small plan and finally summarize your next action (with its target element) in one sentence in `Thought` part.
+   - Write a small plan and finally summarize your next action (with its target element) in one sentence in `Thought` part.
    
    ## User Instruction
    {instruction}
@@ -267,24 +270,32 @@ client = LybicClient(
 
    ```python
    import asyncio
-   from lybic import dto, ComputerUse
+   from lybic import LybicClient, dto, ComputerUse
 
-   computer_use = ComputerUse(client)
-   text_content = """Thought: The task requires double-left-clicking the "images" folder. In the File Explorer window, the "images" folder is visible under the Desktop directory. The target element is the folder named "images" with a yellow folder icon. Double-left-clicking this folder will open it.
-
-   Next action: Left - double - click on the "images" folder icon located in the File Explorer window, under the Desktop directory, with the name "images" and yellow folder icon.
-   Action: left_double(point='<point>213 257</point>')"""
-   # Using DTO
-   actions = asyncio.run(computer_use.parse_model_output(
-       dto.ComputerUseParseRequestDto(
-           model="ui-tars",
-           textContent=text_content
-       )
-   ))
-   print(actions)
-   # Using keyword arguments
-   actions_2 = asyncio.run(computer_use.parse_model_output(model="ui-tars", textContent=text_content))
-   print(actions_2)
+   async def main():
+       async with LybicClient(
+            org_id="ORG-xxxx",
+            api_key="lysk-xxxxxxxxxxx",
+            endpoint="https://api.lybic.cn/",
+       ) as client:
+           computer_use = ComputerUse(client)
+           text_content = """Thought: The task requires double-left-clicking the "images" folder. In the File Explorer window, the "images" folder is visible under the Desktop directory. The target element is the folder named "images" with a yellow folder icon. Double-left-clicking this folder will open it.
+        
+           Next action: Left - double - click on the "images" folder icon located in the File Explorer window, under the Desktop directory, with the name "images" and yellow folder icon.
+           Action: left_double(point='<point>213 257</point>')"""
+           # Using DTO
+           actions = await computer_use.parse_model_output(
+               dto.ComputerUseParseRequestDto(
+                   model="ui-tars",
+                   textContent=text_content
+               )
+           )
+           print(actions)
+           # Using keyword arguments
+           actions_2 = await computer_use.parse_model_output(model="ui-tars", textContent=text_content)
+           print(actions_2)
+   if __name__ == "__main__":
+       asyncio.run(main())
    ```
    It will out put something like this:(an action list object,and length is 1)
 
@@ -294,7 +305,7 @@ client = LybicClient(
 
 2. Execute a computer use action
 
-   This interface enables `Planner` to perform actions on the sandbox through Restful calls
+This interface enables `Planner` to perform actions on the sandbox through Restful calls
 
    method: `execute_computer_use_action(sandbox_id: str, data: dto.ComputerUseActionDto)` or `execute_computer_use_action(sandbox_id: str, **kwargs)`
    - args:
@@ -302,31 +313,38 @@ client = LybicClient(
      - *data: class dto.ComputerUseActionDto The action to execute
    - return: class dto.SandboxActionResponseDto
 
-   ```python
-   import asyncio
-   from lybic import dto, ComputerUse
-
-   computer_use = ComputerUse(client)
-   actions = asyncio.run(computer_use.parse_model_output(
-       model="ui-tars",
-       textContent="""Thought: The task requires double-left-clicking the "images" folder. In the File Explorer window, the "images" folder is visible under the Desktop directory. The target element is the folder named "images" with a yellow folder icon. Double-left-clicking this folder will open it.
-
-   Next action: Left - double - click on the "images" folder icon located in the File Explorer window, under the Desktop directory, with the name "images" and yellow folder icon.
-   Action: left_double(point='<point>213 257</point>')"""
-   ))
-   # Using DTO
-   response = asyncio.run(computer_use.execute_computer_use_action(
-       sandbox_id="SBX-xxxx",
-       data=dto.ComputerUseActionDto(action=actions[0])
-   ))
-   print(response)
-   # Using keyword arguments
-   response_2 = asyncio.run(computer_use.execute_computer_use_action(
-       sandbox_id="SBX-xxxx",
-       action=actions[0]
-   ))
-   print(response_2)
-   ```
+      ```python
+      import asyncio
+      from lybic import dto, ComputerUse
+      async def main():
+          async with LybicClient(
+               org_id="ORG-xxxx",
+               api_key="lysk-xxxxxxxxxxx",
+               endpoint="https://api.lybic.cn/",
+          ) as client:
+              computer_use = ComputerUse(client)
+              actions = await computer_use.parse_model_output(
+                  model="ui-tars",
+                  textContent="""Thought: The task requires double-left-clicking the "images" folder. In the File Explorer window, the "images" folder is visible under the Desktop directory. The target element is the folder named "images" with a yellow folder icon. Double-left-clicking this folder will open it.
+        
+              Next action: Left - double - click on the "images" folder icon located in the File Explorer window, under the Desktop directory, with the name "images" and yellow folder icon.
+              Action: left_double(point='<point>213 257</point>')"""
+              )
+              # Using DTO
+              response = await computer_use.execute_computer_use_action(
+                  sandbox_id="SBX-xxxx",
+                  data=dto.ComputerUseActionDto(action=actions[0])
+              )
+              print(response)
+              # Using keyword arguments
+              response_2 = await computer_use.execute_computer_use_action(
+                  sandbox_id="SBX-xxxx",
+                  action=actions[0]
+              )
+              print(response_2)
+      if __name__ == "__main__":
+          asyncio.run(main())
+      ```
 
 ### Class Sandbox
 
@@ -339,11 +357,11 @@ client = LybicClient(
    - return: class dto.SandboxListResponseDto
 
    ```python
-   import asyncio
    from lybic import Sandbox
 
+   # Inside your async main function, with the client initialized:
    sandbox = Sandbox(client)
-   sandboxes = asyncio.run(sandbox.list())
+   sandboxes = await sandbox.list()
    for s in sandboxes:
        print(s)
    ```
@@ -365,15 +383,15 @@ client = LybicClient(
    - return: class dto.GetSandboxResponseDto
 
    ```python
-   import asyncio
    from lybic import dto, Sandbox
 
+   # Inside your async main function, with the client initialized:
    sandbox = Sandbox(client)
    # Using DTO
-   new_sandbox = asyncio.run(sandbox.create(dto.CreateSandboxDto(name="my-sandbox")))
+   new_sandbox = await sandbox.create(dto.CreateSandboxDto(name="my-sandbox"))
    print(new_sandbox)
    # Using keyword arguments
-   new_sandbox_2 = asyncio.run(sandbox.create(name="my-sandbox-2"))
+   new_sandbox_2 = await sandbox.create(name="my-sandbox-2")
    print(new_sandbox_2)
    ```
 
@@ -388,8 +406,9 @@ client = LybicClient(
    import asyncio
    from lybic import Sandbox
 
+   # Inside your async main function, with the client initialized:
    sandbox = Sandbox(client)
-   details = asyncio.run(sandbox.get(sandbox_id="SBX-xxxx"))
+   details = await sandbox.get(sandbox_id="SBX-xxxx")
    print(details)
    ```
 
@@ -410,8 +429,9 @@ client = LybicClient(
    import asyncio
    from lybic import Sandbox
 
+   # Inside your async main function, with the client initialized:
    sandbox = Sandbox(client)
-   asyncio.run(sandbox.delete(sandbox_id="SBX-xxxx"))
+   await sandbox.delete(sandbox_id="SBX-xxxx")
    ```
 
 5. Get a sandbox screenshot
@@ -425,8 +445,9 @@ client = LybicClient(
    import asyncio
    from lybic import Sandbox
 
+   # Inside your async main function, with the client initialized:
    sandbox = Sandbox(client)
-   url, image, b64_str = asyncio.run(sandbox.get_screenshot(sandbox_id="SBX-xxxx"))
+   url, image, b64_str = await sandbox.get_screenshot(sandbox_id="SBX-xxxx")
    print(f"Screenshot URL: {url}")
    image.show()
    ```
