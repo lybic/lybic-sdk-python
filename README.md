@@ -87,13 +87,11 @@ from lybic import LybicClient
 #             timeout: int = 10,
 #             extra_headers: dict | None = None) -> None
 async def main():
+    # Initialize with environment variables
     async with LybicClient() as client:
         pass
-if __name__=='__main__':
-    asyncio.run(main())
-    
 
-async def main():
+    # Or, initialize with explicit credentials
     async with LybicClient(
         org_id="your_org_id", # Lybic organization ID
         api_key="your_api_key", # Lybic API key
@@ -102,6 +100,7 @@ async def main():
         extra_headers={"User-Agent": "MyAgent/1.0"}, # Custom headers
     ) as client:
         pass
+
 if __name__=='__main__':
     asyncio.run(main())
 ```
