@@ -26,11 +26,10 @@
 """
 pyautogui.py implements a calling interface compatible with pyautogui.py through lybic
 
-from lybic import LybicClient, Pyautogui
+from lybic import LybicClient, PyautoguiLybic
 
 client = LybicClient()
-
-pyautogui = Pyautogui(client,'sandbox_id').clone()
+pyautogui = PyautoguiLybic(client)
 
 pyautogui.position()
 pyautogui.moveTo(1443,343)
@@ -44,59 +43,77 @@ pyautogui.press('esc')
 pyautogui.keyDown('shift')
 pyautogui.keyUp('shift')
 pyautogui.hotkey('ctrl', 'c')
-
-client.close()
 """
 import asyncio
 import logging
+import threading
 import time
-from typing import overload, Optional
+from typing import overload, Optional, Coroutine
 
 from lybic.lmcp import ComputerUse
 from lybic import LybicClient, dto
 
 
-class Pyautogui:
+class PyautoguiLybic:
+    """
+    PyautoguiLybic implements a calling interface compatible with pyautogui.py through lybic
+    """
     def __init__(self, client: LybicClient, sandbox_id: str):
         self.client = client
         self.computer_use = ComputerUse(client)
         self.sandbox_id = sandbox_id
         self.logger = logging.getLogger(__name__)
-        self.logger.info("pyautoguiLybic initialized")
+
+        self._loop = asyncio.new_event_loop()
+        self._thread = threading.Thread(target=self._loop.run_forever, daemon=True)
+        self._thread.start()
+        self.logger.info("PyautoguiLybic event loop running in background thread.")
+
+    def _run_sync(self, coro: Coroutine):
+        """Runs a coroutine in the background event loop and waits for the result."""
+        future = asyncio.run_coroutine_threadsafe(coro, self._loop)
+        return future.result()
+
+    def close(self):
+        """Stops the background event loop and thread."""
+        if self._thread.is_alive():
+            self.logger.info("Closing PyautoguiLybic background event loop.")
+            self._loop.call_soon_threadsafe(self._loop.stop)
+            self._thread.join()
+            self.logger.info("PyautoguiLybic background thread closed.")
+
+    def __del__(self):
+        self.close()
 
     @overload
-    def clone(self, sandbox_id: str) -> "Pyautogui": ...
+    def clone(self, sandbox_id: str) -> "PyautoguiLybic": ...
 
     @overload
-    def clone(self) -> "Pyautogui": ...
+    def clone(self) -> "PyautoguiLybic": ...
 
-    def clone(self, sandbox_id: str = None) -> "Pyautogui":
+    def clone(self, sandbox_id: str = None) -> "PyautoguiLybic":
+        # Note: The cloned object will have its own background thread.
         if sandbox_id is not None:
-            return Pyautogui(self.client, sandbox_id)
+            return PyautoguiLybic(self.client, sandbox_id)
         else:
-            return Pyautogui(self.client, self.sandbox_id)
+            return PyautoguiLybic(self.client, self.sandbox_id)
 
     def position(self) -> tuple[int, int]:
         return self.get_mouse_position()
 
     def get_mouse_position(self) -> tuple[int, int]:
-        loop = asyncio.new_event_loop()
-        try:
-            result = loop.run_until_complete(
-                self.computer_use.execute_computer_use_action(
-                    sandbox_id=self.sandbox_id,
-                    data=dto.ComputerUseActionDto(
-                        action=dto.FinishedAction(type="finished"),
-                        includeScreenShot=False,
-                        includeCursorPosition=True
-                    )
-                )
+        coro = self.computer_use.execute_computer_use_action(
+            sandbox_id=self.sandbox_id,
+            data=dto.ComputerUseActionDto(
+                action=dto.FinishedAction(type="finished"),
+                includeScreenShot=False,
+                includeCursorPosition=True
             )
-            if result.cursorPosition:
-                return result.cursorPosition.x, result.cursorPosition.y
-            raise ConnectionError("Could not get mouse position")
-        finally:
-            loop.close()
+        )
+        result = self._run_sync(coro)
+        if result.cursorPosition:
+            return result.cursorPosition.x, result.cursorPosition.y
+        raise ConnectionError("Could not get mouse position")
 
     def moveTo(self, x, y, duration=0.0, tween=None, logScreenshot=False, _pause=True):
         request = dto.MouseMoveAction(
@@ -104,20 +121,11 @@ class Pyautogui:
             x=dto.PixelLength(type="px", value=x),
             y=dto.PixelLength(type="px", value=y),
         )
-        loop = asyncio.new_event_loop()
-        try:
-            loop.run_until_complete(
-                self.computer_use.execute_computer_use_action(
-                    sandbox_id=self.sandbox_id,
-                    data=dto.ComputerUseActionDto(action=request,
-                                                  includeScreenShot=False,
-                                                  includeCursorPosition=False)
-                )
-            )
-        except Exception as e:
-            RuntimeError("Could not move mouse",e)
-        finally:
-            loop.close()
+        coro = self.computer_use.execute_computer_use_action(
+            sandbox_id=self.sandbox_id,
+            data=dto.ComputerUseActionDto(action=request, includeScreenShot=False, includeCursorPosition=False)
+        )
+        self._run_sync(coro)
 
     def move(self, xOffset=None, yOffset=None, duration=0.0, tween=None, _pause=True):
         if xOffset is None and yOffset is None:
@@ -142,48 +150,28 @@ class Pyautogui:
         button_map = {'left': 1, 'right': 2, 'middle': 4}
         button_code = button_map.get(button.lower(), 1)
 
-        if clicks == 2:
-            request = dto.MouseDoubleClickAction(
-                type="mouse:doubleClick",
-                x=dto.PixelLength(type="px", value=x),
-                y=dto.PixelLength(type="px", value=y),
-                button=button_code
-            )
-            loop = asyncio.new_event_loop()
-            try:
-                loop.run_until_complete(
-                    self.computer_use.execute_computer_use_action(
-                        sandbox_id=self.sandbox_id,
-                        data=dto.ComputerUseActionDto(action=request, includeScreenShot=False,
-                                                      includeCursorPosition=False)
-                    )
-                )
-            except Exception as e:
-                RuntimeError("Could not click", e)
-            finally:
-                loop.close()
-            return
-
         for i in range(clicks):
-            request = dto.MouseClickAction(
-                type="mouse:click",
-                x=dto.PixelLength(type="px", value=x),
-                y=dto.PixelLength(type="px", value=y),
-                button=button_code
-            )
-            loop = asyncio.new_event_loop()
-            try:
-                loop.run_until_complete(
-                    self.computer_use.execute_computer_use_action(
-                        sandbox_id=self.sandbox_id,
-                        data=dto.ComputerUseActionDto(action=request, includeScreenShot=False,
-                                                      includeCursorPosition=False)
-                    )
+            if clicks == 2:
+                action = dto.MouseDoubleClickAction(
+                    type="mouse:doubleClick",
+                    x=dto.PixelLength(type="px", value=x),
+                    y=dto.PixelLength(type="px", value=y),
+                    button=button_code
                 )
-            except Exception as e:
-                RuntimeError("Could not click", e)
-            finally:
-                loop.close()
+            else:
+                action = dto.MouseClickAction(
+                    type="mouse:click",
+                    x=dto.PixelLength(type="px", value=x),
+                    y=dto.PixelLength(type="px", value=y),
+                    button=button_code
+                )
+
+            coro = self.computer_use.execute_computer_use_action(
+                sandbox_id=self.sandbox_id,
+                data=dto.ComputerUseActionDto(action=action, includeScreenShot=False,
+                                              includeCursorPosition=False)
+            )
+            self._run_sync(coro)
 
             if i < clicks - 1:
                 time.sleep(interval)
@@ -199,18 +187,11 @@ class Pyautogui:
             type="keyboard:type",
             content=message
         )
-        loop = asyncio.new_event_loop()
-        try:
-            loop.run_until_complete(
-                self.computer_use.execute_computer_use_action(
-                    sandbox_id=self.sandbox_id,
-                    data=dto.ComputerUseActionDto(action=request, includeScreenShot=False, includeCursorPosition=False)
-                )
-            )
-        except Exception as e:
-            RuntimeError("Could not write content", e)
-        finally:
-            loop.close()
+        coro = self.computer_use.execute_computer_use_action(
+            sandbox_id=self.sandbox_id,
+            data=dto.ComputerUseActionDto(action=request, includeScreenShot=False, includeCursorPosition=False)
+        )
+        self._run_sync(coro)
 
     def press(self, keys, presses=1, interval=0.0, _pause=True):
         for i in range(presses):
@@ -218,19 +199,12 @@ class Pyautogui:
                 type="keyboard:hotkey",
                 keys=keys
             )
-            loop = asyncio.new_event_loop()
-            try:
-                loop.run_until_complete(
-                    self.computer_use.execute_computer_use_action(
-                        sandbox_id=self.sandbox_id,
-                        data=dto.ComputerUseActionDto(action=request, includeScreenShot=False,
-                                                      includeCursorPosition=False)
-                    )
-                )
-            except Exception as e:
-                RuntimeError("Could not press", e)
-            finally:
-                loop.close()
+            coro = self.computer_use.execute_computer_use_action(
+                sandbox_id=self.sandbox_id,
+                data=dto.ComputerUseActionDto(action=request, includeScreenShot=False,
+                                              includeCursorPosition=False)
+            )
+            self._run_sync(coro)
             if i < presses - 1:
                 time.sleep(interval)
 
@@ -240,18 +214,11 @@ class Pyautogui:
             type="keyboard:hotkey",
             keys=keys_to_press
         )
-        loop = asyncio.new_event_loop()
-        try:
-            loop.run_until_complete(
-                self.computer_use.execute_computer_use_action(
-                    sandbox_id=self.sandbox_id,
-                    data=dto.ComputerUseActionDto(action=request, includeScreenShot=False, includeCursorPosition=False)
-                )
-            )
-        except Exception as e:
-            RuntimeError("Could not hot key", e)
-        finally:
-            loop.close()
+        coro = self.computer_use.execute_computer_use_action(
+            sandbox_id=self.sandbox_id,
+            data=dto.ComputerUseActionDto(action=request, includeScreenShot=False, includeCursorPosition=False)
+        )
+        self._run_sync(coro)
 
     def keyDown(self, key):
         self.logger.warning("keyDown is not implemented in Lybic SDK")
