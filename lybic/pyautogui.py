@@ -57,6 +57,18 @@ from lybic import LybicClient, dto
 class PyautoguiLybic:
     """
     PyautoguiLybic implements a calling interface compatible with pyautogui.py through lybic
+
+    Examples:
+
+    LLM_OUTPUT = 'pyautogui.click(x=1443, y=343)'
+
+    from lybic import LybicClient, PyautoguiLybic
+
+    client = LybicClient()
+
+    pyautogui = PyautoguiLybic(client,sandbox_id)
+
+    eval(LLM_OUTPUT)
     """
     def __init__(self, client: LybicClient, sandbox_id: str):
         self.client = client
