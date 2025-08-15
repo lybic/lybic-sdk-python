@@ -14,7 +14,7 @@ async def main():
 
 ### LybicClient Manual lifecycle management
 
-Form v0.5.4, we've added a new feature that allows developers to manually manage the LybicClient lifecycle for increased 
+From v0.5.4, we've added a new feature that allows developers to manually manage the LybicClient lifecycle for increased 
 flexibility.
 
 However, please note that this introduces certain risks, and we still recommend using the `async with ... as ...` syntax.
