@@ -57,7 +57,7 @@ class LybicClient(_LybicBaseClient):
         self.client: httpx.AsyncClient | None = None
         self._in_context = False
 
-    async def _ensure_client_is_open(self):
+    def _ensure_client_is_open(self):
         if self.client is None:
             self.client = httpx.AsyncClient(headers=self.headers, timeout=self.timeout)
         elif self.client.is_closed:
@@ -70,13 +70,12 @@ class LybicClient(_LybicBaseClient):
             raise RuntimeError("Cannot enter context with an already-active client.")
 
         self._in_context = True
-        await self._ensure_client_is_open()
+        self._ensure_client_is_open()
         return self
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         self._in_context = False
-        if self.client:
-            await self.client.aclose()
+        await self.close()
 
     async def close(self):
         """Close the underlying httpx.AsyncClient."""
@@ -94,7 +93,7 @@ class LybicClient(_LybicBaseClient):
         :param kwargs:
         :return:
         """
-        await self._ensure_client_is_open()
+        self._ensure_client_is_open()
 
         url = f"{self.endpoint}{path}"
         headers = self.headers.copy()
