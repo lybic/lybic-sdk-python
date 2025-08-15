@@ -37,6 +37,9 @@ from .lmcp import MCP,ComputerUse
 # Project
 from .project import Project
 
+# Pyautogui
+from .pyautogui import Pyautogui
+
 # Sandbox
 from .sandbox import Sandbox
 
@@ -46,6 +49,7 @@ __all__ = [
     "MCP",
     "ComputerUse",
     "Project",
+    "Pyautogui",
     "Sandbox",
     "Stats"
 ]
