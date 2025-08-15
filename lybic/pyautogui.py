@@ -98,6 +98,12 @@ class Pyautogui:
     def __del__(self):
         self.close()
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close()
+
     @overload
     def clone(self, sandbox_id: str) -> "Pyautogui": ...
 
@@ -113,7 +119,7 @@ class Pyautogui:
 
         Returns:
             Pyautogui: A new Pyautogui object with the specified sandbox ID.
-        Note: The cloned object will have its own background thread.
+        Note: The cloned object will have its own background thread. Frequent cloning may lead to high resource consumption.
         """
         if sandbox_id is not None:
             return Pyautogui(self.client, sandbox_id)
