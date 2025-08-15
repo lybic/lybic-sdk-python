@@ -23,6 +23,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
+
 """
 pyautogui.py implements a calling interface compatible with pyautogui.py through lybic
 
@@ -53,8 +54,8 @@ from typing import overload, Optional, Coroutine
 from lybic.lmcp import ComputerUse
 from lybic import LybicClient, dto
 
-
-class PyautoguiLybic:
+# pylint: disable=unused-argument,invalid-name,logging-fstring-interpolation
+class Pyautogui:
     """
     PyautoguiLybic implements a calling interface compatible with pyautogui.py through lybic
 
@@ -98,22 +99,42 @@ class PyautoguiLybic:
         self.close()
 
     @overload
-    def clone(self, sandbox_id: str) -> "PyautoguiLybic": ...
+    def clone(self, sandbox_id: str) -> "Pyautogui": ...
 
     @overload
-    def clone(self) -> "PyautoguiLybic": ...
+    def clone(self) -> "Pyautogui": ...
 
-    def clone(self, sandbox_id: str = None) -> "PyautoguiLybic":
-        # Note: The cloned object will have its own background thread.
+    def clone(self, sandbox_id: str = None) -> "Pyautogui":
+        """
+        Clones the PyautoguiLybic object with a new sandbox ID.
+
+        Args:
+            sandbox_id (str, optional): The sandbox ID to clone the object with. If not provided, the original sandbox ID will be used.
+
+        Returns:
+            PyautoguiLybic: A new PyautoguiLybic object with the specified sandbox ID.
+        Note: The cloned object will have its own background thread.
+        """
         if sandbox_id is not None:
-            return PyautoguiLybic(self.client, sandbox_id)
-        else:
-            return PyautoguiLybic(self.client, self.sandbox_id)
+            return Pyautogui(self.client, sandbox_id)
+        return Pyautogui(self.client, self.sandbox_id)
 
     def position(self) -> tuple[int, int]:
+        """
+        Returns the current mouse position.
+
+        Returns:
+            tuple[int, int]: The current mouse position as a tuple of (x, y).
+        """
         return self.get_mouse_position()
 
     def get_mouse_position(self) -> tuple[int, int]:
+        """
+        Returns the current mouse position.
+
+        Returns:
+            tuple[int, int]: The current mouse position as a tuple of (x, y).
+        """
         coro = self.computer_use.execute_computer_use_action(
             sandbox_id=self.sandbox_id,
             data=dto.ComputerUseActionDto(
@@ -128,6 +149,17 @@ class PyautoguiLybic:
         raise ConnectionError("Could not get mouse position")
 
     def moveTo(self, x, y, duration=0.0, tween=None, logScreenshot=False, _pause=True):
+        """
+        Moves the mouse to the specified position.
+
+        Args:
+            x (int): The x-coordinate of the destination position.
+            y (int): The y-coordinate of the destination position.
+            duration (Placeholder):
+            tween (Placeholder):
+            logScreenshot (Placeholder):
+            _pause (Placeholder):
+        """
         request = dto.MouseMoveAction(
             type="mouse:move",
             x=dto.PixelLength(type="px", value=x),
@@ -140,6 +172,16 @@ class PyautoguiLybic:
         self._run_sync(coro)
 
     def move(self, xOffset=None, yOffset=None, duration=0.0, tween=None, _pause=True):
+        """
+        Moves the mouse relative to its current position.
+
+        Args:
+            xOffset (int, optional): The x-coordinate offset. If None, the current x-coordinate will be used.
+            yOffset (int, optional): The y-coordinate offset. If None, the current y-coordinate will be used.
+            duration (Placeholder):
+            tween (Placeholder):
+            _pause (Placeholder):
+        """
         if xOffset is None and yOffset is None:
             return
 
@@ -154,6 +196,16 @@ class PyautoguiLybic:
     def click(self, x: Optional[int] = None, y: Optional[int] = None,
               clicks=1, interval=0.0, button='left', duration=0.0, tween=None,
               logScreenshot=None, _pause=True):
+        """
+        Performs a mouse click at the specified position.
+
+        Args:
+            x (int, optional): The x-coordinate of the click position. If None, the current mouse position will be used.
+            y (int, optional): The y-coordinate of the click position. If None, the current mouse position will be used.
+            clicks (int, optional): The number of clicks to perform. Defaults to 1.
+            interval (Placeholder):
+            button (str, optional): The button to click. Can be 'left', 'right', or 'middle'. Defaults to 'left'.
+        """
         if x is None or y is None:
             x, y = self.position()
 
@@ -190,11 +242,27 @@ class PyautoguiLybic:
 
     def doubleClick(self, x: Optional[int] = None, y: Optional[int] = None,
                     interval=0.0, button='left', duration=0.0, tween=None, _pause=True):
+        """
+        Performs a double-click at the specified position.
+
+        Args:
+            x (int, optional): The x-coordinate of the click position. If None, the current mouse position will be used.
+            y (int, optional): The y-coordinate of the click position. If None, the current mouse position will be used.
+            interval (Placeholder):
+            button (str, optional): The button to click. Can be 'left', 'right', or 'middle'. Defaults to 'left'.
+        """
         if x is None or y is None:
             x, y = self.position()
         self.click(x, y, clicks=2, interval=interval, button=button, duration=duration, tween=tween, _pause=_pause)
 
     def write(self, message, interval=0.0, _pause=True):
+        """
+        Types the specified message into the keyboard.
+
+        Args:
+            message (str): The message to type.
+            interval (Placeholder):
+        """
         request = dto.KeyboardTypeAction(
             type="keyboard:type",
             content=message
@@ -206,6 +274,14 @@ class PyautoguiLybic:
         self._run_sync(coro)
 
     def press(self, keys, presses=1, interval=0.0, _pause=True):
+        """
+        Presses the specified keys.
+
+        Args:
+            keys (str): The keys to press.
+            presses (int, optional): The number of times to press the keys. Defaults to 1.
+            interval (Placeholder):
+        """
         for i in range(presses):
             request = dto.KeyboardHotkeyAction(
                 type="keyboard:hotkey",
@@ -221,6 +297,13 @@ class PyautoguiLybic:
                 time.sleep(interval)
 
     def hotkey(self, *args, interval=0.0, _pause=True):
+        """
+        Presses a hotkey combination.
+
+        Args:
+            *args (str): The keys to press.
+            interval (Placeholder):
+        """
         keys_to_press = '+'.join(args)
         request = dto.KeyboardHotkeyAction(
             type="keyboard:hotkey",
@@ -233,9 +316,21 @@ class PyautoguiLybic:
         self._run_sync(coro)
 
     def keyDown(self, key):
+        """
+        Holds down a key. (not implemented)
+
+        Args:
+            key (str): The key to hold down.
+        """
         self.logger.warning("keyDown is not implemented in Lybic SDK")
         raise NotImplementedError("Lybic API does not support holding a key down.")
 
     def keyUp(self, key):
+        """
+        Releases a key. (not implemented)
+
+        Args:
+            key (str): The key to release.
+        """
         self.logger.warning("keyUp is not implemented in Lybic SDK")
         raise NotImplementedError("Lybic API does not support releasing a key.")
