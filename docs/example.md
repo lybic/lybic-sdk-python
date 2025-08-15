@@ -23,10 +23,10 @@ However, please note that this introduces certain risks, and we still recommend 
 import asyncio 
 from lybic import LybicClient
 
-client = LybicClient()
+client = LybicClient(org_id="ORG-xxxx", api_key="lysk-xxxxxxxxxxx")
 
 async def main():
-    await client.request()
+    await client.request("GET", f"/api/orgs/{client.org_id}/stats")
     await client.close()
 
 if __name__ == "__main__":
