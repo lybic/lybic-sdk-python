@@ -54,13 +54,33 @@ class LybicClient(_LybicBaseClient):
             timeout=timeout, extra_headers=extra_headers
         )
 
-        self.client = None
+        self.client: httpx.AsyncClient | None = None
+        self._in_context = False
+
+    def _ensure_client_is_open(self):
+        if self.client is None:
+            self.client = httpx.AsyncClient(headers=self.headers, timeout=self.timeout)
+        elif self.client.is_closed:
+            raise RuntimeError("The client has been closed and cannot be reused. Please create a new client instance.")
 
     async def __aenter__(self):
-        self.client = httpx.AsyncClient(headers=self.headers, timeout=self.timeout)
+        if self._in_context:
+            raise RuntimeError("Cannot re-enter context.")
+        if self.client and not self.client.is_closed:
+            raise RuntimeError("Cannot enter context with an already-active client.")
+
+        self._in_context = True
+        self._ensure_client_is_open()
         return self
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
+        self._in_context = False
+        await self.close()
+
+    async def close(self):
+        """Close the underlying httpx.AsyncClient."""
+        if self._in_context:
+            return
         if self.client:
             await self.client.aclose()
 
@@ -73,12 +93,7 @@ class LybicClient(_LybicBaseClient):
         :param kwargs:
         :return:
         """
-        if not self.client or self.client.is_closed:
-            raise RuntimeError(
-                 "Client is not connected. Use:\n"
-                 "  async with LybicClient(...) as client:\n"
-                 "      await client.method(...)  # inside this block"
-            )
+        self._ensure_client_is_open()
 
         url = f"{self.endpoint}{path}"
         headers = self.headers.copy()
