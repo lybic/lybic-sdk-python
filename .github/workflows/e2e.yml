@@ -1,0 +1,51 @@
+name: SDK E2E Test
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "master" ]
+    paths:
+      - 'lybic/**/*.py'
+      - 'scripts/**/*.py'
+  pull_request:
+    branches: [ "master" ]
+    paths:
+      - 'lybic/**/*.py'
+      - 'scripts/**/*.py'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.12","3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install dependencies
+        run: |
+          set -e 
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Install Prism
+        run: |
+          set -e 
+          npm install -g @stoplight/prism-cli
+      - name: Get Api Doc
+        run: |
+          set -e 
+          wget https://lybic.ai/docs/openapi.json
+      - name: Run Mock Server
+        run: prism mock ./openapi.json &
+      - name: Wait for Mock Server
+        run: sleep 5
+      - name: Run Tests
+        run: |
+          set -e 
+          make test
