@@ -61,7 +61,7 @@ class LybicClient(_LybicBaseClient):
         if self.client is None:
             self.client = httpx.AsyncClient(headers=self.headers, timeout=self.timeout)
         elif self.client.is_closed:
-            raise RuntimeError("Client has been closed.")
+            raise RuntimeError("The client has been closed and cannot be reused. Please create a new client instance.")
 
     async def __aenter__(self):
         if self._in_context:
