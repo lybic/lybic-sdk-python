@@ -27,10 +27,10 @@
 """
 pyautogui.py implements a calling interface compatible with pyautogui.py through lybic
 
-from lybic import LybicClient, PyautoguiLybic
+from lybic import LybicClient, Pyautogui
 
 client = LybicClient()
-pyautogui = PyautoguiLybic(client)
+pyautogui = Pyautogui(client)
 
 pyautogui.position()
 pyautogui.moveTo(1443,343)
@@ -57,17 +57,17 @@ from lybic import LybicClient, dto
 # pylint: disable=unused-argument,invalid-name,logging-fstring-interpolation
 class Pyautogui:
     """
-    PyautoguiLybic implements a calling interface compatible with pyautogui.py through lybic
+    Pyautogui implements a calling interface compatible with pyautogui.py through lybic
 
     Examples:
 
     LLM_OUTPUT = 'pyautogui.click(x=1443, y=343)'
 
-    from lybic import LybicClient, PyautoguiLybic
+    from lybic import LybicClient, Pyautogui
 
     client = LybicClient()
 
-    pyautogui = PyautoguiLybic(client,sandbox_id)
+    pyautogui = Pyautogui(client,sandbox_id)
 
     eval(LLM_OUTPUT)
     """
@@ -106,13 +106,13 @@ class Pyautogui:
 
     def clone(self, sandbox_id: str = None) -> "Pyautogui":
         """
-        Clones the PyautoguiLybic object with a new sandbox ID.
+        Clones the Pyautogui object with a new sandbox ID.
 
         Args:
             sandbox_id (str, optional): The sandbox ID to clone the object with. If not provided, the original sandbox ID will be used.
 
         Returns:
-            PyautoguiLybic: A new PyautoguiLybic object with the specified sandbox ID.
+            Pyautogui: A new Pyautogui object with the specified sandbox ID.
         Note: The cloned object will have its own background thread.
         """
         if sandbox_id is not None:
@@ -214,15 +214,21 @@ class Pyautogui:
         button_map = {'left': 1, 'right': 2, 'middle': 4}
         button_code = button_map.get(button.lower(), 1)
 
-        for i in range(clicks):
-            if clicks == 2:
-                action = dto.MouseDoubleClickAction(
-                    type="mouse:doubleClick",
-                    x=dto.PixelLength(type="px", value=x),
-                    y=dto.PixelLength(type="px", value=y),
-                    button=button_code
-                )
-            else:
+        if clicks == 2:
+            action = dto.MouseDoubleClickAction(
+                type="mouse:doubleClick",
+                x=dto.PixelLength(type="px", value=x),
+                y=dto.PixelLength(type="px", value=y),
+                button=button_code
+            )
+            coro = self.computer_use.execute_computer_use_action(
+                sandbox_id=self.sandbox_id,
+                data=dto.ComputerUseActionDto(action=action, includeScreenShot=False,
+                                              includeCursorPosition=False)
+            )
+            self._run_sync(coro)
+        else:
+            for i in range(clicks):
                 action = dto.MouseClickAction(
                     type="mouse:click",
                     x=dto.PixelLength(type="px", value=x),
@@ -230,15 +236,15 @@ class Pyautogui:
                     button=button_code
                 )
 
-            coro = self.computer_use.execute_computer_use_action(
-                sandbox_id=self.sandbox_id,
-                data=dto.ComputerUseActionDto(action=action, includeScreenShot=False,
-                                              includeCursorPosition=False)
-            )
-            self._run_sync(coro)
+                coro = self.computer_use.execute_computer_use_action(
+                    sandbox_id=self.sandbox_id,
+                    data=dto.ComputerUseActionDto(action=action, includeScreenShot=False,
+                                                  includeCursorPosition=False)
+                )
+                self._run_sync(coro)
 
-            if i < clicks - 1:
-                time.sleep(interval)
+                if i < clicks - 1:
+                    time.sleep(interval)
 
     def doubleClick(self, x: Optional[int] = None, y: Optional[int] = None,
                     interval=0.0, button='left', duration=0.0, tween=None, _pause=True):
