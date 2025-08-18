@@ -200,6 +200,39 @@ First, initialize the `LybicClient` and then create a `Pyautogui` instance, bind
 import asyncio
 from lybic import LybicClient, Pyautogui
 
+sandbox_id = "your_sandbox_id"
+
+client = LybicClient()
+# Create a Pyautogui instance
+pyautogui = Pyautogui(client, sandbox_id)
+
+# Now you can execute pyautogui-style commands
+# For example, if an LLM outputs the following string:
+llm_output = "pyautogui.moveTo(100, 150)"
+
+# You can execute it like this:
+# Warning: Using eval() on untrusted input is a security risk.
+# Always sanitize and validate LLM output.
+eval(llm_output)
+
+# Or call methods directly
+pyautogui.click(x=200, y=200)
+pyautogui.write("Hello from Lybic!")
+pyautogui.press("enter")
+
+# You need to manually manage `LybicClient` object lifecycles
+pyautogui.close()
+asyncio.run(client.close())
+```
+
+> [!WARNING] 
+> Special scenario: If you need to run asynchronously, please ensure that all requests are executed sequentially rather 
+> than concurrently, otherwise you will encounter a `RuntimeError`
+
+```python
+import asyncio
+from lybic import LybicClient, Pyautogui
+
 async def main():
     async with LybicClient() as client:
         # Assume you have a sandbox
@@ -224,27 +257,6 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-```
-
-Special scenario: If your script runs in synchronous mode
-
-```python
-import asyncio
-from lybic import LybicClient, Pyautogui
-
-sandbox_id = "your_sandbox_id"
-llm_output = "pyautogui.moveTo(100, 150)"
-
-client = LybicClient()
-pyautogui = Pyautogui(client, sandbox_id)
-
-# Warning: Using eval() on untrusted input is a security risk.
-# Always sanitize and validate LLM output.
-eval(llm_output)
-
-# Recommendation: You need to manually manage object lifecycles
-pyautogui.close()
-asyncio.run(client.close())
 ```
 
 ### Supported Functions
