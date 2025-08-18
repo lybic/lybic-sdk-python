@@ -72,6 +72,8 @@ class MCP:
         """
         if args and isinstance(args[0], dto.CreateMcpServerDto):
             data = args[0]
+        elif "data" in kwargs and isinstance(kwargs["data"], dto.CreateMcpServerDto):
+            data = kwargs["data"]
         else:
             data = dto.CreateMcpServerDto(**kwargs)
         self.client.logger.debug(f"Create MCP server request: {data.model_dump_json()}")
@@ -171,6 +173,8 @@ class ComputerUse:
         """
         if args and isinstance(args[0], dto.ComputerUseParseRequestDto):
             data = args[0]
+        elif "data" in kwargs and isinstance(kwargs["data"], dto.ComputerUseParseRequestDto):
+            data = kwargs["data"]
         else:
             data = dto.ComputerUseParseRequestDto(**kwargs)
         self.client.logger.debug(f"Parse model output request: {data.model_dump_json()}")
@@ -195,6 +199,8 @@ class ComputerUse:
         """
         if args and isinstance(args[0], dto.ComputerUseActionDto):
             data = args[0]
+        elif "data" in kwargs and isinstance(kwargs["data"], dto.ComputerUseActionDto):
+            data = kwargs["data"]
         else:
             data = dto.ComputerUseActionDto(**kwargs)
         self.client.logger.debug(f"Execute computer use action request: {data.model_dump_json()}")
