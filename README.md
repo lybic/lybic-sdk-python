@@ -229,6 +229,7 @@ if __name__ == "__main__":
 Special scenario: If your script runs in synchronous mode
 
 ```python
+import asyncio
 from lybic import LybicClient, Pyautogui
 
 sandbox_id = "your_sandbox_id"
@@ -242,9 +243,8 @@ pyautogui = Pyautogui(client, sandbox_id)
 eval(llm_output)
 
 # Recommendation: You need to manually manage object lifecycles
-client.close()
 pyautogui.close()
-```
+asyncio.run(client.close())
 
 ### Supported Functions
 
