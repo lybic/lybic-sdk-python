@@ -143,11 +143,10 @@ class Pyautogui:
         """
         coro = self.computer_use.execute_computer_use_action(
             sandbox_id=self.sandbox_id,
-            data=dto.ComputerUseActionDto(
-                action=dto.FinishedAction(type="finished"),
-                includeScreenShot=False,
-                includeCursorPosition=True
-            )
+
+            action=dto.WaitAction(type="wait",duration=1),
+            includeScreenShot=False,
+            includeCursorPosition=True
         )
         result = self._run_sync(coro)
         if result.cursorPosition:
