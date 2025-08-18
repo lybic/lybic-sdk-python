@@ -30,7 +30,7 @@ pyautogui.py implements a calling interface compatible with pyautogui.py through
 from lybic import LybicClient, Pyautogui
 
 client = LybicClient()
-pyautogui = Pyautogui(client)
+pyautogui = Pyautogui(client, 'your-sandbox-id')
 
 pyautogui.position()
 pyautogui.moveTo(1443,343)
