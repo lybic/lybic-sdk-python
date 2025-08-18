@@ -11,7 +11,7 @@ on:
     branches: [ "master" ]
     paths:
       - 'lybic/**/*.py'
-      - 'scripts/**/*.py'
+      - 'test/**/*.py'
 jobs:
   build:
     runs-on: ubuntu-latest
