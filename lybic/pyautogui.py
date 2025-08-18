@@ -197,8 +197,8 @@ class Pyautogui:
             return
 
         current_x, current_y = self.position()
-        xOffset = xOffset or 0
-        yOffset = yOffset or 0
+        xOffset = xOffset if xOffset is not None else 0
+        yOffset = yOffset if yOffset is not None else 0
 
         new_x = current_x + xOffset
         new_y = current_y + yOffset
