@@ -37,6 +37,7 @@ help:
 	@echo "  create-venv        Create a virtual environment in .venv/"
 	@echo "  build              Build the python package"
 	@echo "  publish            Publish the package to PyPI"
+	@echo "  test-[e2e]         Execute the [e2e] tests"
 	@echo "  clean              Remove build artifacts"
 	@echo "  clean-build-cache  Remove Python cache files"
 	@echo "  clean-venv         Remove the virtual environment"
@@ -55,6 +56,10 @@ build:
 publish:
 	@echo "Publishing the package..."
 	twine upload dist/*
+
+test-e2e:
+	@echo "Running end-to-end tests..."
+	LYBIC_ORG_ID=test LYBIC_API_KEY=test LYBIC_API_ENDPOINT=http://localhost:4010 $(PYTHON) -m test.e2e
 
 clean: clean-build-cache
 	@echo "Cleaning build artifacts..."
