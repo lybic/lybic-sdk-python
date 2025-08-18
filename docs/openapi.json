@@ -81,9 +81,7 @@
             "required": true,
             "in": "path",
             "description": "The organization ID",
-            "schema": {
-
-            }
+            "schema": {}
           }
         ],
         "responses": {
@@ -131,7 +129,9 @@
           }
         },
         "summary": "Delete MCP server",
-        "tags": ["McpServers"]
+        "tags": [
+          "McpServers"
+        ]
       }
     },
     "/api/orgs/{orgId}/mcp-servers/{mcpServerId}/sandbox": {
@@ -171,7 +171,9 @@
           }
         },
         "summary": "Set MCP server to Sandbox",
-        "tags": ["McpServers"]
+        "tags": [
+          "McpServers"
+        ]
       }
     },
     "/api/orgs/{orgId}/sandboxes": {
@@ -200,7 +202,9 @@
           }
         },
         "summary": "List Sandboxes",
-        "tags": ["Sandbox"]
+        "tags": [
+          "Sandbox"
+        ]
       },
       "post": {
         "description": "Creates a new sandbox.",
@@ -237,7 +241,9 @@
           }
         },
         "summary": "Create Sandbox",
-        "tags": ["Sandbox"]
+        "tags": [
+          "Sandbox"
+        ]
       }
     },
     "/api/orgs/{orgId}/sandboxes/{sandboxId}": {
@@ -267,7 +273,9 @@
           }
         },
         "summary": "Delete Sandbox",
-        "tags": ["Sandbox"]
+        "tags": [
+          "Sandbox"
+        ]
       },
       "get": {
         "description": "Get the sandbox details by id",
@@ -302,7 +310,9 @@
           }
         },
         "summary": "Get Sandbox Details",
-        "tags": ["Sandbox"]
+        "tags": [
+          "Sandbox"
+        ]
       }
     },
     "/api/orgs/{orgId}/sandboxes/{sandboxId}/extend": {
@@ -342,7 +352,9 @@
           }
         },
         "summary": "Extend Sandbox",
-        "tags": ["Sandbox"]
+        "tags": [
+          "Sandbox"
+        ]
       }
     },
     "/api/orgs/{orgId}/sandboxes/{sandboxId}/actions/computer-use": {
@@ -389,7 +401,9 @@
           }
         },
         "summary": "Execute Computer Use Action",
-        "tags": ["Sandbox"]
+        "tags": [
+          "Sandbox"
+        ]
       }
     },
     "/api/orgs/{orgId}/sandboxes/{sandboxId}/preview": {
@@ -426,7 +440,9 @@
           }
         },
         "summary": "Preview Sandbox",
-        "tags": ["Sandbox"]
+        "tags": [
+          "Sandbox"
+        ]
       }
     },
     "/api/orgs/{orgId}/projects": {
@@ -455,7 +471,9 @@
           }
         },
         "summary": "List Projects",
-        "tags": ["Project"]
+        "tags": [
+          "Project"
+        ]
       },
       "post": {
         "description": "Creates a new project.",
@@ -492,7 +510,9 @@
           }
         },
         "summary": "Create Project",
-        "tags": ["Project"]
+        "tags": [
+          "Project"
+        ]
       }
     },
     "/api/orgs/{orgId}/projects/{projectId}": {
@@ -522,7 +542,9 @@
           }
         },
         "summary": "Delete Project",
-        "tags": ["Project"]
+        "tags": [
+          "Project"
+        ]
       }
     },
     "/api/computer-use/parse": {
@@ -584,7 +606,9 @@
           }
         },
         "summary": "Get Organization Stats",
-        "tags": ["Dashboard"]
+        "tags": [
+          "Dashboard"
+        ]
       }
     }
   },
@@ -819,8 +843,14 @@
             "name": {
               "type": "string"
             },
-            "expiredAt": {},
-            "createdAt": {},
+            "expiredAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "createdAt": {
+              "type": "string",
+              "format": "date-time"
+            },
             "projectId": {
               "type": "string"
             }
@@ -877,8 +907,14 @@
               "name": {
                 "type": "string"
               },
-              "expiredAt": {},
-              "createdAt": {},
+              "expiredAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time"
+              },
               "projectId": {
                 "type": "string"
               }
