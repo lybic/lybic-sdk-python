@@ -245,6 +245,7 @@ eval(llm_output)
 # Recommendation: You need to manually manage object lifecycles
 pyautogui.close()
 asyncio.run(client.close())
+```
 
 ### Supported Functions
 
