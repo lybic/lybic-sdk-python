@@ -49,7 +49,7 @@ import asyncio
 import logging
 import threading
 import time
-from typing import overload, Optional, Coroutine
+from typing import overload, Optional, Coroutine, List
 
 from lybic import dto
 from lybic.lybic import LybicClient
@@ -288,19 +288,30 @@ class Pyautogui:
         )
         self._run_sync(coro)
 
+    @overload
+    def press(self, keys: str, presses: int = 1, interval: float = 0.0, _pause: bool = True): ...
+
+    @overload
+    def press(self, keys: List[str], presses: int = 1, interval: float = 0.0, _pause: bool = True): ...
+
     def press(self, keys, presses=1, interval=0.0, _pause=True):
         """
         Presses the specified keys.
 
         Args:
-            keys (str): The keys to press.
+            keys (str or List[str]): The key to press, or a list of keys to press in sequence.
             presses (int, optional): The number of times to press the keys. Defaults to 1.
-            interval (Placeholder):
+            interval (float, optional): The interval in seconds between each press. Defaults to 0.0
         """
-        for i in range(presses):
+        if isinstance(keys, str):
+            _keys = [keys] * presses
+        else:
+            _keys = keys * presses
+
+        for i, key in enumerate(_keys):
             request = dto.KeyboardHotkeyAction(
                 type="keyboard:hotkey",
-                keys=keys
+                keys=key
             )
             coro = self.computer_use.execute_computer_use_action(
                 sandbox_id=self.sandbox_id,
@@ -308,7 +319,7 @@ class Pyautogui:
                                               includeCursorPosition=False)
             )
             self._run_sync(coro)
-            if i < presses - 1:
+            if i < len(_keys) - 1:
                 time.sleep(interval)
 
     def hotkey(self, *args, interval=0.0, _pause=True):
