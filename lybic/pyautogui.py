@@ -143,10 +143,15 @@ class Pyautogui:
         """
         coro = self.computer_use.execute_computer_use_action(
             sandbox_id=self.sandbox_id,
-
-            action=dto.WaitAction(type="wait",duration=1),
-            includeScreenShot=False,
-            includeCursorPosition=True
+            # An action is required to obtain the mouse cursor and screenshot information.
+            #
+            # The `FinishedAction` , however, does not involve any action operations, is idempotent,
+            # and offers the highest performance.
+            data=dto.ComputerUseActionDto(
+                action=dto.FinishedAction(type="finished"),
+                includeScreenShot=False,
+                includeCursorPosition=True
+            ),
         )
         result = self._run_sync(coro)
         if result.cursorPosition:
@@ -262,8 +267,6 @@ class Pyautogui:
             interval (Placeholder):
             button (str, optional): The button to click. Can be 'left', 'right', or 'middle'. Defaults to 'left'.
         """
-        if x is None or y is None:
-            x, y = self.position()
         self.click(x, y, clicks=2, interval=interval, button=button, duration=duration, tween=tween, _pause=_pause)
 
     def write(self, message, interval=0.0, _pause=True):
