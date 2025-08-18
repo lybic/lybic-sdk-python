@@ -6,7 +6,7 @@ on:
     branches: [ "master" ]
     paths:
       - 'lybic/**/*.py'
-      - 'scripts/**/*.py'
+      - 'test/**/*.py'
   pull_request:
     branches: [ "master" ]
     paths:

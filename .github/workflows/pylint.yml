@@ -3,13 +3,15 @@ name: Pylint
 on:
   workflow_dispatch:
   push:
-    branches: [ "master", "develop" ]
+    branches: [ "master" ]
     paths:
       - 'lybic/**/*.py'
+      - 'test/**/*.py'
   pull_request:
-    branches: [ "master", "develop" ]
+    branches: [ "master" ]
     paths:
       - 'lybic/**/*.py'
+      - 'test/**/*.py'
 
 jobs:
   build:
