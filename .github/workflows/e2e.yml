@@ -48,4 +48,4 @@ jobs:
       - name: Run Tests
         run: |
           set -e 
-          make test
+          make test-e2e
