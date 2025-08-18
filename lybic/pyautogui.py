@@ -51,8 +51,9 @@ import threading
 import time
 from typing import overload, Optional, Coroutine
 
+from lybic import dto
+from lybic.lybic import LybicClient
 from lybic.lmcp import ComputerUse
-from lybic import LybicClient, dto
 
 # pylint: disable=unused-argument,invalid-name,logging-fstring-interpolation
 class Pyautogui:
