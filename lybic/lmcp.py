@@ -199,8 +199,9 @@ class ComputerUse:
         """
         if args and isinstance(args[0], dto.ComputerUseActionDto):
             data = args[0]
-        elif "data" in kwargs and isinstance(kwargs["data"], dto.ComputerUseActionDto):
+        elif "data" in kwargs:
             data = kwargs["data"]
+            if not isinstance(data, dto.ComputerUseActionDto): raise TypeError(f"The 'data' argument must be of type {dto.ComputerUseActionDto.__name__}")
         else:
             data = dto.ComputerUseActionDto(**kwargs)
         self.client.logger.debug(f"Execute computer use action request: {data.model_dump_json()}")
