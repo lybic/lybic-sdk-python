@@ -3,10 +3,19 @@
   "paths": {
     "/api/orgs/{orgId}/mcp-servers": {
       "get": {
-        "operationId": "listMcpServers",
-        "summary": "List MCP servers",
         "description": "Returns a list of MCP servers for the organization.",
-        "parameters": [],
+        "operationId": "listMcpServers",
+        "parameters": [
+          {
+            "name": "orgId",
+            "required": true,
+            "in": "path",
+            "description": "The organization ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "",
@@ -18,13 +27,26 @@
               }
             }
           }
-        }
+        },
+        "summary": "List MCP servers",
+        "tags": [
+          "McpServers"
+        ]
       },
       "post": {
-        "operationId": "createMcpServer",
-        "summary": "Create MCP server",
         "description": "Creates a new MCP server.",
-        "parameters": [],
+        "operationId": "createMcpServer",
+        "parameters": [
+          {
+            "name": "orgId",
+            "required": true,
+            "in": "path",
+            "description": "The organization ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -46,15 +68,28 @@
               }
             }
           }
-        }
+        },
+        "summary": "Create MCP server",
+        "tags": [
+          "McpServers"
+        ]
       }
     },
     "/api/orgs/{orgId}/mcp-servers/default": {
       "get": {
-        "operationId": "getDefaultMcpServer",
-        "summary": "Get Default MCP server",
         "description": "Returns the default MCP server for the organization. If not set, it will create a new one.",
-        "parameters": [],
+        "operationId": "getDefaultMcpServer",
+        "parameters": [
+          {
+            "name": "orgId",
+            "required": true,
+            "in": "path",
+            "description": "The organization ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "",
@@ -66,19 +101,31 @@
               }
             }
           }
-        }
+        },
+        "summary": "Get Default MCP server",
+        "tags": [
+          "McpServers"
+        ]
       }
     },
     "/api/orgs/{orgId}/mcp-servers/{mcpServerId}": {
       "delete": {
-        "operationId": "deleteMcpServer",
-        "summary": "Delete MCP server",
         "description": "Deletes an MCP server by its ID.",
+        "operationId": "deleteMcpServer",
         "parameters": [
           {
             "name": "mcpServerId",
             "required": true,
             "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orgId",
+            "required": true,
+            "in": "path",
+            "description": "The organization ID",
             "schema": {
               "type": "string"
             }
@@ -88,19 +135,31 @@
           "200": {
             "description": ""
           }
-        }
+        },
+        "summary": "Delete MCP server",
+        "tags": [
+          "McpServers"
+        ]
       }
     },
     "/api/orgs/{orgId}/mcp-servers/{mcpServerId}/sandbox": {
       "post": {
-        "operationId": "setMcpServerToSandbox",
-        "summary": "Set MCP server to Sandbox",
         "description": "Sets the specified MCP server to the given Sandbox.",
+        "operationId": "setMcpServerToSandbox",
         "parameters": [
           {
             "name": "mcpServerId",
             "required": true,
             "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orgId",
+            "required": true,
+            "in": "path",
+            "description": "The organization ID",
             "schema": {
               "type": "string"
             }
@@ -120,15 +179,28 @@
           "201": {
             "description": ""
           }
-        }
+        },
+        "summary": "Set MCP server to Sandbox",
+        "tags": [
+          "McpServers"
+        ]
       }
     },
     "/api/orgs/{orgId}/sandboxes": {
       "get": {
-        "operationId": "listSandboxes",
-        "summary": "List Sandboxes",
         "description": "Returns a list of sandboxes for the organization.",
-        "parameters": [],
+        "operationId": "listSandboxes",
+        "parameters": [
+          {
+            "name": "orgId",
+            "required": true,
+            "in": "path",
+            "description": "The organization ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "",
@@ -140,13 +212,26 @@
               }
             }
           }
-        }
+        },
+        "summary": "List Sandboxes",
+        "tags": [
+          "Sandbox"
+        ]
       },
       "post": {
-        "operationId": "createSandbox",
-        "summary": "Create Sandbox",
         "description": "Creates a new sandbox.",
-        "parameters": [],
+        "operationId": "createSandbox",
+        "parameters": [
+          {
+            "name": "orgId",
+            "required": true,
+            "in": "path",
+            "description": "The organization ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -168,19 +253,31 @@
               }
             }
           }
-        }
+        },
+        "summary": "Create Sandbox",
+        "tags": [
+          "Sandbox"
+        ]
       }
     },
     "/api/orgs/{orgId}/sandboxes/{sandboxId}": {
       "delete": {
-        "operationId": "deleteSandbox",
-        "summary": "Delete Sandbox",
         "description": "Deletes a sandbox by its ID.",
+        "operationId": "deleteSandbox",
         "parameters": [
           {
             "name": "sandboxId",
             "required": true,
             "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orgId",
+            "required": true,
+            "in": "path",
+            "description": "The organization ID",
             "schema": {
               "type": "string"
             }
@@ -190,17 +287,29 @@
           "200": {
             "description": ""
           }
-        }
+        },
+        "summary": "Delete Sandbox",
+        "tags": [
+          "Sandbox"
+        ]
       },
       "get": {
-        "operationId": "getSandbox",
-        "summary": "Get Sandbox Details",
         "description": "Get the sandbox details by id",
+        "operationId": "getSandbox",
         "parameters": [
           {
             "name": "sandboxId",
             "required": true,
             "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orgId",
+            "required": true,
+            "in": "path",
+            "description": "The organization ID",
             "schema": {
               "type": "string"
             }
@@ -217,19 +326,75 @@
               }
             }
           }
-        }
+        },
+        "summary": "Get Sandbox Details",
+        "tags": [
+          "Sandbox"
+        ]
       }
     },
-    "/api/orgs/{orgId}/sandboxes/{sandboxId}/actions/computer-use": {
+    "/api/orgs/{orgId}/sandboxes/{sandboxId}/extend": {
       "post": {
-        "operationId": "executeComputerUseAction",
-        "summary": "Execute Computer Use Action",
-        "description": "Executes a computer use action on the sandbox.",
+        "description": "Extends a sandbox by its ID.",
+        "operationId": "extendSandbox",
         "parameters": [
           {
             "name": "sandboxId",
             "required": true,
             "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orgId",
+            "required": true,
+            "in": "path",
+            "description": "The organization ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExtendSandboxDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Extend Sandbox",
+        "tags": [
+          "Sandbox"
+        ]
+      }
+    },
+    "/api/orgs/{orgId}/sandboxes/{sandboxId}/actions/computer-use": {
+      "post": {
+        "description": "Executes a computer use action on the sandbox.",
+        "operationId": "executeComputerUseAction",
+        "parameters": [
+          {
+            "name": "sandboxId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orgId",
+            "required": true,
+            "in": "path",
+            "description": "The organization ID",
             "schema": {
               "type": "string"
             }
@@ -256,19 +421,31 @@
               }
             }
           }
-        }
+        },
+        "summary": "Execute Computer Use Action",
+        "tags": [
+          "Sandbox"
+        ]
       }
     },
     "/api/orgs/{orgId}/sandboxes/{sandboxId}/preview": {
       "post": {
-        "operationId": "previewSandbox",
-        "summary": "Preview Sandbox",
         "description": "Takes a screenshot and gets cursor position of the sandbox.",
+        "operationId": "previewSandbox",
         "parameters": [
           {
             "name": "sandboxId",
             "required": true,
             "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orgId",
+            "required": true,
+            "in": "path",
+            "description": "The organization ID",
             "schema": {
               "type": "string"
             }
@@ -285,15 +462,28 @@
               }
             }
           }
-        }
+        },
+        "summary": "Preview Sandbox",
+        "tags": [
+          "Sandbox"
+        ]
       }
     },
     "/api/orgs/{orgId}/projects": {
       "get": {
-        "operationId": "listProjects",
-        "summary": "List Projects",
         "description": "Returns a list of projects for the organization.",
-        "parameters": [],
+        "operationId": "listProjects",
+        "parameters": [
+          {
+            "name": "orgId",
+            "required": true,
+            "in": "path",
+            "description": "The organization ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "",
@@ -305,13 +495,26 @@
               }
             }
           }
-        }
+        },
+        "summary": "List Projects",
+        "tags": [
+          "Project"
+        ]
       },
       "post": {
-        "operationId": "createProject",
-        "summary": "Create Project",
         "description": "Creates a new project.",
-        "parameters": [],
+        "operationId": "createProject",
+        "parameters": [
+          {
+            "name": "orgId",
+            "required": true,
+            "in": "path",
+            "description": "The organization ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -333,19 +536,31 @@
               }
             }
           }
-        }
+        },
+        "summary": "Create Project",
+        "tags": [
+          "Project"
+        ]
       }
     },
     "/api/orgs/{orgId}/projects/{projectId}": {
       "delete": {
-        "operationId": "deleteProject",
-        "summary": "Delete Project",
         "description": "Deletes a project by its ID.",
+        "operationId": "deleteProject",
         "parameters": [
           {
             "name": "projectId",
             "required": true,
             "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orgId",
+            "required": true,
+            "in": "path",
+            "description": "The organization ID",
             "schema": {
               "type": "string"
             }
@@ -355,14 +570,17 @@
           "200": {
             "description": ""
           }
-        }
+        },
+        "summary": "Delete Project",
+        "tags": [
+          "Project"
+        ]
       }
     },
     "/api/computer-use/parse": {
       "post": {
-        "operationId": "parseModelOutput",
-        "summary": "Parse LLM Output",
         "description": "Parses the output text of computer use model and returns the parsed actions.",
+        "operationId": "parseModelOutput",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -385,15 +603,28 @@
               }
             }
           }
-        }
+        },
+        "summary": "Parse LLM Output",
+        "tags": [
+          "ComputerUse"
+        ]
       }
     },
     "/api/orgs/{orgId}/stats": {
       "get": {
-        "operationId": "getStats",
-        "summary": "Get Organization Stats",
         "description": "Returns the stats of the organization, such as number of members, computers, etc.",
-        "parameters": [],
+        "operationId": "getStats",
+        "parameters": [
+          {
+            "name": "orgId",
+            "required": true,
+            "in": "path",
+            "description": "The organization ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "",
@@ -405,7 +636,11 @@
               }
             }
           }
-        }
+        },
+        "summary": "Get Organization Stats",
+        "tags": [
+          "Dashboard"
+        ]
       }
     }
   },
@@ -640,8 +875,14 @@
             "name": {
               "type": "string"
             },
-            "expiredAt": {},
-            "createdAt": {},
+            "expiredAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "createdAt": {
+              "type": "string",
+              "format": "date-time"
+            },
             "projectId": {
               "type": "string"
             }
@@ -698,8 +939,14 @@
               "name": {
                 "type": "string"
               },
-              "expiredAt": {},
-              "createdAt": {},
+              "expiredAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time"
+              },
               "projectId": {
                 "type": "string"
               }
@@ -807,11 +1054,25 @@
           "connectDetails"
         ]
       },
+      "ExtendSandboxDto": {
+        "type": "object",
+        "properties": {
+          "maxLifeSeconds": {
+            "description": "The maximum life time of the sandbox in seconds. Default is 1 hour, max is 1 year.",
+            "type": "number",
+            "minimum": 1,
+            "exclusiveMinimum": false,
+            "maximum": 31536000,
+            "exclusiveMaximum": false,
+            "default": 3600
+          }
+        }
+      },
       "ComputerUseActionDto": {
         "type": "object",
         "properties": {
           "action": {
-            "description": "All possible computer use actions, with optional callId",
+            "description": "All possible computer use actions",
             "oneOf": [
               {
                 "description": "Click the mouse at the specified coordinates",
@@ -822,6 +1083,10 @@
                     "enum": [
                       "mouse:click"
                     ]
+                  },
+                  "callId": {
+                    "description": "Optional call identifier",
+                    "type": "string"
                   },
                   "x": {
                     "description": "X coordinate",
@@ -836,6 +1101,10 @@
                             "enum": [
                               "px"
                             ]
+                          },
+                          "callId": {
+                            "description": "Optional call identifier",
+                            "type": "string"
                           },
                           "value": {
                             "description": "Length in pixels",
@@ -856,6 +1125,10 @@
                             "enum": [
                               "/"
                             ]
+                          },
+                          "callId": {
+                            "description": "Optional call identifier",
+                            "type": "string"
                           },
                           "numerator": {
                             "description": "Numerator of the fraction",
@@ -888,6 +1161,10 @@
                               "px"
                             ]
                           },
+                          "callId": {
+                            "description": "Optional call identifier",
+                            "type": "string"
+                          },
                           "value": {
                             "description": "Length in pixels",
                             "type": "number"
@@ -907,6 +1184,10 @@
                             "enum": [
                               "/"
                             ]
+                          },
+                          "callId": {
+                            "description": "Optional call identifier",
+                            "type": "string"
                           },
                           "numerator": {
                             "description": "Numerator of the fraction",
@@ -951,6 +1232,10 @@
                       "mouse:doubleClick"
                     ]
                   },
+                  "callId": {
+                    "description": "Optional call identifier",
+                    "type": "string"
+                  },
                   "x": {
                     "description": "X coordinate",
                     "oneOf": [
@@ -964,6 +1249,10 @@
                             "enum": [
                               "px"
                             ]
+                          },
+                          "callId": {
+                            "description": "Optional call identifier",
+                            "type": "string"
                           },
                           "value": {
                             "description": "Length in pixels",
@@ -984,6 +1273,10 @@
                             "enum": [
                               "/"
                             ]
+                          },
+                          "callId": {
+                            "description": "Optional call identifier",
+                            "type": "string"
                           },
                           "numerator": {
                             "description": "Numerator of the fraction",
@@ -1016,6 +1309,10 @@
                               "px"
                             ]
                           },
+                          "callId": {
+                            "description": "Optional call identifier",
+                            "type": "string"
+                          },
                           "value": {
                             "description": "Length in pixels",
                             "type": "number"
@@ -1035,6 +1332,10 @@
                             "enum": [
                               "/"
                             ]
+                          },
+                          "callId": {
+                            "description": "Optional call identifier",
+                            "type": "string"
                           },
                           "numerator": {
                             "description": "Numerator of the fraction",
@@ -1079,6 +1380,10 @@
                       "mouse:move"
                     ]
                   },
+                  "callId": {
+                    "description": "Optional call identifier",
+                    "type": "string"
+                  },
                   "x": {
                     "description": "X coordinate",
                     "oneOf": [
@@ -1092,6 +1397,10 @@
                             "enum": [
                               "px"
                             ]
+                          },
+                          "callId": {
+                            "description": "Optional call identifier",
+                            "type": "string"
                           },
                           "value": {
                             "description": "Length in pixels",
@@ -1112,6 +1421,10 @@
                             "enum": [
                               "/"
                             ]
+                          },
+                          "callId": {
+                            "description": "Optional call identifier",
+                            "type": "string"
                           },
                           "numerator": {
                             "description": "Numerator of the fraction",
@@ -1144,6 +1457,10 @@
                               "px"
                             ]
                           },
+                          "callId": {
+                            "description": "Optional call identifier",
+                            "type": "string"
+                          },
                           "value": {
                             "description": "Length in pixels",
                             "type": "number"
@@ -1163,6 +1480,10 @@
                             "enum": [
                               "/"
                             ]
+                          },
+                          "callId": {
+                            "description": "Optional call identifier",
+                            "type": "string"
                           },
                           "numerator": {
                             "description": "Numerator of the fraction",
@@ -1202,6 +1523,10 @@
                       "mouse:scroll"
                     ]
                   },
+                  "callId": {
+                    "description": "Optional call identifier",
+                    "type": "string"
+                  },
                   "x": {
                     "description": "X coordinate",
                     "oneOf": [
@@ -1215,6 +1540,10 @@
                             "enum": [
                               "px"
                             ]
+                          },
+                          "callId": {
+                            "description": "Optional call identifier",
+                            "type": "string"
                           },
                           "value": {
                             "description": "Length in pixels",
@@ -1235,6 +1564,10 @@
                             "enum": [
                               "/"
                             ]
+                          },
+                          "callId": {
+                            "description": "Optional call identifier",
+                            "type": "string"
                           },
                           "numerator": {
                             "description": "Numerator of the fraction",
@@ -1267,6 +1600,10 @@
                               "px"
                             ]
                           },
+                          "callId": {
+                            "description": "Optional call identifier",
+                            "type": "string"
+                          },
                           "value": {
                             "description": "Length in pixels",
                             "type": "number"
@@ -1286,6 +1623,10 @@
                             "enum": [
                               "/"
                             ]
+                          },
+                          "callId": {
+                            "description": "Optional call identifier",
+                            "type": "string"
                           },
                           "numerator": {
                             "description": "Numerator of the fraction",
@@ -1335,6 +1676,10 @@
                       "mouse:drag"
                     ]
                   },
+                  "callId": {
+                    "description": "Optional call identifier",
+                    "type": "string"
+                  },
                   "startX": {
                     "description": "Start X coordinate",
                     "oneOf": [
@@ -1348,6 +1693,10 @@
                             "enum": [
                               "px"
                             ]
+                          },
+                          "callId": {
+                            "description": "Optional call identifier",
+                            "type": "string"
                           },
                           "value": {
                             "description": "Length in pixels",
@@ -1368,6 +1717,10 @@
                             "enum": [
                               "/"
                             ]
+                          },
+                          "callId": {
+                            "description": "Optional call identifier",
+                            "type": "string"
                           },
                           "numerator": {
                             "description": "Numerator of the fraction",
@@ -1400,6 +1753,10 @@
                               "px"
                             ]
                           },
+                          "callId": {
+                            "description": "Optional call identifier",
+                            "type": "string"
+                          },
                           "value": {
                             "description": "Length in pixels",
                             "type": "number"
@@ -1419,6 +1776,10 @@
                             "enum": [
                               "/"
                             ]
+                          },
+                          "callId": {
+                            "description": "Optional call identifier",
+                            "type": "string"
                           },
                           "numerator": {
                             "description": "Numerator of the fraction",
@@ -1451,6 +1812,10 @@
                               "px"
                             ]
                           },
+                          "callId": {
+                            "description": "Optional call identifier",
+                            "type": "string"
+                          },
                           "value": {
                             "description": "Length in pixels",
                             "type": "number"
@@ -1470,6 +1835,10 @@
                             "enum": [
                               "/"
                             ]
+                          },
+                          "callId": {
+                            "description": "Optional call identifier",
+                            "type": "string"
                           },
                           "numerator": {
                             "description": "Numerator of the fraction",
@@ -1502,6 +1871,10 @@
                               "px"
                             ]
                           },
+                          "callId": {
+                            "description": "Optional call identifier",
+                            "type": "string"
+                          },
                           "value": {
                             "description": "Length in pixels",
                             "type": "number"
@@ -1521,6 +1894,10 @@
                             "enum": [
                               "/"
                             ]
+                          },
+                          "callId": {
+                            "description": "Optional call identifier",
+                            "type": "string"
                           },
                           "numerator": {
                             "description": "Numerator of the fraction",
@@ -1562,6 +1939,10 @@
                       "keyboard:type"
                     ]
                   },
+                  "callId": {
+                    "description": "Optional call identifier",
+                    "type": "string"
+                  },
                   "content": {
                     "description": "Text content to type",
                     "type": "string"
@@ -1588,6 +1969,10 @@
                     "enum": [
                       "keyboard:hotkey"
                     ]
+                  },
+                  "callId": {
+                    "description": "Optional call identifier",
+                    "type": "string"
                   },
                   "keys": {
                     "description": "Hotkey combination, in xdotool key syntax. Examples: \"a\", \"Return\", \"alt+Tab\", \"ctrl+s\", \"Up\", \"KP_0\" (for the numpad 0 key).",
@@ -1616,6 +2001,10 @@
                     "enum": [
                       "screenshot"
                     ]
+                  },
+                  "callId": {
+                    "description": "Optional call identifier",
+                    "type": "string"
                   }
                 },
                 "required": [
@@ -1631,6 +2020,10 @@
                     "enum": [
                       "wait"
                     ]
+                  },
+                  "callId": {
+                    "description": "Optional call identifier",
+                    "type": "string"
                   },
                   "duration": {
                     "description": "Duration in milliseconds",
@@ -1652,6 +2045,10 @@
                       "finished"
                     ]
                   },
+                  "callId": {
+                    "description": "Optional call identifier",
+                    "type": "string"
+                  },
                   "message": {
                     "description": "Completion message",
                     "type": "string"
@@ -1671,6 +2068,10 @@
                       "failed"
                     ]
                   },
+                  "callId": {
+                    "description": "Optional call identifier",
+                    "type": "string"
+                  },
                   "message": {
                     "description": "Failure message",
                     "type": "string"
@@ -1679,15 +2080,27 @@
                 "required": [
                   "type"
                 ]
+              },
+              {
+                "description": "Indicates the human user should take over the control",
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "client:user-takeover"
+                    ]
+                  },
+                  "callId": {
+                    "description": "Optional call identifier",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "type"
+                ]
               }
-            ],
-            "type": "object",
-            "properties": {
-              "callId": {
-                "description": "Optional call identifier",
-                "type": "string"
-              }
-            }
+            ]
           },
           "includeScreenShot": {
             "description": "Whether to include the screenshot url after action in the response",
@@ -1815,6 +2228,7 @@
             "type": "string",
             "enum": [
               "ui-tars",
+              "seed",
               "oai-compute-use"
             ]
           },
@@ -1834,7 +2248,7 @@
           "actions": {
             "type": "array",
             "items": {
-              "description": "All possible computer use actions, with optional callId",
+              "description": "All possible computer use actions",
               "oneOf": [
                 {
                   "description": "Click the mouse at the specified coordinates",
@@ -1845,6 +2259,10 @@
                       "enum": [
                         "mouse:click"
                       ]
+                    },
+                    "callId": {
+                      "description": "Optional call identifier",
+                      "type": "string"
                     },
                     "x": {
                       "description": "X coordinate",
@@ -1859,6 +2277,10 @@
                               "enum": [
                                 "px"
                               ]
+                            },
+                            "callId": {
+                              "description": "Optional call identifier",
+                              "type": "string"
                             },
                             "value": {
                               "description": "Length in pixels",
@@ -1879,6 +2301,10 @@
                               "enum": [
                                 "/"
                               ]
+                            },
+                            "callId": {
+                              "description": "Optional call identifier",
+                              "type": "string"
                             },
                             "numerator": {
                               "description": "Numerator of the fraction",
@@ -1911,6 +2337,10 @@
                                 "px"
                               ]
                             },
+                            "callId": {
+                              "description": "Optional call identifier",
+                              "type": "string"
+                            },
                             "value": {
                               "description": "Length in pixels",
                               "type": "number"
@@ -1930,6 +2360,10 @@
                               "enum": [
                                 "/"
                               ]
+                            },
+                            "callId": {
+                              "description": "Optional call identifier",
+                              "type": "string"
                             },
                             "numerator": {
                               "description": "Numerator of the fraction",
@@ -1974,6 +2408,10 @@
                         "mouse:doubleClick"
                       ]
                     },
+                    "callId": {
+                      "description": "Optional call identifier",
+                      "type": "string"
+                    },
                     "x": {
                       "description": "X coordinate",
                       "oneOf": [
@@ -1987,6 +2425,10 @@
                               "enum": [
                                 "px"
                               ]
+                            },
+                            "callId": {
+                              "description": "Optional call identifier",
+                              "type": "string"
                             },
                             "value": {
                               "description": "Length in pixels",
@@ -2007,6 +2449,10 @@
                               "enum": [
                                 "/"
                               ]
+                            },
+                            "callId": {
+                              "description": "Optional call identifier",
+                              "type": "string"
                             },
                             "numerator": {
                               "description": "Numerator of the fraction",
@@ -2039,6 +2485,10 @@
                                 "px"
                               ]
                             },
+                            "callId": {
+                              "description": "Optional call identifier",
+                              "type": "string"
+                            },
                             "value": {
                               "description": "Length in pixels",
                               "type": "number"
@@ -2058,6 +2508,10 @@
                               "enum": [
                                 "/"
                               ]
+                            },
+                            "callId": {
+                              "description": "Optional call identifier",
+                              "type": "string"
                             },
                             "numerator": {
                               "description": "Numerator of the fraction",
@@ -2102,6 +2556,10 @@
                         "mouse:move"
                       ]
                     },
+                    "callId": {
+                      "description": "Optional call identifier",
+                      "type": "string"
+                    },
                     "x": {
                       "description": "X coordinate",
                       "oneOf": [
@@ -2115,6 +2573,10 @@
                               "enum": [
                                 "px"
                               ]
+                            },
+                            "callId": {
+                              "description": "Optional call identifier",
+                              "type": "string"
                             },
                             "value": {
                               "description": "Length in pixels",
@@ -2135,6 +2597,10 @@
                               "enum": [
                                 "/"
                               ]
+                            },
+                            "callId": {
+                              "description": "Optional call identifier",
+                              "type": "string"
                             },
                             "numerator": {
                               "description": "Numerator of the fraction",
@@ -2167,6 +2633,10 @@
                                 "px"
                               ]
                             },
+                            "callId": {
+                              "description": "Optional call identifier",
+                              "type": "string"
+                            },
                             "value": {
                               "description": "Length in pixels",
                               "type": "number"
@@ -2186,6 +2656,10 @@
                               "enum": [
                                 "/"
                               ]
+                            },
+                            "callId": {
+                              "description": "Optional call identifier",
+                              "type": "string"
                             },
                             "numerator": {
                               "description": "Numerator of the fraction",
@@ -2225,6 +2699,10 @@
                         "mouse:scroll"
                       ]
                     },
+                    "callId": {
+                      "description": "Optional call identifier",
+                      "type": "string"
+                    },
                     "x": {
                       "description": "X coordinate",
                       "oneOf": [
@@ -2238,6 +2716,10 @@
                               "enum": [
                                 "px"
                               ]
+                            },
+                            "callId": {
+                              "description": "Optional call identifier",
+                              "type": "string"
                             },
                             "value": {
                               "description": "Length in pixels",
@@ -2258,6 +2740,10 @@
                               "enum": [
                                 "/"
                               ]
+                            },
+                            "callId": {
+                              "description": "Optional call identifier",
+                              "type": "string"
                             },
                             "numerator": {
                               "description": "Numerator of the fraction",
@@ -2290,6 +2776,10 @@
                                 "px"
                               ]
                             },
+                            "callId": {
+                              "description": "Optional call identifier",
+                              "type": "string"
+                            },
                             "value": {
                               "description": "Length in pixels",
                               "type": "number"
@@ -2309,6 +2799,10 @@
                               "enum": [
                                 "/"
                               ]
+                            },
+                            "callId": {
+                              "description": "Optional call identifier",
+                              "type": "string"
                             },
                             "numerator": {
                               "description": "Numerator of the fraction",
@@ -2358,6 +2852,10 @@
                         "mouse:drag"
                       ]
                     },
+                    "callId": {
+                      "description": "Optional call identifier",
+                      "type": "string"
+                    },
                     "startX": {
                       "description": "Start X coordinate",
                       "oneOf": [
@@ -2371,6 +2869,10 @@
                               "enum": [
                                 "px"
                               ]
+                            },
+                            "callId": {
+                              "description": "Optional call identifier",
+                              "type": "string"
                             },
                             "value": {
                               "description": "Length in pixels",
@@ -2391,6 +2893,10 @@
                               "enum": [
                                 "/"
                               ]
+                            },
+                            "callId": {
+                              "description": "Optional call identifier",
+                              "type": "string"
                             },
                             "numerator": {
                               "description": "Numerator of the fraction",
@@ -2423,6 +2929,10 @@
                                 "px"
                               ]
                             },
+                            "callId": {
+                              "description": "Optional call identifier",
+                              "type": "string"
+                            },
                             "value": {
                               "description": "Length in pixels",
                               "type": "number"
@@ -2442,6 +2952,10 @@
                               "enum": [
                                 "/"
                               ]
+                            },
+                            "callId": {
+                              "description": "Optional call identifier",
+                              "type": "string"
                             },
                             "numerator": {
                               "description": "Numerator of the fraction",
@@ -2474,6 +2988,10 @@
                                 "px"
                               ]
                             },
+                            "callId": {
+                              "description": "Optional call identifier",
+                              "type": "string"
+                            },
                             "value": {
                               "description": "Length in pixels",
                               "type": "number"
@@ -2493,6 +3011,10 @@
                               "enum": [
                                 "/"
                               ]
+                            },
+                            "callId": {
+                              "description": "Optional call identifier",
+                              "type": "string"
                             },
                             "numerator": {
                               "description": "Numerator of the fraction",
@@ -2525,6 +3047,10 @@
                                 "px"
                               ]
                             },
+                            "callId": {
+                              "description": "Optional call identifier",
+                              "type": "string"
+                            },
                             "value": {
                               "description": "Length in pixels",
                               "type": "number"
@@ -2544,6 +3070,10 @@
                               "enum": [
                                 "/"
                               ]
+                            },
+                            "callId": {
+                              "description": "Optional call identifier",
+                              "type": "string"
                             },
                             "numerator": {
                               "description": "Numerator of the fraction",
@@ -2585,6 +3115,10 @@
                         "keyboard:type"
                       ]
                     },
+                    "callId": {
+                      "description": "Optional call identifier",
+                      "type": "string"
+                    },
                     "content": {
                       "description": "Text content to type",
                       "type": "string"
@@ -2611,6 +3145,10 @@
                       "enum": [
                         "keyboard:hotkey"
                       ]
+                    },
+                    "callId": {
+                      "description": "Optional call identifier",
+                      "type": "string"
                     },
                     "keys": {
                       "description": "Hotkey combination, in xdotool key syntax. Examples: \"a\", \"Return\", \"alt+Tab\", \"ctrl+s\", \"Up\", \"KP_0\" (for the numpad 0 key).",
@@ -2639,6 +3177,10 @@
                       "enum": [
                         "screenshot"
                       ]
+                    },
+                    "callId": {
+                      "description": "Optional call identifier",
+                      "type": "string"
                     }
                   },
                   "required": [
@@ -2654,6 +3196,10 @@
                       "enum": [
                         "wait"
                       ]
+                    },
+                    "callId": {
+                      "description": "Optional call identifier",
+                      "type": "string"
                     },
                     "duration": {
                       "description": "Duration in milliseconds",
@@ -2675,6 +3221,10 @@
                         "finished"
                       ]
                     },
+                    "callId": {
+                      "description": "Optional call identifier",
+                      "type": "string"
+                    },
                     "message": {
                       "description": "Completion message",
                       "type": "string"
@@ -2694,6 +3244,10 @@
                         "failed"
                       ]
                     },
+                    "callId": {
+                      "description": "Optional call identifier",
+                      "type": "string"
+                    },
                     "message": {
                       "description": "Failure message",
                       "type": "string"
@@ -2702,16 +3256,36 @@
                   "required": [
                     "type"
                   ]
+                },
+                {
+                  "description": "Indicates the human user should take over the control",
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "client:user-takeover"
+                      ]
+                    },
+                    "callId": {
+                      "description": "Optional call identifier",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "type"
+                  ]
                 }
-              ],
-              "type": "object",
-              "properties": {
-                "callId": {
-                  "description": "Optional call identifier",
-                  "type": "string"
-                }
-              }
+              ]
             }
+          },
+          "unknown": {
+            "description": "Unknown text that is not thoughts nor actions, commonly due to the misformat of model output",
+            "type": "string"
+          },
+          "thoughts": {
+            "description": "Thoughts that are not parsed",
+            "type": "string"
           }
         },
         "required": [
