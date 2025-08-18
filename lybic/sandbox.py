@@ -129,16 +129,12 @@ class Sandbox:
         self.client.logger.debug(f"Previewed sandbox {sandbox_id}")
         return dto.SandboxActionResponseDto.model_validate_json(response.text)
 
-    async def get_connection_details(self, sandbox_id: str)-> dto.SandboxConnectionDetail:
+    async def get_connection_details(self, sandbox_id: str)-> dto.ConnectDetails:
         """
         Get connection details for a sandbox
         """
-        self.client.logger.debug(f"Getting connection details for sandbox {sandbox_id}")
-        response =  await self.client.request(
-            "GET",
-            f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}")
-        self.client.logger.debug(f"Got connection details for sandbox {sandbox_id}")
-        return dto.SandboxConnectionDetail.model_validate_json(response.text)
+        sandbox = await self.get(sandbox_id)
+        return sandbox.connectDetails
 
     async def get_screenshot(self, sandbox_id: str) -> Tuple[str, Image.Image, str]:
         """

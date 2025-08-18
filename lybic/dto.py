@@ -491,10 +491,6 @@ class SingleProjectResponseDto(ProjectResponseDto):
     Response DTO for a single project.
     """
 
-class SandboxConnectionDetail(SandboxListItem):
-    """
-    Represents the connection details for a sandbox, inheriting from SandboxListItem.
-    """
 
 class SetMcpServerToSandboxResponseDto(BaseModel):
     """
