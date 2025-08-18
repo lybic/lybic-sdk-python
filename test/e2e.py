@@ -117,13 +117,12 @@ async def test_computer_use(client:LybicClient):
     ))
 
 # pylint: disable=eval-used,fixme
-async def test_pyautogui(client:LybicClient):
+def test_pyautogui(client:LybicClient):
     """
     Test Pyautogui
     :param client:
     :return:
     """
-    await Sandbox(client).create(name='test_pyautogui')
     pyautogui = Pyautogui(client, sandbox_id='test_pyautogui')
 
     print("Test pyautogui.click without position arguments.")
@@ -145,10 +144,12 @@ async def test_pyautogui(client:LybicClient):
     expression = 'pyautogui.click(x=1443, y=343)'
     eval(expression)
 
+    pyautogui.close()
 
-async def main() -> None:
+
+async def restful_test() -> None:
     """
-    Core test main
+    Core restful api test
     """
     async with LybicClient() as client:
         tasks = [
@@ -157,9 +158,12 @@ async def main() -> None:
             asyncio.create_task(test_sandbox(client)),
             asyncio.create_task(test_mcp(client)),
             asyncio.create_task(test_computer_use(client)),
-            asyncio.create_task(test_pyautogui(client)),
+            asyncio.create_task(Sandbox(client).create(name='test_pyautogui'))
         ]
         await asyncio.gather(*tasks)
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    # test restful api(asynchronize_test)
+    asyncio.run(restful_test())
+    # test pyautogui(synchronize_test)
+    test_pyautogui(LybicClient())
