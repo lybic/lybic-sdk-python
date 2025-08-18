@@ -34,23 +34,38 @@ from lybic import (Project,
                    Stats, Pyautogui)
 
 async def test_stats(client:LybicClient):
+    """
+    Test Restful API Class: Stats
+    :param client:
+    :return:
+    """
     stats = Stats(client)
     result =  await stats.get()
     print(result)
 
 async def test_project(client:LybicClient):
+    """
+    Test Restful API Class: Project
+    :param client:
+    :return:
+    """
     project = Project(client)
-    print("Test List Project")
-    result = await project.list()
-    print("Result:",result)
-    print("Test Create Project")
+    print("Test List Project:",await project.list())
+    print("Test Create Project:",)
     result = await project.create(name='test_project')
     print("Result:",result)
     print("Test Delete Project")
     await project.delete(result.id)
 
 async def test_sandbox(client:LybicClient):
+    """
+    Test Restful API Class: Sandbox
+    :param client:
+    :return:
+    """
+    await Project(client).create(name='test_sandbox')
     sandbox = Sandbox(client)
+
     print("Test List Sandbox:",await sandbox.list())
     print("Test Create Sandbox:",await sandbox.create(name="test_sandbox"))
 
@@ -64,7 +79,14 @@ async def test_sandbox(client:LybicClient):
     # print("Test Get Sandbox screenshot",await sandbox.get_screenshot(result.sandbox.id))
 
 async def test_mcp(client:LybicClient):
+    """
+    Test Restful API Class: MCP
+    :param client:
+    :return:
+    """
+    await Sandbox(client).create(name='test_mcp')
     mcp = MCP(client)
+
     print("Test List MCP:",await mcp.list())
     print("Test Create MCP:",await mcp.create(name="test_mcp"))
     print("Test Delete MCP",await mcp.delete("test_mcp"))
@@ -72,7 +94,14 @@ async def test_mcp(client:LybicClient):
     # print("Test Call MCP Tool",await mcp.call_tool_async("test_mcp"))
 
 async def test_computer_use(client:LybicClient):
+    """
+    Test Restful API Class: ComputerUse
+    :param client:
+    :return:
+    """
+    await Sandbox(client).create(name='test_computer_use')
     computer_use = ComputerUse(client)
+
     print("Test parse model output:")
     action = await computer_use.parse_model_output(
         model="seed",
@@ -83,12 +112,20 @@ async def test_computer_use(client:LybicClient):
 
     sandbox = Sandbox(client)
     print("Execute computer use action:",await sandbox.execute_computer_use_action(
-        sandbox_id='test',
+        sandbox_id='test_computer_use',
         action=action.actions[0]
     ))
 
+# pylint: disable=eval-used,fixme
 async def test_pyautogui(client:LybicClient):
-    pyautogui = Pyautogui(client, sandbox_id='test')
+    """
+    Test Pyautogui
+    :param client:
+    :return:
+    """
+    await Sandbox(client).create(name='test_pyautogui')
+    pyautogui = Pyautogui(client, sandbox_id='test_pyautogui')
+
     print("Test pyautogui.click without position arguments.")
     pyautogui.click()
     print("Test pyautogui.click with position arguments.")
@@ -110,11 +147,10 @@ async def test_pyautogui(client:LybicClient):
 
 
 async def main() -> None:
-    async with LybicClient(
-        org_id="test",
-        api_key="test",
-        endpoint="http://127.0.0.1:4010"
-    ) as client:
+    """
+    Core test main
+    """
+    async with LybicClient() as client:
         tasks = [
             asyncio.create_task(test_stats(client)),
             asyncio.create_task(test_project(client)),
