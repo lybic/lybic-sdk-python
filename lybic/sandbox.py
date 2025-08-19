@@ -130,10 +130,12 @@ class Sandbox:
         return dto.SandboxActionResponseDto.model_validate_json(response.text)
 
     async def extend_life(self, sandbox_id: str, seconds: int = 3600) -> None:
-        """
-        Extend life of a sandbox
+        """Extend the life of a sandbox.
 
-        The maximum life time of the sandbox in seconds. Default is 1 hour, max is 1 year.
+        Args:
+            sandbox_id: The ID of the sandbox to extend.
+            seconds: The duration in seconds to extend the sandbox's life.
+                     Default is 3600 (1 hour), max is 31536000 (1 year).
         """
         self.client.logger.debug(f"Extending life of sandbox {sandbox_id}")
         data = dto.ExtendSandboxDto(maxLifeSeconds=seconds)
