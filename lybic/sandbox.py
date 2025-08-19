@@ -129,6 +129,19 @@ class Sandbox:
         self.client.logger.debug(f"Previewed sandbox {sandbox_id}")
         return dto.SandboxActionResponseDto.model_validate_json(response.text)
 
+    async def extend_life(self, sandbox_id: str, seconds: int = 3600) -> None:
+        """
+        Extend life of a sandbox
+
+        The maximum life time of the sandbox in seconds. Default is 1 hour, max is 1 year.
+        """
+        self.client.logger.debug(f"Extending life of sandbox {sandbox_id}")
+        data = dto.ExtendSandboxDto(maxLifeSeconds=seconds)
+        await self.client.request(
+            "POST",
+            f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/extend",
+            json=data.model_dump())
+
     async def get_connection_details(self, sandbox_id: str)-> dto.ConnectDetails:
         """
         Get connection details for a sandbox

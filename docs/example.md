@@ -472,3 +472,20 @@ This interface enables `Planner` to perform actions on the sandbox through Restf
    print(f"Screenshot URL: {url}")
    image.show()
    ```
+
+6. Extend a sandbox's lifetime
+
+    method: `extend_life(sandbox_id: str, seconds: int)`
+    - args:
+    - *sandbox_id: str ID of the sandbox
+    - *seconds: int Lifetime in seconds to extend the sandbox's lifetime(default: 3600 s, 1 hour,max: 31536000 s, 1 year)
+    - return: None(if successful)
+
+    ```python
+    import asyncio
+    from lybic import Sandbox
+   
+    # Inside your async main function, with the client initialized:
+    sandbox = Sandbox(client)
+    await sandbox.extend_life(sandbox_id="SBX-xxxx", seconds=3600)
+    ```
