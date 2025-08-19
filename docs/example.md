@@ -478,7 +478,7 @@ This interface enables `Planner` to perform actions on the sandbox through Restf
     method: `extend_life(sandbox_id: str, seconds: int)`
     - args:
       - *sandbox_id: str ID of the sandbox
-      - *seconds: int Lifetime in seconds to extend the sandbox's lifetime (default: 3600 s, 1 hour, max: 31536000 s, 1 year)
+      - *seconds: int Lifetime in seconds to extend the sandbox's lifetime (default: 3600 s, 1 hour, max: 86400 s, 1 day)
     - return: None(if successful)
 
     ```python

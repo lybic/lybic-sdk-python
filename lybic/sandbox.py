@@ -135,7 +135,10 @@ class Sandbox:
         Args:
             sandbox_id: The ID of the sandbox to extend.
             seconds: The duration in seconds to extend the sandbox's life.
-                     Default is 3600 (1 hour), max is 31536000 (1 year).
+                     Default is 3600 (1 hour), max is 86400 (1 day).
+                     The new max life time of the sandbox (relative to the current time) in seconds. Should not less
+                     than 30 seconds or more than 24 hours. Note that the total maximum lifetime of a sandbox should
+                     not longer than 13 days.
         """
         self.client.logger.debug(f"Extending life of sandbox {sandbox_id}")
         data = dto.ExtendSandboxDto(maxLifeSeconds=seconds)
