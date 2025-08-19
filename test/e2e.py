@@ -75,6 +75,7 @@ async def test_sandbox(client:LybicClient):
 
     print("Test Delete Sandbox",await sandbox.delete(result.sandbox.id))
     print("Test Get Sandbox preview info",await sandbox.preview(result.sandbox.id))
+    print("Test Extend Sandbox",await sandbox.extend_life(result.sandbox.id))
     print("Test Get Sandbox connection details",await sandbox.get_connection_details(result.sandbox.id))
     # print("Test Get Sandbox screenshot",await sandbox.get_screenshot(result.sandbox.id))
 
