@@ -433,7 +433,7 @@ class ExtendSandboxDto(BaseModel):
     """
     Extend sandbox life request.
     """
-    maxLifeSeconds: int =  Field(3600, description="Max life seconds of sandbox")
+    maxLifeSeconds: int = Field(3600, description="Max life seconds of sandbox", ge=1, le=31536000)
 
 class SandboxActionResponseDto(BaseModel):
     """
