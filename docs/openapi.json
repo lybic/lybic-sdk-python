@@ -335,7 +335,7 @@
     },
     "/api/orgs/{orgId}/sandboxes/{sandboxId}/extend": {
       "post": {
-        "description": "Extends a sandbox by its ID.",
+        "description": "Extends a sandbox expire time by its ID.",
         "operationId": "extendSandbox",
         "parameters": [
           {
