@@ -60,7 +60,7 @@ jobs:
           gh pr create \
             --title "feat: Update OpenAPI Specification" \
             --body "This is an automated PR to sync the OpenAPI specification from [lybic.ai](https://lybic.ai/docs/openapi.json)." \
-            --base "main" \
+            --base "master" \
             --head "update-openapi-json"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
