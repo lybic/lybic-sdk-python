@@ -1,0 +1,66 @@
+# .github/workflows/sync-openapi.yml
+name: Sync OpenAPI Spec
+
+on:
+  workflow_dispatch: # Allows manual triggering
+  schedule:
+    - cron: '0 0 * * *' # Runs at 00:00 UTC every day
+
+jobs:
+  sync-spec:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Check for existing Pull Request
+        id: check_pr
+        run: |
+          PR_COUNT=$(gh pr list --head "update-openapi-json" --json number | jq length)
+          if [ "$PR_COUNT" -gt 0 ]; then
+            echo "An update PR already exists. Skipping workflow."
+            echo "stop_workflow=true" >> $GITHUB_OUTPUT
+          else
+            echo "No existing update PR found. Proceeding."
+            echo "stop_workflow=false" >> $GITHUB_OUTPUT
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download latest OpenAPI spec and compare
+        if: steps.check_pr.outputs.stop_workflow == 'false'
+        id: compare
+        run: |
+          curl -s -o openapi_new.json https://lybic.ai/docs/openapi.json
+          
+          # Use diff -q to quietly check for differences.
+          # If files are different, diff exits with 1, triggering the 'if' block.
+          if ! diff -q docs/openapi.json openapi_new.json; then
+            echo "OpenAPI spec has changed. An update is needed."
+            echo "needs_update=true" >> $GITHUB_OUTPUT
+            # Replace the old file with the new one for commit
+            mv openapi_new.json docs/openapi.json
+          else
+            echo "OpenAPI spec is up-to-date."
+            echo "needs_update=false" >> $GITHUB_OUTPUT
+            rm openapi_new.json
+          fi
+
+      - name: Create Pull Request
+        if: steps.compare.outputs.needs_update == 'true'
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          
+          git checkout -b update-openapi-json
+          git add docs/openapi.json
+          git commit -m "feat: Update OpenAPI specification" -m "Automated update of openapi.json from lybic.ai."
+          git push origin update-openapi-json
+          
+          gh pr create \
+            --title "feat: Update OpenAPI Specification" \
+            --body "This is an automated PR to sync the OpenAPI specification from [lybic.ai](https://lybic.ai/docs/openapi.json)." \
+            --base "main" \
+            --head "update-openapi-json"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

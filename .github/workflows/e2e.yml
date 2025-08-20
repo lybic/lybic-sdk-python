@@ -37,12 +37,9 @@ jobs:
         run: |
           set -e 
           npm install -g @stoplight/prism-cli
-      - name: Get Api Doc
-        run: |
-          set -e 
-          wget https://lybic.ai/docs/openapi.json
+
       - name: Run Mock Server
-        run: prism mock ./openapi.json &
+        run: prism mock docs/openapi.json &
       - name: Wait for Mock Server
         run: sleep 5
       - name: Run Tests
