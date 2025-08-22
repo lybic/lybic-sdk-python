@@ -429,6 +429,11 @@ class CursorPosition(BaseModel):
     screenHeight: int
     screenIndex: int
 
+class ExtendSandboxDto(BaseModel):
+    """
+    Extend sandbox life request.
+    """
+    maxLifeSeconds: int = Field(3600, description="Max life seconds of sandbox", ge=30, le=60*60*24)
 
 class SandboxActionResponseDto(BaseModel):
     """
