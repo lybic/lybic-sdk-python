@@ -7,11 +7,15 @@ on:
     paths:
       - 'lybic/**/*.py'
       - 'test/**/*.py'
+      - 'requirements.txt'
+      - 'Makefile'
   pull_request:
     branches: [ "master" ]
     paths:
       - 'lybic/**/*.py'
       - 'test/**/*.py'
+      - 'requirements.txt'
+      - 'Makefile'
 jobs:
   build:
     runs-on: ubuntu-latest
