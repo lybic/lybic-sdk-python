@@ -158,7 +158,7 @@ class Sandbox:
         """
         Get screenshot of a sandbox
 
-        Return screenShot_Url, screenshot_image, base64_str
+        Return screenShot_url, screenshot_image, base64_str(utf-8 encode)
         """
         result = await self.preview(sandbox_id)
         screenshot_url = result.screenShot
