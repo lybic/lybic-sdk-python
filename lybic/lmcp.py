@@ -138,7 +138,7 @@ class MCP:
         try:
             async with streamablehttp_client(self.client.make_mcp_endpoint(mcp_server_id),
                                              headers=self.client.headers,
-                                             timeout=30
+                                             timeout=self.client.timeout
             ) as (
                     read_stream,
                     write_stream,
