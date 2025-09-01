@@ -38,7 +38,8 @@ class _LybicBaseClient:
                  api_key: str = os.getenv("LYBIC_API_KEY"),
                  endpoint: str = os.getenv("LYBIC_API_ENDPOINT", "https://api.lybic.cn"),
                  timeout: int = 10,
-                 extra_headers: dict = None
+                 extra_headers: dict = None,
+                 max_retries: int = 3,
                  ):
         """
         Init lybic client with org_id, api_key and endpoint
@@ -70,6 +71,10 @@ class _LybicBaseClient:
         self.timeout = timeout
         self.org_id = org_id
         self.headers["Content-Type"] = "application/json"
+
+        if max_retries < 0:
+            max_retries = 0
+        self.max_retries = max_retries
 
         self.logger = logging.getLogger(__name__)
 

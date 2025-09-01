@@ -40,7 +40,8 @@ class LybicClient(_LybicBaseClient):
                  api_key: str = os.getenv("LYBIC_API_KEY"),
                  endpoint: str = os.getenv("LYBIC_API_ENDPOINT", "https://api.lybic.cn"),
                  timeout: int = 10,
-                 extra_headers: dict = None
+                 extra_headers: dict = None,
+                 max_retries: int = 3,
                  ):
         """
         Init lybic client with org_id, api_key and endpoint
@@ -48,10 +49,11 @@ class LybicClient(_LybicBaseClient):
         :param org_id:
         :param api_key:
         :param endpoint:
+        :param max_retries: maximum number of retries for failed requests
         """
         super().__init__(
             org_id=org_id, api_key=api_key, endpoint=endpoint,
-            timeout=timeout, extra_headers=extra_headers
+            timeout=timeout, extra_headers=extra_headers, max_retries=max_retries
         )
 
         self.client: httpx.AsyncClient | None = None
@@ -100,9 +102,20 @@ class LybicClient(_LybicBaseClient):
         if method.upper() != "POST":
             headers.pop("Content-Type", None)
 
-        response = await self.client.request(method, url, headers=headers, **kwargs)
-        response.raise_for_status()
-        return response
+        last_exception = None
+        for attempt in range(self.max_retries + 1):
+            try:
+                response = await self.client.request(method, url, headers=headers, **kwargs)
+                response.raise_for_status()
+                return response
+            except (httpx.RequestError, httpx.HTTPStatusError) as e:
+                last_exception = e
+                if attempt < self.max_retries:
+                    self.logger.debug(f"Request failed (attempt {attempt + 1}/{self.max_retries + 1}): {str(e)}")
+                else:
+                    self.logger.error(f"Request failed after {self.max_retries + 1} attempts")
+
+        raise last_exception
 
 class Stats:
     """Stats are used for check"""
