@@ -25,6 +25,7 @@
 # THE SOFTWARE.
 
 """lmcp.py: MCP client for lybic MCP(Model Context Protocol) and Restful Interface API."""
+import asyncio
 from typing import overload
 
 import httpx

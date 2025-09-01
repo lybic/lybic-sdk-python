@@ -31,7 +31,6 @@ import httpx
 
 from lybic.base import _LybicBaseClient
 
-
 class LybicClient(_LybicBaseClient):
     """LybicAsyncClient is a client for all Lybic API."""
 
