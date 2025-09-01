@@ -111,9 +111,9 @@ class LybicClient(_LybicBaseClient):
             except (httpx.RequestError, httpx.HTTPStatusError) as e:
                 last_exception = e
                 if attempt < self.max_retries:
-                    self.logger.debug(f"Request failed (attempt {attempt + 1}/{self.max_retries + 1}): {str(e)}")
+                    self.logger.debug("Request failed (attempt %d): %s",(attempt + 1)/(self.max_retries + 1), str(e))
                 else:
-                    self.logger.error(f"Request failed after {self.max_retries + 1} attempts")
+                    self.logger.error("Request failed after %d attempts",self.max_retries + 1)
                 await asyncio.sleep(2 ** attempt)
 
         raise last_exception
