@@ -135,23 +135,32 @@ class MCP:
         :return:
         """
         self.client.logger.debug(f"Call tool request: {tool_name} with arguments: {tool_args}")
-        try:
-            async with streamablehttp_client(self.client.make_mcp_endpoint(mcp_server_id),
-                                             headers=self.client.headers,
-                                             timeout=self.client.timeout
-            ) as (
-                    read_stream,
-                    write_stream,
-                    _,
-            ):
-                async with ClientSession(read_stream, write_stream) as session:
-                    await session.initialize()
-                    result = await session.call_tool(tool_name, tool_args)
-                    self.client.logger.debug(f"Call tool response: {result.model_dump_json()}")
-                    return result
 
-        except Exception as e:
-            raise RuntimeError(f"Failed to call tool: {e}") from e
+        last_exception = None
+        for attempt in range(self.client.max_retries + 1):
+            try:
+                async with streamablehttp_client(self.client.make_mcp_endpoint(mcp_server_id),
+                                                 headers=self.client.headers,
+                                                 timeout=self.client.timeout
+                ) as (
+                        read_stream,
+                        write_stream,
+                        _,
+                ):
+                    async with ClientSession(read_stream, write_stream) as session:
+                        await session.initialize()
+                        result = await session.call_tool(tool_name, tool_args)
+                        self.client.logger.debug(f"Call tool response: {result.model_dump_json()}")
+                        return result
+
+            except Exception as e:
+                last_exception = e
+                if attempt < self.client.max_retries:
+                    self.client.logger.debug(f"Call tool failed (attempt {attempt + 1}/{self.client.max_retries + 1}): {str(e)}")
+                else:
+                    self.client.logger.error(f"Call tool failed after {self.client.max_retries + 1} attempts")
+
+        raise RuntimeError(f"Failed to call tool: {last_exception}") from last_exception
 
 class ComputerUse:
     """AsyncComputerUse is a client for lybic ComputerUse API(MCP and Restful)."""
