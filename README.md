@@ -86,6 +86,7 @@ from lybic import LybicClient
 #             api_key: str = os.getenv("LYBIC_API_KEY"),
 #             endpoint: str = os.getenv("LYBIC_API_ENDPOINT", "https://api.lybic.cn"),
 #             timeout: int = 10,
+#             max_retries: int = 3,
 #             extra_headers: dict | None = None) -> None
 async def main():
     # Initialize with environment variables
@@ -98,6 +99,7 @@ async def main():
         api_key="your_api_key", # Lybic API key
         endpoint="https://api.lybic.cn", # Lybic API endpoint
         timeout=10, # Timeout for API requests
+        max_retries=3, # Maximum number of request retries
         extra_headers={"User-Agent": "MyAgent/1.0"}, # Custom headers
     ) as client:
         pass
