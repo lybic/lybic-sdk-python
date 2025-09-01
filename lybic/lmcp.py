@@ -27,6 +27,7 @@
 """lmcp.py: MCP client for lybic MCP(Model Context Protocol) and Restful Interface API."""
 from typing import overload
 
+import httpx
 from mcp import ClientSession
 from mcp.client.streamable_http import streamablehttp_client
 from mcp.types import CallToolResult
@@ -153,7 +154,7 @@ class MCP:
                         self.client.logger.debug(f"Call tool response: {result.model_dump_json()}")
                         return result
 
-            except Exception as e:
+            except (httpx.RequestError, httpx.HTTPStatusError) as e:
                 last_exception = e
                 if attempt < self.client.max_retries:
                     self.client.logger.debug(f"Call tool failed (attempt {attempt + 1}/{self.client.max_retries + 1}): {str(e)}")
