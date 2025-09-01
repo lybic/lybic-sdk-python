@@ -24,7 +24,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-"""stats.py is used for check"""
+"""Provides the Stats class for accessing organization statistics."""
 from lybic import dto
 from lybic.lybic import LybicClient
 
