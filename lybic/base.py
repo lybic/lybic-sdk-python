@@ -70,11 +70,8 @@ class _LybicBaseClient:
             timeout = 10
         self.timeout = timeout
         self.org_id = org_id
+        self.max_retries = max(max_retries, 1)
         self.headers["Content-Type"] = "application/json"
-
-        if max_retries < 0:
-            max_retries = 0
-        self.max_retries = max_retries
 
         self.logger = logging.getLogger(__name__)
 
