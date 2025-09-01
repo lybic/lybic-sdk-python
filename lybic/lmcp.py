@@ -158,6 +158,7 @@ class MCP:
                 last_exception = e
                 if attempt < self.client.max_retries:
                     self.client.logger.debug(f"Call tool failed (attempt {attempt + 1}/{self.client.max_retries + 1}): {str(e)}")
+                    await asyncio.sleep(2 ** attempt)
                 else:
                     self.client.logger.error(f"Call tool failed after {self.client.max_retries + 1} attempts")
 
