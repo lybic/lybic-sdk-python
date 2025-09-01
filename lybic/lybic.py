@@ -25,6 +25,7 @@
 # THE SOFTWARE.
 
 """lybic.py is the main entry point for Lybic API."""
+import asyncio
 import os
 import httpx
 
@@ -113,5 +114,6 @@ class LybicClient(_LybicBaseClient):
                     self.logger.debug(f"Request failed (attempt {attempt + 1}/{self.max_retries + 1}): {str(e)}")
                 else:
                     self.logger.error(f"Request failed after {self.max_retries + 1} attempts")
+                await asyncio.sleep(2 ** attempt)
 
         raise last_exception
