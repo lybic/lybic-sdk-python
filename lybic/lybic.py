@@ -28,7 +28,6 @@
 import os
 import httpx
 
-from lybic import dto
 from lybic.base import _LybicBaseClient
 
 
@@ -103,17 +102,3 @@ class LybicClient(_LybicBaseClient):
         response = await self.client.request(method, url, headers=headers, **kwargs)
         response.raise_for_status()
         return response
-
-class Stats:
-    """Stats are used for check"""
-    def __init__(self, client: LybicClient):
-        self.client = client
-
-    async def get(self) -> dto.StatsResponseDto:
-        """
-        Get the stats of the organization, such as number of members, computers, etc.
-        """
-        self.client.logger.debug("Get stats requests")
-        response = await self.client.request("GET", f"/api/orgs/{self.client.org_id}/stats")
-        self.client.logger.debug("Get stats response: %s", response.text)
-        return dto.StatsResponseDto.model_validate_json(response.text)
