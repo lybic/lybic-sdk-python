@@ -29,7 +29,7 @@ from lybic import dto
 from lybic.lybic import LybicClient
 
 class Stats:
-    """Stats are used for check"""
+    """Provides methods to retrieve statistics for an organization."""
     def __init__(self, client: LybicClient):
         self.client = client
 
