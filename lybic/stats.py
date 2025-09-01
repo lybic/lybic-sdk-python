@@ -24,35 +24,20 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-""" Lybic SDK import header"""
+"""stats.py is used for check"""
+from lybic import dto
+from lybic.lybic import LybicClient
 
-__version__ = "0.6.0"
+class Stats:
+    """Stats are used for check"""
+    def __init__(self, client: LybicClient):
+        self.client = client
 
-# Lybic Client
-from .lybic import LybicClient
-
-# MCP Operations
-from .lmcp import MCP,ComputerUse
-
-# Project
-from .project import Project
-
-# Pyautogui
-from .pyautogui import Pyautogui
-
-# Sandbox
-from .sandbox import Sandbox
-
-# Stats
-from .stats import Stats
-
-__all__ = [
-    "__version__",
-    "LybicClient",
-    "MCP",
-    "ComputerUse",
-    "Project",
-    "Pyautogui",
-    "Sandbox",
-    "Stats"
-]
+    async def get(self) -> dto.StatsResponseDto:
+        """
+        Get the stats of the organization, such as number of members, computers, etc.
+        """
+        self.client.logger.debug("Get stats requests")
+        response = await self.client.request("GET", f"/api/orgs/{self.client.org_id}/stats")
+        self.client.logger.debug("Get stats response: %s", response.text)
+        return dto.StatsResponseDto.model_validate_json(response.text)
