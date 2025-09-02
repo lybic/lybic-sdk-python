@@ -1,3 +1,6 @@
+"""
+Internal API for Lybic.
+"""
 import inspect
 
 
