@@ -37,7 +37,7 @@ from lybic import dto
 from lybic.lybic import LybicClient
 
 class MCP:
-    """AsyncMCP is a client for lybic MCP(Model Context Protocol) and Restful Interface API."""
+    """MCP is an async client for lybic MCP(Model Context Protocol) and Restful Interface API."""
     def __init__(self, client: LybicClient):
         """
         Init MCP client with lybic client
@@ -166,7 +166,7 @@ class MCP:
         raise RuntimeError(f"Failed to call tool: {last_exception}") from last_exception
 
 class ComputerUse:
-    """AsyncComputerUse is a client for lybic ComputerUse API(MCP and Restful)."""
+    """ComputerUse is an async client for lybic ComputerUse API(MCP and Restful)."""
     def __init__(self, client: LybicClient):
         self.client = client
 
