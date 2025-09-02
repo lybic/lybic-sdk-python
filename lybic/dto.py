@@ -26,6 +26,7 @@
 
 """dto.py provides all the data types used in the API."""
 import uuid
+from enum import Enum, unique
 from typing import List, Optional, Union, Literal
 from pydantic import BaseModel, Field, RootModel
 
@@ -441,6 +442,17 @@ class SandboxActionResponseDto(BaseModel):
     """
     screenShot: Optional[str]  # is a picture url of the screen eg. https://example.com/screen.webp
     cursorPosition: Optional[CursorPosition]
+
+@unique
+class ModelType(Enum):
+    """
+    support ui-tars", "seed", "glm-4.1v","glm-4.5v","qwen-2.5-vl"
+    """
+    UITARS = "ui-tars"
+    SEED = "seed"
+    GLM_4_1V = "glm-4.1v"
+    GLM_4_5V = "glm-4.5v"
+    QWEN_2_5_VL = "qwen-2.5-vl"
 
 
 class ComputerUseParseRequestDto(BaseModel):
