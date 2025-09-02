@@ -35,6 +35,7 @@ from PIL import Image
 from PIL.WebPImagePlugin import WebPImageFile
 
 from lybic import dto
+from lybic._api import deprecated
 from lybic.lybic import LybicClient
 
 class Sandbox:
@@ -93,13 +94,34 @@ class Sandbox:
         await self.client.request(
             "DELETE",
             f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}")
-
+    @deprecated(
+        since="0.7.0",
+        removal="1.0.0",
+        message="Lybic Sandbox will support multiple types of tools in the future and will no longer be limited to computer_use. "
+                "To execute a single action tool, such as computer_use, use the action execution method "
+                "in the ComputerUse class. If no distinction is made, use the `execute_action` method in "
+                "the Sandbox class."
+    )
     @overload
     async def execute_computer_use_action(self, sandbox_id: str, data: dto.ComputerUseActionDto) -> dto.SandboxActionResponseDto: ...
-
+    @deprecated(
+        since="0.7.0",
+        removal="1.0.0",
+        message="Lybic Sandbox will support multiple types of tools in the future and will no longer be limited to computer_use. "
+                "To execute a single action tool, such as computer_use, use the action execution method "
+                "in the ComputerUse class. If no distinction is made, use the `execute_action` method in "
+                "the Sandbox class."
+    )
     @overload
     async def execute_computer_use_action(self, sandbox_id: str, **kwargs) -> dto.SandboxActionResponseDto: ...
-
+    @deprecated(
+        since="0.7.0",
+        removal="1.0.0",
+        message="Lybic Sandbox will support multiple types of tools in the future and will no longer be limited to computer_use. "
+                "To execute a single action tool, such as computer_use, use the action execution method "
+                "in the ComputerUse class. If no distinction is made, use the `execute_action` method in "
+                "the Sandbox class."
+    )
     async def execute_computer_use_action(self, sandbox_id: str, *args, **kwargs) -> dto.SandboxActionResponseDto:
         """
         Execute a computer use action
@@ -190,3 +212,5 @@ class Sandbox:
         """
         _, _, base64_str = await self.get_screenshot(sandbox_id)
         return base64_str
+
+    # todo: 2025-09-02 a method called "execute_action" for computer-use, mobile-use and other sandbox tools.
