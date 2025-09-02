@@ -108,14 +108,17 @@ class Sandbox:
         """
         if args and isinstance(args[0], dto.ComputerUseActionDto):
             data = args[0]
+        elif "data" in kwargs:
+            data = kwargs["data"]
+            if not isinstance(data, dto.ComputerUseActionDto):
+                raise TypeError(f"The 'data' argument must be of type {dto.ComputerUseActionDto.__name__}")
         else:
             data = dto.ComputerUseActionDto(**kwargs)
-        self.client.logger.debug(f"Executing computer use action for sandbox {sandbox_id}")
-        response = await self.client.request(
-            "POST",
-            f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/actions/computer-use",
-            json=data.model_dump())
-        self.client.logger.debug(f"Computer use action executed for sandbox {sandbox_id}")
+        self.client.logger.debug(f"Execute computer use action request: {data.model_dump_json()}")
+        response = await self.client.request("POST",
+                                       f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/actions/computer-use",
+                                       json=data.model_dump(exclude_none=True))
+        self.client.logger.debug(f"Execute computer use action response: {response.text}")
         return dto.SandboxActionResponseDto.model_validate_json(response.text)
 
     async def preview(self, sandbox_id: str) -> dto.SandboxActionResponseDto:
