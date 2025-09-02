@@ -579,7 +579,7 @@
     },
     "/api/computer-use/parse": {
       "post": {
-        "description": "Parses the output text of computer use model and returns the parsed actions.",
+        "description": "Deprecated, use parseModelTextOutput instead",
         "operationId": "parseModelOutput",
         "parameters": [],
         "requestBody": {
@@ -604,9 +604,73 @@
             }
           }
         },
-        "summary": "Parse LLM Output",
+        "summary": "Parse LLM Output (Deprecated)",
         "tags": [
           "ComputerUse"
+        ]
+      }
+    },
+    "/api/computer-use/parse/{type}": {
+      "post": {
+        "description": "Parses the output text of computer use model and returns the parsed actions.",
+        "operationId": "parseModelTextOutput",
+        "parameters": [
+          {
+            "name": "type",
+            "required": true,
+            "in": "path",
+            "description": "The type of the prompt to parse the input for",
+            "schema": {
+              "enum": [
+                "ui-tars",
+                "seed",
+                "glm-4.1v",
+                "glm-4.5v",
+                "qwen-2.5-vl"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ComputerUseParseTextRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ComputerUseActionResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Parse LLM Text Output",
+        "tags": [
+          "ComputerUse"
+        ]
+      }
+    },
+    "/api/healthz": {
+      "get": {
+        "operationId": "HealthCheckController_healthCheck",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "HealthCheck"
         ]
       }
     },
@@ -3283,6 +3347,10 @@
             "description": "Unknown text that is not thoughts nor actions, commonly due to the misformat of model output",
             "type": "string"
           },
+          "memory": {
+            "description": "Memory that is not parsed",
+            "type": "string"
+          },
           "thoughts": {
             "description": "Thoughts that are not parsed",
             "type": "string"
@@ -3290,6 +3358,18 @@
         },
         "required": [
           "actions"
+        ]
+      },
+      "ComputerUseParseTextRequestDto": {
+        "type": "object",
+        "properties": {
+          "textContent": {
+            "description": "The text content to parse",
+            "type": "string"
+          }
+        },
+        "required": [
+          "textContent"
         ]
       },
       "StatsResponseDto": {
