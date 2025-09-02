@@ -237,15 +237,28 @@ def deprecated(
             old_doc = obj.description
 
             def finalize(wrapper: Callable[..., Any], new_doc: str) -> T:  # noqa: ARG001
+                kwargs = {
+                    "default": obj.default,
+                    "default_factory": obj.default_factory,
+                    "alias": obj.alias,
+                    "title": obj.title,
+                    "const": obj.const,
+                    "gt": obj.gt,
+                    "ge": obj.ge,
+                    "lt": obj.lt,
+                    "le": obj.le,
+                    "multiple_of": obj.multiple_of,
+                    "min_items": obj.min_items,
+                    "max_items": obj.max_items,
+                    "min_length": obj.min_length,
+                    "max_length": obj.max_length,
+                    "regex": obj.regex,
+                }
+                kwargs.update(getattr(obj, "extra", {}))
+                kwargs["description"] = new_doc
                 return cast(
                     "T",
-                    FieldInfoV1(
-                        default=obj.default,
-                        default_factory=obj.default_factory,
-                        description=new_doc,
-                        alias=obj.alias,
-                        exclude=obj.exclude,
-                    ),
+                    FieldInfoV1(**kwargs),
                 )
 
         elif isinstance(obj, FieldInfo):
@@ -258,15 +271,15 @@ def deprecated(
             old_doc = obj.description
 
             def finalize(wrapper: Callable[..., Any], new_doc: str) -> T:  # noqa: ARG001
+                kwargs = {
+                    attr: getattr(obj, attr)
+                    for attr in getattr(obj, "_attributes_set", set())
+                    if hasattr(obj, attr)
+                }
+                kwargs["description"] = new_doc
                 return cast(
                     "T",
-                    FieldInfo(
-                        default=obj.default,
-                        default_factory=obj.default_factory,
-                        description=new_doc,
-                        alias=obj.alias,
-                        exclude=obj.exclude,
-                    ),
+                    FieldInfo(**kwargs),
                 )
 
         elif isinstance(obj, property):
@@ -465,7 +478,7 @@ def warn_deprecated(
                 f"Need to determine which default deprecation schedule to use. "
                 f"{removal}"
             )
-            raise NotImplementedError(msg)
+            raise ValueError(msg)
         removal = f"in {removal}"
 
     if not message:
