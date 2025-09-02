@@ -53,7 +53,7 @@ from typing import overload, Optional, Coroutine, List
 
 from lybic import dto
 from lybic.lybic import LybicClient
-from lybic.lmcp import ComputerUse
+from lybic.mcp import ComputerUse
 
 # pylint: disable=unused-argument,invalid-name,logging-fstring-interpolation
 class Pyautogui:
