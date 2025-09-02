@@ -133,9 +133,13 @@ class Sandbox:
         if args and isinstance(args[0], dto.ComputerUseActionDto):
             data = args[0]
         elif "data" in kwargs:
-            data = kwargs["data"]
-            if not isinstance(data, dto.ComputerUseActionDto):
-                raise TypeError(f"The 'data' argument must be of type {dto.ComputerUseActionDto.__name__}")
+            data_arg = kwargs["data"]
+            if isinstance(data_arg, dto.ComputerUseActionDto):
+                data = data_arg
+            elif isinstance(data_arg, dict):
+                data = dto.ComputerUseActionDto(**data_arg)
+            else:
+                raise TypeError(f"The 'data' argument must be of type {dto.ComputerUseActionDto.__name__} or dict")
         else:
             data = dto.ComputerUseActionDto(**kwargs)
         self.client.logger.debug(f"Execute computer use action request: {data.model_dump_json()}")
