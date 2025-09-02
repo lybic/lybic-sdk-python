@@ -24,6 +24,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+# pylint: disable=fixme
+
 """sandbox.py provides the Sandbox API"""
 import base64
 from io import BytesIO
