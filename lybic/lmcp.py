@@ -13,7 +13,11 @@ from lybic import MCP,ComputerUse
 """
 # pylint: disable=unused-import
 
-import sys
+import warnings
 from .mcp import MCP,ComputerUse
 
-print("lmcp.py has been moved to mcp.py",file=sys.stderr)
+warnings.warn(
+    "The 'lybic.lmcp' module has been moved to 'lybic.mcp' and is deprecated. It will be removed in version 1.0. Please update your imports.",
+    DeprecationWarning,
+    stacklevel=2
+)
