@@ -24,7 +24,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-"""lmcp.py: MCP client for lybic MCP(Model Context Protocol) and Restful Interface API."""
+"""mcp.py: MCP client for lybic MCP(Model Context Protocol) and Restful Interface API."""
 import asyncio
 from typing import overload
 
