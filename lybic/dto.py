@@ -26,8 +26,11 @@
 
 """dto.py provides all the data types used in the API."""
 import uuid
+from enum import Enum, unique
 from typing import List, Optional, Union, Literal
 from pydantic import BaseModel, Field, RootModel
+
+from lybic._api import deprecated
 
 
 class StatsResponseDto(BaseModel):
@@ -78,7 +81,6 @@ class ListMcpServerResponse(RootModel):
         return self.root[item]
 
 
-
 class CreateMcpServerDto(McpServerPolicy):
     """
     Create MCP server request.
@@ -90,7 +92,7 @@ class CreateMcpServerDto(McpServerPolicy):
     sandboxMaxLifetimeSeconds: Optional[int] = Field(3600, description="The maximum lifetime of a sandbox.")
     sandboxMaxIdleTimeSeconds: Optional[int] = Field(3600, description="The maximum idle time of a sandbox.")
     sandboxAutoCreation: Optional[bool] = Field(False,
-                                      description="Whether to create a new sandbox automatically when old sandbox is deleted. If not, new sandboxes will be created when calling computer use tools.")
+                                                description="Whether to create a new sandbox automatically when old sandbox is deleted. If not, new sandboxes will be created when calling computer use tools.")
     sandboxExposeRecreateTool: Optional[bool] = Field(False, description="Whether to expose recreate tool to LLMs.")
     sandboxExposeRestartTool: Optional[bool] = Field(False, description="Whether to expose restart tool to LLMs.")
     sandboxExposeDeleteTool: Optional[bool] = Field(False, description="Whether to expose delete tool to LLMs.")
@@ -167,11 +169,13 @@ class CreateSandboxDto(BaseModel):
     projectId: Optional[str] = Field(None, description="The project id to use for the sandbox. Use default if not provided.")
     specId: Optional[str] = Field(None, description="The spec of the sandbox. Use default if not provided.")
     datacenterId: Optional[str] = Field(None, description="The datacenter id to use for the sandbox. Use default if not provided.")
+
     class Config:
         """
         Configuration for Pydantic model.
         """
         exclude_none = True
+
 
 class GetSandboxResponseDto(BaseModel):
     """
@@ -212,6 +216,7 @@ class MouseClickAction(BaseModel):
     button: int = Field(..., description="Mouse button flag combination. 1: left, 2: right, 4: middle, 8: back, 16: forward; add them together to press multiple buttons at once.")
     holdKey: Optional[str] = Field(None, description="Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
     callId: Optional[str] = str(uuid.uuid4())
+
     class Config:
         """
         Configuration for Pydantic model.
@@ -232,6 +237,7 @@ class MouseDoubleClickAction(BaseModel):
     button: int = Field(..., description="Mouse button flag combination. 1: left, 2: right, 4: middle, 8: back, 16: forward; add them together to press multiple buttons at once.")
     holdKey: Optional[str] = Field(None, description="Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
     callId: Optional[str] = str(uuid.uuid4())
+
     class Config:
         """
         Configuration for Pydantic model.
@@ -251,6 +257,7 @@ class MouseMoveAction(BaseModel):
     y: Length
     holdKey: Optional[str] = Field(None, description="Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
     callId: Optional[str] = str(uuid.uuid4())
+
     class Config:
         """
         Configuration for Pydantic model.
@@ -259,6 +266,7 @@ class MouseMoveAction(BaseModel):
         # Allow population of fields with default values
         validate_assignment = True
         exclude_none = True
+
 
 class MouseScrollAction(BaseModel):
     """
@@ -271,6 +279,7 @@ class MouseScrollAction(BaseModel):
     stepHorizontal: int
     holdKey: Optional[str] = Field(None, description="Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
     callId: Optional[str] = str(uuid.uuid4())
+
     class Config:
         """
         Configuration for Pydantic model.
@@ -279,6 +288,7 @@ class MouseScrollAction(BaseModel):
         # Allow population of fields with default values
         validate_assignment = True
         exclude_none = True
+
 
 class MouseDragAction(BaseModel):
     """
@@ -291,6 +301,7 @@ class MouseDragAction(BaseModel):
     endY: Length
     holdKey: Optional[str] = Field(None, description="Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
     callId: Optional[str] = str(uuid.uuid4())
+
     class Config:
         """
         Configuration for Pydantic model.
@@ -299,6 +310,7 @@ class MouseDragAction(BaseModel):
         # Allow population of fields with default values
         validate_assignment = True
         exclude_none = True
+
 
 class KeyboardTypeAction(BaseModel):
     """
@@ -309,6 +321,7 @@ class KeyboardTypeAction(BaseModel):
     treatNewLineAsEnter: bool = Field(False, description="Whether to treat line breaks as enter. If true, any line breaks(\\n) in content will be treated as enter key press, and content will be split into multiple lines.")
     callId: Optional[str] = str(uuid.uuid4())
 
+
 class KeyboardHotkeyAction(BaseModel):
     """
     Represents a keyboard hotkey combination action.
@@ -317,6 +330,7 @@ class KeyboardHotkeyAction(BaseModel):
     keys: str
     duration: Optional[int] = Field(None, description="Duration in milliseconds. If specified, the hotkey will be held for a while and then released.")
     callId: Optional[str] = str(uuid.uuid4())
+
     class Config:
         """
         Configuration for Pydantic model.
@@ -333,6 +347,7 @@ class ScreenshotAction(BaseModel):
     """
     type: Literal["screenshot"]
     callId: Optional[str] = str(uuid.uuid4())
+
     class Config:
         """
         Configuration for Pydantic model.
@@ -342,6 +357,7 @@ class ScreenshotAction(BaseModel):
         validate_assignment = True
         exclude_none = True
 
+
 class WaitAction(BaseModel):
     """
     Represents a wait action for a specified duration.
@@ -349,6 +365,7 @@ class WaitAction(BaseModel):
     type: Literal["wait"]
     duration: int
     callId: Optional[str] = str(uuid.uuid4())
+
     class Config:
         """
         Configuration for Pydantic model.
@@ -356,6 +373,7 @@ class WaitAction(BaseModel):
         # Allow population of fields with default values
         validate_assignment = True
         exclude_none = True
+
 
 class FinishedAction(BaseModel):
     """
@@ -364,6 +382,7 @@ class FinishedAction(BaseModel):
     type: Literal["finished"]
     message: Optional[str] = None
     callId: Optional[str] = str(uuid.uuid4())
+
     class Config:
         """
         Configuration for Pydantic model.
@@ -372,6 +391,7 @@ class FinishedAction(BaseModel):
         validate_assignment = True
         exclude_none = True
 
+
 class FailedAction(BaseModel):
     """
     Represents a failed action, signaling an error or failure in a task.
@@ -379,6 +399,7 @@ class FailedAction(BaseModel):
     type: Literal["failed"]
     message: Optional[str] = None
     callId: Optional[str] = str(uuid.uuid4())
+
     class Config:
         """
         Configuration for Pydantic model.
@@ -386,6 +407,7 @@ class FailedAction(BaseModel):
         # Allow population of fields with default values
         validate_assignment = True
         exclude_none = True
+
 
 ComputerUseAction = Union[
     MouseClickAction,
@@ -410,6 +432,7 @@ class ComputerUseActionDto(BaseModel):
     includeScreenShot: bool = True
     includeCursorPosition: bool = True
     callId: Optional[str] = str(uuid.uuid4())
+
     class Config:
         """
         Configuration for Pydantic model.
@@ -418,6 +441,7 @@ class ComputerUseActionDto(BaseModel):
         # Allow population of fields with default values
         validate_assignment = True
         exclude_none = True
+
 
 class CursorPosition(BaseModel):
     """
@@ -429,11 +453,13 @@ class CursorPosition(BaseModel):
     screenHeight: int
     screenIndex: int
 
+
 class ExtendSandboxDto(BaseModel):
     """
     Extend sandbox life request.
     """
-    maxLifeSeconds: int = Field(3600, description="Max life seconds of sandbox", ge=30, le=60*60*24)
+    maxLifeSeconds: int = Field(3600, description="Max life seconds of sandbox", ge=30, le=60 * 60 * 24)
+
 
 class SandboxActionResponseDto(BaseModel):
     """
@@ -443,6 +469,26 @@ class SandboxActionResponseDto(BaseModel):
     cursorPosition: Optional[CursorPosition]
 
 
+@unique
+class ModelType(Enum):
+    """
+    Enumeration of supported LLM models for computer-use parsing.
+    """
+    UITARS = "ui-tars"
+    SEED = "seed"
+    GLM_4_1V = "glm-4.1v"
+    GLM_4_5V = "glm-4.5v"
+    QWEN_2_5_VL = "qwen-2.5-vl"
+
+
+@deprecated(
+    since="0.7.0",
+    removal="1.0.0",
+    message=(
+        "Starting from v0.7.0, parsing LLM output functions(ComputerUse.parse_llm_output) will "
+        "no longer require ComputerUseParseRequestDto"
+    )
+)
 class ComputerUseParseRequestDto(BaseModel):
     """
     Request DTO for parsing text content into computer use actions.
@@ -455,8 +501,10 @@ class ComputerUseActionResponseDto(BaseModel):
     """
     Response DTO containing a list of parsed computer use actions.
     """
-    unknown: str
-    thoughts: str
+    unknown: Optional[str] = None
+    thoughts: Optional[str] = None
+    memory: Optional[str] = None
+
     actions: List[ComputerUseAction]
 
 

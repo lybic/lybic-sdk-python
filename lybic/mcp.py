@@ -34,7 +34,9 @@ from mcp.client.streamable_http import streamablehttp_client
 from mcp.types import CallToolResult
 
 from lybic import dto
+from lybic._api import deprecated
 from lybic.lybic import LybicClient
+
 
 class MCP:
     """MCP is an async client for lybic MCP(Model Context Protocol) and Restful Interface API."""
@@ -127,7 +129,7 @@ class MCP:
     async def call_tool_async(self,
                               mcp_server_id: str,
                               tool_name: str = "computer-use",
-                              tool_args: dict = None)->CallToolResult:
+                              tool_args: dict = None) -> CallToolResult:
         """
         Call a tool on mcp server
 
@@ -169,13 +171,25 @@ class ComputerUse:
     """ComputerUse is an async client for lybic ComputerUse API(MCP and Restful)."""
     def __init__(self, client: LybicClient):
         self.client = client
-
+    @deprecated(
+        since="0.7.0",
+        removal="1.0.0",
+        message="Use parse_llm_output instead"
+    )
     @overload
     async def parse_model_output(self, data: dto.ComputerUseParseRequestDto) -> dto.ComputerUseActionResponseDto: ...
-
+    @deprecated(
+        since="0.7.0",
+        removal="1.0.0",
+        message="Use parse_llm_output instead"
+    )
     @overload
     async def parse_model_output(self, **kwargs) -> dto.ComputerUseActionResponseDto: ...
-
+    @deprecated(
+        since="0.7.0",
+        removal="1.0.0",
+        message="Use parse_llm_output instead"
+    )
     async def parse_model_output(self, *args, **kwargs) -> dto.ComputerUseActionResponseDto:
         """
         parse doubao-ui-tars output
@@ -196,6 +210,35 @@ class ComputerUse:
             json=data.model_dump(exclude_none=True))
         self.client.logger.debug(f"Parse model output response: {response.text}")
         return dto.ComputerUseActionResponseDto.model_validate_json(response.text)
+    async def parse_llm_output(
+        self, model_type: dto.ModelType | str, llm_output: str
+    ) -> dto.ComputerUseActionResponseDto:
+        """Parse LLM output to computer use actions.
+
+        Args:
+            model_type: The type of the large language model.
+            llm_output: The text output from the large language model.
+
+        Returns:
+            A DTO containing the parsed computer use actions.
+        """
+        if isinstance(model_type, dto.ModelType):
+            model = model_type.value
+        elif isinstance(model_type, str):
+            valid_models = [item.value for item in dto.ModelType]
+            if model_type not in valid_models:
+                raise ValueError(f"Invalid model_type: {model_type}. Must be one of {valid_models}")
+            model = model_type
+        else:
+            raise TypeError("model_type must be either dto.ModelType or str")
+
+        response = await self.client.request(
+            "POST",
+            f"/api/computer-use/parse/{model}",
+            json={"textContent": llm_output},
+        )
+        self.client.logger.debug(f"Parse model output response: {response.text}")
+        return dto.ComputerUseActionResponseDto.model_validate_json(response.text)
 
     @overload
     async def execute_computer_use_action(self, sandbox_id: str,
@@ -212,9 +255,13 @@ class ComputerUse:
         if args and isinstance(args[0], dto.ComputerUseActionDto):
             data = args[0]
         elif "data" in kwargs:
-            data = kwargs["data"]
-            if not isinstance(data, dto.ComputerUseActionDto):
-                raise TypeError(f"The 'data' argument must be of type {dto.ComputerUseActionDto.__name__}")
+            data_arg = kwargs["data"]
+            if isinstance(data_arg, dto.ComputerUseActionDto):
+                data = data_arg
+            elif isinstance(data_arg, dict):
+                data = dto.ComputerUseActionDto(**data_arg)
+            else:
+                raise TypeError(f"The 'data' argument must be of type {dto.ComputerUseActionDto.__name__} or dict")
         else:
             data = dto.ComputerUseActionDto(**kwargs)
         self.client.logger.debug(f"Execute computer use action request: {data.model_dump_json()}")
