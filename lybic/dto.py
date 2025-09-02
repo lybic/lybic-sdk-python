@@ -467,7 +467,7 @@ class ComputerUseActionResponseDto(BaseModel):
     """
     Response DTO containing a list of parsed computer use actions.
     """
-    unknown: str
+    unknown: Optional[str] = None
     thoughts: str
     actions: List[ComputerUseAction]
 
