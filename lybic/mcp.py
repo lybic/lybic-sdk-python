@@ -210,7 +210,7 @@ class ComputerUse:
         self.client.logger.debug(f"Parse model output response: {response.text}")
         return dto.ComputerUseActionResponseDto.model_validate_json(response.text)
     async def parse_llm_output(
-        self, model_type: dto.ModelType|str, llm_output: str
+        self, model_type: dto.ModelType | str, llm_output: str
     ) -> dto.ComputerUseActionResponseDto:
         """Parse LLM output to computer use actions.
 
@@ -221,11 +221,15 @@ class ComputerUse:
         Returns:
             A DTO containing the parsed computer use actions.
         """
-        model:str
         if isinstance(model_type, dto.ModelType):
             model = model_type.value
-        if isinstance(model_type, str):
+        elif isinstance(model_type, str):
+            valid_models = [item.value for item in dto.ModelType]
+            if model_type not in valid_models:
+                raise ValueError(f"Invalid model_type: {model_type}. Must be one of {valid_models}")
             model = model_type
+        else:
+            raise TypeError("model_type must be either dto.ModelType or str")
 
         response = await self.client.request(
             "POST",
