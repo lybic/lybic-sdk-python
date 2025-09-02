@@ -56,3 +56,6 @@ __all__ = [
     "Sandbox",
     "Stats"
 ]
+
+def __dir__() -> list[str]:
+    return list(__all__)
