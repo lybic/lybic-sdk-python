@@ -14,6 +14,6 @@ from lybic import MCP,ComputerUse
 # pylint: disable=unused-import
 
 import sys
+from .mcp import MCP,ComputerUse
 
 print("lmcp.py has been moved to mcp.py",file=sys.stderr)
-from .mcp import MCP,ComputerUse
