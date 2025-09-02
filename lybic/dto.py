@@ -471,7 +471,7 @@ class SandboxActionResponseDto(BaseModel):
 @unique
 class ModelType(Enum):
     """
-    support ui-tars", "seed", "glm-4.1v","glm-4.5v","qwen-2.5-vl"
+    Enumeration of supported LLM models for computer-use parsing.
     """
     UITARS = "ui-tars"
     SEED = "seed"
