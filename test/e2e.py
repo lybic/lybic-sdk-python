@@ -117,6 +117,7 @@ async def test_computer_use(client:LybicClient):
         action=action.actions[0]
     ))
 
+
 # pylint: disable=eval-used,fixme
 def test_pyautogui(client:LybicClient):
     """

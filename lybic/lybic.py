@@ -31,6 +31,7 @@ import httpx
 
 from lybic.base import _LybicBaseClient
 
+
 class LybicClient(_LybicBaseClient):
     """LybicAsyncClient is a client for all Lybic API."""
 
@@ -112,7 +113,7 @@ class LybicClient(_LybicBaseClient):
                 if attempt < self.max_retries:
                     self.logger.debug(f"Request failed (attempt {attempt + 1}/{self.max_retries + 1}): {e}")
                 else:
-                    self.logger.error("Request failed after %d attempts",self.max_retries + 1)
+                    self.logger.error("Request failed after %d attempts", self.max_retries + 1)
                 await asyncio.sleep(2 ** attempt)
 
         raise last_exception

@@ -37,6 +37,7 @@ from lybic import dto
 from lybic._api import deprecated
 from lybic.lybic import LybicClient
 
+
 class MCP:
     """MCP is an async client for lybic MCP(Model Context Protocol) and Restful Interface API."""
     def __init__(self, client: LybicClient):
@@ -128,7 +129,7 @@ class MCP:
     async def call_tool_async(self,
                               mcp_server_id: str,
                               tool_name: str = "computer-use",
-                              tool_args: dict = None)->CallToolResult:
+                              tool_args: dict = None) -> CallToolResult:
         """
         Call a tool on mcp server
 

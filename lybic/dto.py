@@ -169,6 +169,7 @@ class CreateSandboxDto(BaseModel):
     projectId: Optional[str] = Field(None, description="The project id to use for the sandbox. Use default if not provided.")
     specId: Optional[str] = Field(None, description="The spec of the sandbox. Use default if not provided.")
     datacenterId: Optional[str] = Field(None, description="The datacenter id to use for the sandbox. Use default if not provided.")
+
     class Config:
         """
         Configuration for Pydantic model.
