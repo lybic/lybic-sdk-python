@@ -10,12 +10,12 @@ authors = [
 dependencies =[
     "pydantic>=2.10.6",
     "mcp>=1.12.0",
-    "pillow==11.3.0",
-    "httpx==0.28.1"
+    "pillow>=11.3.0",
+    "httpx>=0.28.1"
 ]
 description = "Lybic sdk for python"
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.10"
 classifiers = [
     "Programming Language :: Python :: 3",
     "Operating System :: OS Independent",
