@@ -327,15 +327,15 @@ class Pyautogui:
             x (int, optional): The x position to move to before scrolling. Defaults to the current mouse position.
             y (int, optional): The y position to move to before scrolling. Defaults to the current mouse position.
         """
-        if x is None and y is None:
+        if x is not None and y is not None:
+            scroll_x, scroll_y = x, y
+            self.moveTo(scroll_x, scroll_y)
+        elif x is None and y is None:
             scroll_x, scroll_y = self.position()
-        else:
-            if x is None or y is None:
-                current_x, current_y = self.position()
-                scroll_x = x if x is not None else current_x
-                scroll_y = y if y is not None else current_y
-            else:  # both x and y are not None
-                scroll_x, scroll_y = x, y
+        else:  # one of x or y is None
+            current_x, current_y = self.position()
+            scroll_x = x if x is not None else current_x
+            scroll_y = y if y is not None else current_y
             self.moveTo(scroll_x, scroll_y)
 
         self.logger.info(f"scroll(clicks={clicks}) at ({scroll_x}, {scroll_y})")
