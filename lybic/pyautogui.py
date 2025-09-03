@@ -289,14 +289,14 @@ class Pyautogui:
         """
         self.click(x, y, clicks=2, interval=interval, button=button, duration=duration, tween=tween, _pause=_pause)
 
-    def dragTo(self, x: int, y: int, duration=0.0, button='left', _pause=True):
+    def dragTo(self, x: int, y: int, duration: float = 0.0, button: str = 'left', _pause: bool = True):
         """
         Drags the mouse to the specified position.
 
         Args:
             x (int): The x-coordinate of the destination position.
             y (int): The y-coordinate of the destination position.
-            duration (Placeholder):
+            duration (float, optional): The time in seconds to spend moving the mouse. Defaults to 0.0. This parameter is currently ignored.
             button (str, optional): The button to drag with. Can be 'left', 'right', or 'middle'. Defaults to 'left'.
         """
         if button.lower() != 'left':
@@ -319,7 +319,7 @@ class Pyautogui:
         )
         self._run_sync(coro)
 
-    def scroll(self, clicks: int, x: Optional[int] = None, y: Optional[int] = None, _pause=True):
+    def scroll(self, clicks: int, x: Optional[int] = None, y: Optional[int] = None, _pause: bool = True):
         """
         Scrolls the mouse wheel.
         Args:
@@ -327,11 +327,16 @@ class Pyautogui:
             x (int, optional): The x position to move to before scrolling. Defaults to the current mouse position.
             y (int, optional): The y position to move to before scrolling. Defaults to the current mouse position.
         """
-        if x is not None and y is not None:
-            scroll_x, scroll_y = x, y
-            self.moveTo(scroll_x, scroll_y)
-        else:
+        if x is None and y is None:
             scroll_x, scroll_y = self.position()
+        else:
+            if x is None or y is None:
+                current_x, current_y = self.position()
+                scroll_x = x if x is not None else current_x
+                scroll_y = y if y is not None else current_y
+            else:  # both x and y are not None
+                scroll_x, scroll_y = x, y
+            self.moveTo(scroll_x, scroll_y)
 
         self.logger.info(f"scroll(clicks={clicks}) at ({scroll_x}, {scroll_y})")
 
