@@ -32,7 +32,10 @@ __version__ = "0.7.0"
 from .lybic import LybicClient
 
 # MCP Operations
-from .mcp import MCP,ComputerUse
+from .mcp import MCP
+
+#  Tools
+from .tools import ComputerUse
 
 # Project
 from .project import Project
