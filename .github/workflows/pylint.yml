@@ -7,14 +7,17 @@ on:
     paths:
       - 'lybic/**/*.py'
       - 'test/**/*.py'
+      - 'requirements.txt'
+
   pull_request:
     branches: [ "master" ]
     paths:
       - 'lybic/**/*.py'
       - 'test/**/*.py'
+      - 'requirements.txt'
 
 jobs:
-  build:
+  Code-quality:
     runs-on: ubuntu-latest
     strategy:
       matrix:
