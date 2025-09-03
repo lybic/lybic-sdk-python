@@ -59,6 +59,7 @@ class _LybicBaseClient:
         if not (extra_headers and 'x-trial-session-token' in extra_headers):
             assert api_key, "LYBIC_API_KEY is required when x-trial-session-token is not provided"
             self.headers["x-api-key"] = api_key
+        self._apikey = api_key
 
         if endpoint.endswith("/"):
             self.endpoint = endpoint[:-1]
