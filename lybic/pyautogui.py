@@ -73,6 +73,7 @@ class Pyautogui:
     eval(LLM_OUTPUT)
     """
     def __init__(self, client: LybicClient, sandbox_id: str):
+        self._original_client = client
         self.logger = logging.getLogger(__name__)
         if client.client and not client.client.is_closed:
             self.logger.warning(
@@ -139,8 +140,8 @@ class Pyautogui:
         Note: The cloned object will have its own background thread. Frequent cloning may lead to high resource consumption.
         """
         if sandbox_id is not None:
-            return Pyautogui(self.client, sandbox_id)
-        return Pyautogui(self.client, self.sandbox_id)
+            return Pyautogui(self._original_client, sandbox_id)
+        return Pyautogui(self._original_client, self.sandbox_id)
 
     def position(self) -> tuple[int, int]:
         """
