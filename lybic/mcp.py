@@ -34,9 +34,7 @@ from mcp.client.streamable_http import streamablehttp_client
 from mcp.types import CallToolResult
 
 from lybic import dto
-from lybic._api import deprecated
 from lybic.lybic import LybicClient
-
 
 class MCP:
     """MCP is an async client for lybic MCP(Model Context Protocol) and Restful Interface API."""
@@ -166,107 +164,3 @@ class MCP:
                     self.client.logger.error(f"Call tool failed after {self.client.max_retries + 1} attempts")
 
         raise RuntimeError(f"Failed to call tool: {last_exception}") from last_exception
-
-class ComputerUse:
-    """ComputerUse is an async client for lybic ComputerUse API(MCP and Restful)."""
-    def __init__(self, client: LybicClient):
-        self.client = client
-    @deprecated(
-        since="0.7.0",
-        removal="1.0.0",
-        message="Use parse_llm_output instead"
-    )
-    @overload
-    async def parse_model_output(self, data: dto.ComputerUseParseRequestDto) -> dto.ComputerUseActionResponseDto: ...
-    @deprecated(
-        since="0.7.0",
-        removal="1.0.0",
-        message="Use parse_llm_output instead"
-    )
-    @overload
-    async def parse_model_output(self, **kwargs) -> dto.ComputerUseActionResponseDto: ...
-    @deprecated(
-        since="0.7.0",
-        removal="1.0.0",
-        message="Use parse_llm_output instead"
-    )
-    async def parse_model_output(self, *args, **kwargs) -> dto.ComputerUseActionResponseDto:
-        """
-        parse doubao-ui-tars output
-
-        :param data:
-        :return:
-        """
-        if args and isinstance(args[0], dto.ComputerUseParseRequestDto):
-            data = args[0]
-        elif "data" in kwargs and isinstance(kwargs["data"], dto.ComputerUseParseRequestDto):
-            data = kwargs["data"]
-        else:
-            data = dto.ComputerUseParseRequestDto(**kwargs)
-        self.client.logger.debug(f"Parse model output request: {data.model_dump_json()}")
-        response = await self.client.request(
-            "POST",
-            "/api/computer-use/parse",
-            json=data.model_dump(exclude_none=True))
-        self.client.logger.debug(f"Parse model output response: {response.text}")
-        return dto.ComputerUseActionResponseDto.model_validate_json(response.text)
-    async def parse_llm_output(
-        self, model_type: dto.ModelType | str, llm_output: str
-    ) -> dto.ComputerUseActionResponseDto:
-        """Parse LLM output to computer use actions.
-
-        Args:
-            model_type: The type of the large language model.
-            llm_output: The text output from the large language model.
-
-        Returns:
-            A DTO containing the parsed computer use actions.
-        """
-        if isinstance(model_type, dto.ModelType):
-            model = model_type.value
-        elif isinstance(model_type, str):
-            valid_models = [item.value for item in dto.ModelType]
-            if model_type not in valid_models:
-                raise ValueError(f"Invalid model_type: {model_type}. Must be one of {valid_models}")
-            model = model_type
-        else:
-            raise TypeError("model_type must be either dto.ModelType or str")
-
-        response = await self.client.request(
-            "POST",
-            f"/api/computer-use/parse/{model}",
-            json={"textContent": llm_output},
-        )
-        self.client.logger.debug(f"Parse model output response: {response.text}")
-        return dto.ComputerUseActionResponseDto.model_validate_json(response.text)
-
-    @overload
-    async def execute_computer_use_action(self, sandbox_id: str,
-                                    data: dto.ComputerUseActionDto) -> dto.SandboxActionResponseDto: ...
-    @overload
-    async def execute_computer_use_action(self, sandbox_id: str, **kwargs) -> dto.SandboxActionResponseDto: ...
-
-    async def execute_computer_use_action(self, sandbox_id: str, *args, **kwargs) -> dto.SandboxActionResponseDto:
-        """
-        Execute a computer use action
-
-        is same as sandbox.Sandbox.execute_computer_use_action
-        """
-        if args and isinstance(args[0], dto.ComputerUseActionDto):
-            data = args[0]
-        elif "data" in kwargs:
-            data_arg = kwargs["data"]
-            if isinstance(data_arg, dto.ComputerUseActionDto):
-                data = data_arg
-            elif isinstance(data_arg, dict):
-                data = dto.ComputerUseActionDto(**data_arg)
-            else:
-                raise TypeError(f"The 'data' argument must be of type {dto.ComputerUseActionDto.__name__} or dict")
-        else:
-            data = dto.ComputerUseActionDto(**kwargs)
-        self.client.logger.debug(f"Execute computer use action request: {data.model_dump_json()}")
-        response = await self.client.request("POST",
-                                       f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/actions/computer-use",
-                                       json=data.model_dump(exclude_none=True))
-        self.client.logger.debug(f"Execute computer use action response: {response.text}")
-        return dto.SandboxActionResponseDto.model_validate_json(response.text)
