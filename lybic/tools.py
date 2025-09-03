@@ -113,10 +113,22 @@ class ComputerUse:
     async def execute_computer_use_action(self, sandbox_id: str, **kwargs) -> dto.SandboxActionResponseDto: ...
 
     async def execute_computer_use_action(self, sandbox_id: str, *args, **kwargs) -> dto.SandboxActionResponseDto:
-        """
-        Execute a computer use action
+        """Executes a computer use action in a specific sandbox.
 
-        is same as sandbox.Sandbox.execute_computer_use_action
+        Note: This method provides the same functionality as
+        `lybic.sandbox.Sandbox.execute_computer_use_action`.
+
+        Args:
+            sandbox_id: The ID of the sandbox to execute the action in.
+            *args: Supports passing `dto.ComputerUseActionDto` as a positional argument.
+            **kwargs: Supports passing `data` as a `dto.ComputerUseActionDto` or a `dict`,
+                or the fields of `dto.ComputerUseActionDto` directly as keyword arguments.
+
+        Returns:
+            A `dto.SandboxActionResponseDto` containing the result of the action.
+
+        Raises:
+            TypeError: If the 'data' argument is not of the expected type.
         """
         if args and isinstance(args[0], dto.ComputerUseActionDto):
             data = args[0]
