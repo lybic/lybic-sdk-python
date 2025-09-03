@@ -44,6 +44,8 @@ pyautogui.press('esc')
 pyautogui.keyDown('shift')
 pyautogui.keyUp('shift')
 pyautogui.hotkey('ctrl', 'c')
+pyautogui.scroll(100)
+pyautogui.dragTo(500, 500)
 """
 import asyncio
 import logging
@@ -286,6 +288,67 @@ class Pyautogui:
             button (str, optional): The button to click. Can be 'left', 'right', or 'middle'. Defaults to 'left'.
         """
         self.click(x, y, clicks=2, interval=interval, button=button, duration=duration, tween=tween, _pause=_pause)
+
+    def dragTo(self, x: int, y: int, duration=0.0, button='left', _pause=True):
+        """
+        Drags the mouse to the specified position.
+
+        Args:
+            x (int): The x-coordinate of the destination position.
+            y (int): The y-coordinate of the destination position.
+            duration (Placeholder):
+            button (str, optional): The button to drag with. Can be 'left', 'right', or 'middle'. Defaults to 'left'.
+        """
+        if button.lower() != 'left':
+            self.logger.warning(f"Lybic API currently only supports dragging with the left mouse button, but '{button}' was requested. Proceeding with left button.")
+
+        start_x, start_y = self.position()
+
+        self.logger.info(f"dragTo(x={x}, y={y}, button='{button}')")
+
+        request = dto.MouseDragAction(
+            type="mouse:drag",
+            startX=dto.PixelLength(type="px", value=start_x),
+            startY=dto.PixelLength(type="px", value=start_y),
+            endX=dto.PixelLength(type="px", value=x),
+            endY=dto.PixelLength(type="px", value=y)
+        )
+        coro = self.computer_use.execute_computer_use_action(
+            sandbox_id=self.sandbox_id,
+            data=dto.ComputerUseActionDto(action=request, includeScreenShot=False, includeCursorPosition=False)
+        )
+        self._run_sync(coro)
+
+    def scroll(self, clicks: int, x: Optional[int] = None, y: Optional[int] = None, _pause=True):
+        """
+        Scrolls the mouse wheel.
+        Args:
+            clicks (int): The amount of scrolling to perform. Positive values scroll up, negative values scroll down.
+            x (int, optional): The x position to move to before scrolling. Defaults to the current mouse position.
+            y (int, optional): The y position to move to before scrolling. Defaults to the current mouse position.
+        """
+        if x is not None and y is not None:
+            scroll_x, scroll_y = x, y
+            self.moveTo(scroll_x, scroll_y)
+        else:
+            scroll_x, scroll_y = self.position()
+
+        self.logger.info(f"scroll(clicks={clicks}) at ({scroll_x}, {scroll_y})")
+
+        # In pyautogui, positive clicks scroll up.
+        # The dto.MouseScrollAction uses stepVertical, assuming positive is up.
+        request = dto.MouseScrollAction(
+            type="mouse:scroll",
+            x=dto.PixelLength(type="px", value=scroll_x),
+            y=dto.PixelLength(type="px", value=scroll_y),
+            stepVertical=clicks,
+            stepHorizontal=0
+        )
+        coro = self.computer_use.execute_computer_use_action(
+            sandbox_id=self.sandbox_id,
+            data=dto.ComputerUseActionDto(action=request, includeScreenShot=False, includeCursorPosition=False)
+        )
+        self._run_sync(coro)
 
     def write(self, message, interval=0.0, _pause=True):
         """
