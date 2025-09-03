@@ -410,7 +410,11 @@ class Pyautogui:
             *args (str): The keys to press.
             interval (Placeholder):
         """
-        keys_to_press = '+'.join(args)
+        keys = args
+        if len(keys) == 1 and isinstance(keys[0], (list, tuple)):
+            keys = keys[0]
+
+        keys_to_press = '+'.join(keys)
         request = dto.KeyboardHotkeyAction(
             type="keyboard:hotkey",
             keys=keys_to_press
