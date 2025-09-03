@@ -73,10 +73,26 @@ class Pyautogui:
     eval(LLM_OUTPUT)
     """
     def __init__(self, client: LybicClient, sandbox_id: str):
-        self.client = client
-        self.computer_use = ComputerUse(client)
-        self.sandbox_id = sandbox_id
         self.logger = logging.getLogger(__name__)
+        if client.client and not client.client.is_closed:
+            self.logger.warning(
+                "The provided LybicClient is already active. "
+                "Pyautogui will create its own client instance to avoid event loop conflicts. "
+                "For better performance, initialize Pyautogui with an inactive LybicClient."
+            )
+            self.client = LybicClient(
+                org_id=client.org_id,
+                api_key=client._apikey,
+                endpoint=client.endpoint,
+                timeout=client.timeout,
+                extra_headers=client.headers,
+                max_retries=client.max_retries,
+            )
+        else:
+            self.client = client
+
+        self.computer_use = ComputerUse(self.client)
+        self.sandbox_id = sandbox_id
 
         self._loop = asyncio.new_event_loop()
         self._thread = threading.Thread(target=self._loop.run_forever, daemon=True)
