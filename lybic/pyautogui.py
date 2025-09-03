@@ -319,7 +319,7 @@ class Pyautogui:
         )
         self._run_sync(coro)
 
-    def scroll(self, clicks: int, x: Optional[int] = None, y: Optional[int] = None, _pause=True):
+    def scroll(self, clicks: int, x: Optional[int] = None, y: Optional[int] = None, _pause: bool = True):
         """
         Scrolls the mouse wheel.
         Args:
