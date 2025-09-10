@@ -4,7 +4,6 @@ Thank you so much for wanting to contribute to Lybic Project! Here are a few imp
 
 1. API changes require discussion, use cases, etc. Code comes later.
 2. Pull requests are great for small fixes for bugs, documentation, etc.
-3. Pull requests are not merged directly into the master branch, please use the `develop` branch.
 
 ## API changes
 
