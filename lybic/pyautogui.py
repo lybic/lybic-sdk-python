@@ -322,15 +322,18 @@ class Pyautogui:
         self.click(x, y, button='middle', duration=duration, tween=tween, _pause=_pause)
 
     def tripleClick(self, x: Optional[int] = None, y: Optional[int] = None,
-                    interval=0.0, button='left', duration=0.0, tween=None, _pause=True):
+                    interval: float = 0.0, button: str = 'left', duration: float = 0.0, tween=None, _pause: bool = True):
         """
         Performs a triple-click at the specified position.
 
         Args:
             x (int, optional): The x-coordinate of the click position. If None, the current mouse position will be used.
             y (int, optional): The y-coordinate of the click position. If None, the current mouse position will be used.
-            interval (Placeholder):
+            interval (float, optional): The time in seconds between clicks. Defaults to 0.0.
             button (str, optional): The button to click. Can be 'left', 'right', or 'middle'. Defaults to 'left'.
+            duration (float, optional): The time in seconds to spend moving the mouse. Defaults to 0.0. This parameter is currently ignored.
+            tween (optional): The tweening function. This parameter is currently ignored.
+            _pause (bool, optional): Whether to pause after the action. Defaults to True.
         """
         self.click(x, y, clicks=3, interval=interval, button=button, duration=duration, tween=tween, _pause=_pause)
 
@@ -400,7 +403,7 @@ class Pyautogui:
         )
         self._run_sync(coro)
 
-    def write(self, message, interval=0.0, _pause=True):
+    def write(self, message: str, interval: float = 0.0, _pause: bool = True):
         """
         Types the specified message into the keyboard.
         This is a wrapper for typewrite().
@@ -434,16 +437,13 @@ class Pyautogui:
                 self._run_sync(coro)
                 return
 
-            keys_to_press = []
-            for char in message:
-                if char == '\n':
-                    keys_to_press.append('enter')
-                else:
-                    keys_to_press.append(char)
+            keys_to_press = ['enter' if char == '\n' else char for char in message]
             self.press(keys_to_press, interval=interval, _pause=_pause)
 
         elif isinstance(message, list):
             self.press(message, interval=interval, _pause=_pause)
+        else:
+            raise TypeError("message argument must be a string or a list of strings.")
 
     @overload
     def press(self, keys: str, presses: int = 1, interval: float = 0.0, _pause: bool = True): ...
