@@ -53,6 +53,7 @@ pyautogui.dragTo(500, 500)
 """
 import asyncio
 import logging
+import re
 import threading
 import time
 from typing import overload, Optional, Coroutine, List, Union
@@ -127,6 +128,21 @@ class Pyautogui:
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.close()
+
+    @staticmethod
+    def parse(content: str) -> str:
+        """
+        Parses the given text content to extract pyautogui commands.
+
+        Args:
+            content (str): The text content to parse.
+
+        Returns:
+            str: A string containing the extracted pyautogui commands, each on a new line.
+        """
+        pattern = r"pyautogui\[a-zA-Z_]\w*\(.*\)"
+        matches = re.findall(pattern, content)
+        return "\n".join(matches)
 
     @overload
     def clone(self, sandbox_id: str) -> "Pyautogui": ...
