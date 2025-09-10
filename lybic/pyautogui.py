@@ -36,6 +36,10 @@ pyautogui.position()
 pyautogui.moveTo(1443,343)
 pyautogui.click()
 pyautogui.click(x=1443, y=343)
+pyautogui.rightClick()
+pyautogui.middleClick()
+pyautogui.tripleClick()
+pyautogui.typewrite(['a', 'b', 'c', 'left', 'backspace', 'enter', 'f1'], interval=secs_between_keys)
 pyautogui.move(None, 10)
 pyautogui.doubleClick()
 pyautogui.moveTo(500, 500)
@@ -51,7 +55,7 @@ import asyncio
 import logging
 import threading
 import time
-from typing import overload, Optional, Coroutine, List
+from typing import overload, Optional, Coroutine, List, Union
 
 from lybic import dto
 from lybic.lybic import LybicClient
@@ -289,6 +293,45 @@ class Pyautogui:
         """
         self.click(x, y, clicks=2, interval=interval, button=button, duration=duration, tween=tween, _pause=_pause)
 
+    def rightClick(self, x: Optional[int] = None, y: Optional[int] = None,
+                   duration=0.0, tween=None, _pause=True):
+        """
+        Performs a right-click at the specified position.
+
+        Args:
+            x (int, optional): The x-coordinate of the click position. If None, the current mouse position will be used.
+            y (int, optional): The y-coordinate of the click position. If None, the current mouse position will be used.
+            duration (Placeholder):
+            tween (Placeholder):
+        """
+        self.click(x, y, button='right', duration=duration, tween=tween, _pause=_pause)
+
+    def middleClick(self, x: Optional[int] = None, y: Optional[int] = None,
+                    duration=0.0, tween=None, _pause=True):
+        """
+        Performs a middle-click at the specified position.
+
+        Args:
+            x (int, optional): The x-coordinate of the click position. If None, the current mouse position will be used.
+            y (int, optional): The y-coordinate of the click position. If None, the current mouse position will be used.
+            duration (Placeholder):
+            tween (Placeholder):
+        """
+        self.click(x, y, button='middle', duration=duration, tween=tween, _pause=_pause)
+
+    def tripleClick(self, x: Optional[int] = None, y: Optional[int] = None,
+                    interval=0.0, button='left', duration=0.0, tween=None, _pause=True):
+        """
+        Performs a triple-click at the specified position.
+
+        Args:
+            x (int, optional): The x-coordinate of the click position. If None, the current mouse position will be used.
+            y (int, optional): The y-coordinate of the click position. If None, the current mouse position will be used.
+            interval (Placeholder):
+            button (str, optional): The button to click. Can be 'left', 'right', or 'middle'. Defaults to 'left'.
+        """
+        self.click(x, y, clicks=3, interval=interval, button=button, duration=duration, tween=tween, _pause=_pause)
+
     def dragTo(self, x: int, y: int, duration: float = 0.0, button: str = 'left', _pause: bool = True):
         """
         Drags the mouse to the specified position.
@@ -358,20 +401,47 @@ class Pyautogui:
     def write(self, message, interval=0.0, _pause=True):
         """
         Types the specified message into the keyboard.
+        This is a wrapper for typewrite().
 
         Args:
             message (str): The message to type.
-            interval (Placeholder):
+            interval (float, optional): The interval in seconds between each key press. Defaults to 0.0.
         """
-        request = dto.KeyboardTypeAction(
-            type="keyboard:type",
-            content=message
-        )
-        coro = self.computer_use.execute_computer_use_action(
-            sandbox_id=self.sandbox_id,
-            data=dto.ComputerUseActionDto(action=request, includeScreenShot=False, includeCursorPosition=False)
-        )
-        self._run_sync(coro)
+        self.typewrite(message, interval=interval, _pause=_pause)
+
+    def typewrite(self, message: Union[str, List[str]], interval: float = 0.0, _pause: bool = True):
+        """
+        Types the specified message.
+
+        Args:
+            message (str or List[str]): The message to type. If a string, it's typed out.
+                                         If a list of strings, each string is typed or pressed as a key.
+            interval (float, optional): The interval in seconds between each key press. Defaults to 0.0.
+        """
+        if isinstance(message, str):
+            if interval == 0.0:
+                request = dto.KeyboardTypeAction(
+                    type="keyboard:type",
+                    content=message,
+                    treatNewLineAsEnter=True
+                )
+                coro = self.computer_use.execute_computer_use_action(
+                    sandbox_id=self.sandbox_id,
+                    data=dto.ComputerUseActionDto(action=request, includeScreenShot=False, includeCursorPosition=False)
+                )
+                self._run_sync(coro)
+                return
+
+            keys_to_press = []
+            for char in message:
+                if char == '\n':
+                    keys_to_press.append('enter')
+                else:
+                    keys_to_press.append(char)
+            self.press(keys_to_press, interval=interval, _pause=_pause)
+
+        elif isinstance(message, list):
+            self.press(message, interval=interval, _pause=_pause)
 
     @overload
     def press(self, keys: str, presses: int = 1, interval: float = 0.0, _pause: bool = True): ...

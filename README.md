@@ -285,7 +285,7 @@ if __name__ == "__main__":
 
 ### Supported Functions
 
-The `lybic.Pyautogui` class supports a subset of the most common `pyautogui` functions.
+The `lybic.Pyautogui` class supports a subset of the most common `pyautogui` mouse and keyboard functions.
 
 | Function | Supported | Notes |
 | :--- | :---: | :--- |
@@ -293,10 +293,14 @@ The `lybic.Pyautogui` class supports a subset of the most common `pyautogui` fun
 | `moveTo()` | ✅ | |
 | `move()` | ✅ | |
 | `click()` | ✅ | |
+| `rightClick()` | ✅ | |
+| `middleClick()` | ✅ | |
 | `doubleClick()` | ✅ | |
+| `tripleClick()` | ✅ | |
 | `dragTo()` | ✅ | Only supports left-button dragging. |
 | `scroll()` | ✅ | |
-| `write()` | ✅ | |
+| `write()` | ✅ | A wrapper for `typewrite()`. |
+| `typewrite()` | ✅ | Supports both strings and lists of strings. |
 | `press()` | ✅ | Supports single key and list of keys. |
 | `hotkey()` | ✅ | |
 | `keyDown()` | ❌ | Not supported by Lybic API. |
