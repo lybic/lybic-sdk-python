@@ -308,15 +308,16 @@ class Pyautogui:
         self.click(x, y, button='right', duration=duration, tween=tween, _pause=_pause)
 
     def middleClick(self, x: Optional[int] = None, y: Optional[int] = None,
-                    duration=0.0, tween=None, _pause=True):
+                    duration: float = 0.0, tween=None, _pause: bool = True):
         """
         Performs a middle-click at the specified position.
 
         Args:
             x (int, optional): The x-coordinate of the click position. If None, the current mouse position will be used.
             y (int, optional): The y-coordinate of the click position. If None, the current mouse position will be used.
-            duration (Placeholder):
-            tween (Placeholder):
+            duration (float, optional): The time in seconds to spend moving the mouse. Defaults to 0.0. This parameter is currently ignored.
+            tween (optional): The tweening function. This parameter is currently ignored.
+            _pause (bool, optional): Whether to pause after the action. Defaults to True.
         """
         self.click(x, y, button='middle', duration=duration, tween=tween, _pause=_pause)
 
