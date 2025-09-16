@@ -1,4 +1,4 @@
-name: Create Release Changelog And Version
+name: Create Release
 
 on:
   workflow_dispatch:
@@ -11,13 +11,12 @@ on:
         required: true
 
 jobs:
-  create_changelog:
+  release:
     runs-on: ubuntu-latest
     permissions:
-      contents: write      # To push tags, branches, and commits
-      pull-requests: write # To create and merge pull requests
+      contents: write
     steps:
-      - name: Checkout master branch
+      - name: Checkout code from selected branch
         uses: actions/checkout@v5
         with:
           fetch-depth: 0 # Required for changelog generation from git history
@@ -27,23 +26,20 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Create release branch
-        run: |
-          git checkout -b changelog_${{ github.event.inputs.new_tag }}
-
       - name: Generate changelog
         env:
           GH_TOKEN: ${{ github.token }}
           NEW_TAG: ${{ github.event.inputs.new_tag }}
           PREVIOUS_TAG: ${{ github.event.inputs.previous_tag }}
+          RELEASE_BRANCH: ${{ github.ref_name }}
         run: |
           echo "## Changelog for $NEW_TAG" > changelog.md
           echo "" >> changelog.md
-          echo "Update from $PREVIOUS_TAG to $NEW_TAG" >> changelog.md
+          echo "Update from $PREVIOUS_TAG to $NEW_TAG on branch $RELEASE_BRANCH" >> changelog.md
           echo "" >> changelog.md
           echo "Release timestamp: $(date +%Y-%m-%d)" >> changelog.md
           echo "" >> changelog.md
-          gh api repos/${{ github.repository }}/compare/${PREVIOUS_TAG}...HEAD --jq '.commits[] | "- \(.commit.message | split("\n")[0]) (by @\(.author.login // .commit.author.name) in `\(.sha | tostring | .[0:7])`) "' >> changelog.md
+          gh api repos/${{ github.repository }}/compare/${PREVIOUS_TAG}...${RELEASE_BRANCH} --jq '.commits[] | "- \(.commit.message | split("\n")[0]) (by @\(.author.login // .commit.author.name) in `\(.sha | tostring | .[0:7])`) "' >> changelog.md
           mkdir -p CHANGELOGS
           mv changelog.md CHANGELOGS/${NEW_TAG}-release.md
 
@@ -56,24 +52,21 @@ jobs:
           # Update version in pyproject.toml
           sed -i "s/^version = \".*\"/version = \"$VERSION\"/" pyproject.toml
 
-          # Commit the version update
-          git add pyproject.toml
-          git commit -m "build: bump pypi package version to $VERSION"
-          git push --set-upstream origin changelog_${{ github.event.inputs.new_tag }}
-
-      - name: Commit and push changelog
+      - name: Commit version bump and changelog
         run: |
-          git add CHANGELOGS/${{ github.event.inputs.new_tag }}-release.md
-          git commit -m "docs(changelog): Generate changelog for ${{ github.event.inputs.new_tag }}"
-          git push origin changelog_${{ github.event.inputs.new_tag }}
+          git add pyproject.toml CHANGELOGS/${{ github.event.inputs.new_tag }}-release.md
+          git commit -m "chore(release): prepare release ${{ github.event.inputs.new_tag }}"
+          git push origin ${{ github.ref_name }}
 
-      - name: Create Changelog Pull Request
+      - name: Create and push tag
+        run: |
+          git tag ${{ github.event.inputs.new_tag }}
+          git push origin ${{ github.event.inputs.new_tag }}
+
+      - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
-          NEW_TAG: ${{ github.event.inputs.new_tag }}
-        run:  |
-          gh pr create \
-            --title "build: bump lybic-sdk-version to ${NEW_TAG}" \
-            --body "build: bump lybic-sdk-version to ${NEW_TAG}" \
-            --base master \
-            --head changelog_${{ github.event.inputs.new_tag }}
+        run: |
+          gh release create ${{ github.event.inputs.new_tag }} \
+            --title "Release ${{ github.event.inputs.new_tag }}" \
+            --notes-file "CHANGELOGS/${{ github.event.inputs.new_tag }}-release.md"
