@@ -34,10 +34,11 @@ from mcp.client.streamable_http import streamablehttp_client
 from mcp.types import CallToolResult
 
 from lybic import dto
+from lybic._api import deprecated
 from lybic.lybic import LybicClient
 
-class MCP:
-    """MCP is an async client for lybic MCP(Model Context Protocol) and Restful Interface API."""
+class Mcp:
+    """Mcp is an async client for lybic MCP(Model Context Protocol) and Restful Interface API."""
     def __init__(self, client: LybicClient):
         """
         Init MCP client with lybic client
@@ -164,3 +165,23 @@ class MCP:
                     self.client.logger.error(f"Call tool failed after {self.client.max_retries + 1} attempts")
 
         raise RuntimeError(f"Failed to call tool: {last_exception}") from last_exception
+
+
+class MCP(Mcp):
+    """
+    MCP client for lybic MCP(Model Context Protocol) and Restful Interface API.
+
+    According to the python naming convention, please use Class Mcp
+    """
+    @deprecated(
+        since="0.8.0",
+        removal="1.0.0",
+        message="Use Mcp instead"
+    )
+    def __init__(self, client: LybicClient):
+        """
+        Initialize MCP client
+
+        :param client: LybicClient
+        """
+        super().__init__(client)

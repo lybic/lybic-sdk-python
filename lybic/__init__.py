@@ -26,13 +26,13 @@
 
 """ Lybic SDK import header"""
 
-__version__ = "0.7.0"
+__version__ = "0.8.0"
 
 # Lybic Client
 from .lybic import LybicClient
 
 # MCP Operations
-from .mcp import MCP
+from .mcp import MCP, Mcp
 
 #  Tools
 from .tools import ComputerUse
