@@ -3,7 +3,8 @@ requires = ["setuptools >= 77.0.3"]
 build-backend = "setuptools.build_meta"
 [project]
 name = "lybic"
-version = "0.7.5"
+# The mainline branch will no longer add version numbers by default
+version = "0.0.0"
 authors = [
   { name="Lybic Development Team", email="team@lybic.ai" },
 ]
