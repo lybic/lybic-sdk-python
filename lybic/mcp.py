@@ -166,18 +166,19 @@ class Mcp:
 
         raise RuntimeError(f"Failed to call tool: {last_exception}") from last_exception
 
+# pylint: disable=useless-parent-delegation
 
+@deprecated(
+    since="0.8.0",
+    removal="1.0.0",
+    message="Use Mcp instead"
+)
 class MCP(Mcp):
     """
     MCP client for lybic MCP(Model Context Protocol) and Restful Interface API.
 
     According to the python naming convention, please use Class Mcp
     """
-    @deprecated(
-        since="0.8.0",
-        removal="1.0.0",
-        message="Use Mcp instead"
-    )
     def __init__(self, client: LybicClient):
         """
         Initialize MCP client
