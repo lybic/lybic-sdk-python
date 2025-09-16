@@ -8,7 +8,9 @@ on:
 jobs:
   cleanup_branch:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged == false && startsWith(github.event.pull_request.head.ref, 'changelog_')
+    if: |
+      github.event.pull_request.merged == false &&
+      startsWith(github.event.pull_request.title, 'build: bump lybic-sdk-version to')
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
