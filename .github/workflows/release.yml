@@ -59,6 +59,17 @@ jobs:
           git commit -m "chore(release): prepare release ${{ github.event.inputs.new_tag }}"
           git push origin ${{ github.ref_name }}
 
+      - name: Push Changelog to changelog branch
+        run: |
+          git fetch origin changelog || echo "changelog branch does not exist, will create it."
+          git switch changelog || git switch -c changelog
+          git checkout ${{ github.ref_name }} -- CHANGELOGS/${{ github.event.inputs.new_tag }}-release.md
+          git add CHANGELOGS/${{ github.event.inputs.new_tag }}-release.md
+          git commit -m "docs: add changelog for ${{ github.event.inputs.new_tag }}"
+          git push origin changelog
+          # Switch back to the original branch to not affect subsequent steps
+          git switch ${{ github.ref_name }}
+
       - name: Create and push tag
         run: |
           git tag ${{ github.event.inputs.new_tag }}

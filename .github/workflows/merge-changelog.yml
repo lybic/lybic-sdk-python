@@ -1,0 +1,41 @@
+name: Merge Changelog Branch
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Runs at 03:00 on Monday every two weeks
+    - cron: '0 3 * * 1/2'
+
+jobs:
+  merge-changelog:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout master branch
+        uses: actions/checkout@v4
+        with:
+          ref: 'master'
+          token: ${{ secrets.GH_PAT }}
+          fetch-depth: 0 # Required for merge history
+
+      - name: Configure Git user
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Fetch changelog branch
+        run: git fetch origin changelog
+
+      - name: Merge and squash changelog branch
+        run: |
+          # The --squash option stages the changes, but doesn't create a commit.
+          git merge --squash origin/changelog
+          
+          # Check if there are any changes to commit after the squash
+          if ! git diff --staged --quiet; then
+            # Create the squash commit with the specified message
+            git commit -m "chore: merge the latest changlogs from the changelog branch"
+            # Push the changes to the master branch
+            git push origin master
+          else
+            echo "No new changes from changelog branch to merge."
+          fi
