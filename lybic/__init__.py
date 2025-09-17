@@ -37,6 +37,9 @@ from .mcp import MCP, Mcp
 #  Tools
 from .tools import ComputerUse
 
+# osworld
+from .osworld import OSWorld
+
 # Project
 from .project import Project
 
@@ -54,6 +57,7 @@ __all__ = [
     "LybicClient",
     "MCP",
     "ComputerUse",
+    "OSWorld",
     "Project",
     "Pyautogui",
     "Sandbox",
