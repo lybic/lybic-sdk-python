@@ -39,8 +39,10 @@ from lybic.lybic import LybicClient
 
 class OSWorld(Pyautogui):
     """
-    OSWorld is a Python library for controlling the mouse and keyboard on Windows, macOS, and Linux.
-    It provides a simple but effective way to automate tasks on these operating systems.
+    Extends Pyautogui with cross-platform helper functions inspired by the OSWorld benchmark.
+
+    This class provides convenience methods for common OS-level tasks, such as opening applications,
+    abstracting away the platform-specific details for Windows, macOS, and Linux.
     """
     def __init__(self, client: LybicClient, sandbox_id: str):
         super().__init__(client, sandbox_id)
@@ -50,32 +52,32 @@ class OSWorld(Pyautogui):
         """
         Opens an application or file.
 
-        :param app_or_filename:
-        :return:
+        :param app_or_filename: The name of the application or file to open.
         """
+        LAUNCHER_APPEAR_DELAY = 0.5
+        SEARCH_RESULTS_DELAY = 1.0
+        APP_LAUNCH_DELAY = 0.5
+        WIN_APP_LAUNCH_DELAY = 1.0
+
+        action = None
+        final_delay = APP_LAUNCH_DELAY
+
         if self.platform.startswith("darwin"):
             # macOS: Command+Space to open Spotlight
-            self.hotkey("command", "space", interval=0.2)
-            time.sleep(0.5)
-            self.typewrite(app_or_filename)
-            time.sleep(1.0)
-            self.press("enter")
-            time.sleep(0.5)
+            action = lambda: self.hotkey("command", "space", interval=0.2)
         elif self.platform.startswith("linux"):
-            # Linux: Win key to open application menu
-            self.press("super")
-            time.sleep(0.5)
-            self.typewrite(app_or_filename)
-            time.sleep(1.0)
-            self.press("enter")
-            time.sleep(0.5)
+            # Linux: Super key to open application menu
+            action = lambda: self.press("super")
         elif self.platform.startswith("win"):
             # Windows: Win+R to open Run dialog
-            self.hotkey("win", "r", interval=0.1)
-            time.sleep(0.5)
-            self.typewrite(app_or_filename)
-            time.sleep(1.0)
-            self.press("enter")
-            time.sleep(1.0)
+            action = lambda: self.hotkey("win", "r", interval=0.1)
+            final_delay = WIN_APP_LAUNCH_DELAY
         else:
             raise NotImplementedError(f"Open not supported on platform: {self.platform}")
+
+        action()
+        time.sleep(LAUNCHER_APPEAR_DELAY)
+        self.typewrite(app_or_filename)
+        time.sleep(SEARCH_RESULTS_DELAY)
+        self.press("enter")
+        time.sleep(final_delay)
