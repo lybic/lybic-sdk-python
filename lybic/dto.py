@@ -32,6 +32,15 @@ from pydantic import BaseModel, Field, RootModel
 
 from lybic._api import deprecated
 
+# pylint: disable=invalid-name
+
+# Strategy for handling extra fields in the lybic api response
+# "ignore" means ignore extra fields, which will ensure that your SDK version remains compatible with the Lybic platform,
+# but it may cause compatibility issues with future versions of the SDK.
+# "forbid" means that the SDK will throw an error if it encounters extra fields in the response, which will force you to
+# update your SDK when the Lybic platform is updated, and may have a certain impact on your online environment.
+json_extra_fields_policy = "ignore"
+
 
 class StatsResponseDto(BaseModel):
     """
@@ -103,7 +112,7 @@ class CreateMcpServerDto(McpServerPolicy):
         """
         Configuration for Pydantic model.
         """
-        extra = "ignore"
+        extra = json_extra_fields_policy
         # Allow population of fields with default values
         validate_assignment = True
 
@@ -237,7 +246,7 @@ class MouseClickAction(BaseModel):
         """
         Configuration for Pydantic model.
         """
-        extra = "forbid"
+        extra = json_extra_fields_policy
         # Allow population of fields with default values
         validate_assignment = True
         exclude_none = True
@@ -258,7 +267,7 @@ class MouseTripleClickAction(BaseModel):
         """
         Configuration for Pydantic model.
         """
-        extra = "ignore"
+        extra = json_extra_fields_policy
         # Allow population of fields with default values
         validate_assignment = True
         exclude_none = True
@@ -279,7 +288,7 @@ class MouseDoubleClickAction(BaseModel):
         """
         Configuration for Pydantic model.
         """
-        extra = "forbid"
+        extra = json_extra_fields_policy
         # Allow population of fields with default values
         validate_assignment = True
         exclude_none = True
@@ -300,7 +309,7 @@ class MouseMoveAction(BaseModel):
         """
         Configuration for Pydantic model.
         """
-        extra = "forbid"
+        extra = json_extra_fields_policy
         # Allow population of fields with default values
         validate_assignment = True
         exclude_none = True
@@ -315,6 +324,7 @@ class MouseScrollAction(BaseModel):
     y: Length
     stepVertical: int
     stepHorizontal: int
+    relative: bool = Field(False, description="Whether the coordinates are relative to the current mouse position")
     holdKey: Optional[str] = Field(None, description="Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
     callId: Optional[str] = str(uuid.uuid4())
 
@@ -322,7 +332,7 @@ class MouseScrollAction(BaseModel):
         """
         Configuration for Pydantic model.
         """
-        extra = "forbid"
+        extra = json_extra_fields_policy
         # Allow population of fields with default values
         validate_assignment = True
         exclude_none = True
@@ -347,7 +357,7 @@ class MouseDragAction(BaseModel):
         """
         Configuration for Pydantic model.
         """
-        extra = "forbid"
+        extra = json_extra_fields_policy
         # Allow population of fields with default values
         validate_assignment = True
         exclude_none = True
@@ -376,7 +386,7 @@ class KeyboardHotkeyAction(BaseModel):
         """
         Configuration for Pydantic model.
         """
-        extra = "forbid"
+        extra = json_extra_fields_policy
         # Allow population of fields with default values
         validate_assignment = True
         exclude_none = True
@@ -393,7 +403,7 @@ class ScreenshotAction(BaseModel):
         """
         Configuration for Pydantic model.
         """
-        extra = "forbid"
+        extra = json_extra_fields_policy
         # Allow population of fields with default values
         validate_assignment = True
         exclude_none = True
@@ -479,7 +489,7 @@ class ComputerUseActionDto(BaseModel):
         """
         Configuration for Pydantic model.
         """
-        extra = "forbid"
+        extra = json_extra_fields_policy
         # Allow population of fields with default values
         validate_assignment = True
         exclude_none = True
