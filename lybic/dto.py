@@ -293,7 +293,7 @@ class MouseMoveAction(BaseModel):
     x: Length
     y: Length
     relative: bool = Field(False, description="Whether the coordinates are relative to the current mouse position")
-    holdKey: Optional[str] = Field(None, description="Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
+    holdKey: Optional[str] = Field(None, description="Key to hold down during move, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
     callId: Optional[str] = str(uuid.uuid4())
 
     class Config:
