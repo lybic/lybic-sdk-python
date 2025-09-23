@@ -244,21 +244,21 @@ class MouseClickAction(BaseModel):
 
 class MouseTripleClickAction(BaseModel):
     """
-    Represents a mouse click action at a specified location.
+    Represents a mouse triple-click action at a specified location.
     """
     type: Literal["mouse:tripleClick"]
     x: Length
     y: Length
     button: int = Field(..., description="Mouse button flag combination. 1: left, 2: right, 4: middle, 8: back, 16: forward; add them together to press multiple buttons at once.")
-    relative: bool = Field(False, description="Whether the coordinates are relative to the current mouse position")
-    holdKey: Optional[str] = Field(None, description="Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
+    relative: bool = Field(False, description="Whether the coordinates are relative to the current mouse position.")
+    holdKey: Optional[str] = Field(None, description="Key to hold down during triple click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
     callId: Optional[str] = str(uuid.uuid4())
 
     class Config:
         """
         Configuration for Pydantic model.
         """
-        extra = "ignore"
+        extra = "forbid"
         # Allow population of fields with default values
         validate_assignment = True
         exclude_none = True
