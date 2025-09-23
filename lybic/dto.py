@@ -46,6 +46,7 @@ class McpServerPolicy(BaseModel):
     """
     MCP server sandbox policy.
     """
+    sandboxShape: str = Field('', description="The shape of the sandbox created by the MCP server.")
     sandboxMaxLifetimeSeconds: int = Field(3600, description="The maximum lifetime of a sandbox.")
     sandboxMaxIdleTimeSeconds: int = Field(3600, description="The maximum idle time of a sandbox.")
     sandboxAutoCreation: bool = Field(False,
@@ -88,6 +89,7 @@ class CreateMcpServerDto(McpServerPolicy):
     """
     name: str = Field(..., description="Name of the MCP server.")
     projectId: Optional[str] = Field('', description="Project to which the MCP server belongs to.")
+    sandboxShape: str = Field('', description="The shape of the sandbox created by the MCP server.")
 
     sandboxMaxLifetimeSeconds: Optional[int] = Field(3600, description="The maximum lifetime of a sandbox.")
     sandboxMaxIdleTimeSeconds: Optional[int] = Field(3600, description="The maximum idle time of a sandbox.")
@@ -105,6 +107,19 @@ class CreateMcpServerDto(McpServerPolicy):
         # Allow population of fields with default values
         validate_assignment = True
 
+class Shape(BaseModel):
+    """
+    Represents a shape of a sandbox.
+    """
+    name: str = Field(..., description="Name of the shape.")
+    description: str = Field(..., description="Description of the shape.")
+    hardwareAcceleratedEncoding: bool = Field(False, description="Whether the shape supports hardware accelerated encoding.")
+    pricePerHour: float = Field(..., description="This price acts as a multiplier, e.g. if it is set to 0.5, each hour of usage will be billed as 0.5 hours.")
+    requiredPlanTier: float = Field(..., description="Required plan tier to use this shape.")
+    os: str
+    shape: Literal["Windows","Linux","Android"]
+    virtualization: Literal["KVM","Container"]
+    architecture: Literal["x86_64","aarch64"]
 
 # Sandbox Schemas
 class Sandbox(BaseModel):
@@ -116,7 +131,8 @@ class Sandbox(BaseModel):
     expiredAt: str = Field(..., description="Expiration date of the sandbox.")
     createdAt: str = Field(..., description="Creation date of the sandbox.")
     projectId: str = Field(..., description="Project ID to which the sandbox belongs.")
-
+    shapeName: str = Field(..., description="Specs and datacenter of the sandbox.")
+    shape: Shape
 
 class GatewayAddress(BaseModel):
     """
@@ -168,7 +184,7 @@ class CreateSandboxDto(BaseModel):
                                 ge=1, le=86400)
     projectId: Optional[str] = Field(None, description="The project id to use for the sandbox. Use default if not provided.")
     specId: Optional[str] = Field(None, description="The spec of the sandbox. Use default if not provided.")
-    datacenterId: Optional[str] = Field(None, description="The datacenter id to use for the sandbox. Use default if not provided.")
+    shape: Optional[str] = Field(None, description="Specs and datacenter of the sandbox.")
 
     class Config:
         """
@@ -214,7 +230,7 @@ class MouseClickAction(BaseModel):
     x: Length
     y: Length
     button: int = Field(..., description="Mouse button flag combination. 1: left, 2: right, 4: middle, 8: back, 16: forward; add them together to press multiple buttons at once.")
-    relative: bool
+    relative: bool = Field(False, description="Whether the coordinates are relative to the current mouse position")
     holdKey: Optional[str] = Field(None, description="Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
     callId: Optional[str] = str(uuid.uuid4())
 
@@ -235,7 +251,7 @@ class MouseTripleClickAction(BaseModel):
     x: Length
     y: Length
     button: int = Field(..., description="Mouse button flag combination. 1: left, 2: right, 4: middle, 8: back, 16: forward; add them together to press multiple buttons at once.")
-    relative: bool
+    relative: bool = Field(False, description="Whether the coordinates are relative to the current mouse position")
     holdKey: Optional[str] = Field(None, description="Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
     callId: Optional[str] = str(uuid.uuid4())
 
@@ -256,7 +272,7 @@ class MouseDoubleClickAction(BaseModel):
     x: Length
     y: Length
     button: int = Field(..., description="Mouse button flag combination. 1: left, 2: right, 4: middle, 8: back, 16: forward; add them together to press multiple buttons at once.")
-    relative: bool
+    relative: bool = Field(False, description="Whether the coordinates are relative to the current mouse position")
     holdKey: Optional[str] = Field(None, description="Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
     callId: Optional[str] = str(uuid.uuid4())
 
@@ -277,7 +293,7 @@ class MouseMoveAction(BaseModel):
     type: Literal["mouse:move"]
     x: Length
     y: Length
-    relative: bool
+    relative: bool = Field(False, description="Whether the coordinates are relative to the current mouse position")
     holdKey: Optional[str] = Field(None, description="Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
     callId: Optional[str] = str(uuid.uuid4())
 
@@ -322,8 +338,8 @@ class MouseDragAction(BaseModel):
     startY: Length
     endX: Length
     endY: Length
-    startRelative: bool
-    endRelative: bool
+    startRelative: bool = Field(False, description="Whether the coordinates are relative to the current mouse position")
+    endRelative: bool = Field(False, description="Whether the coordinates are relative to the current mouse position")
     button: int = Field(..., description="Mouse button flag combination. 1: left, 2: right, 4: middle, 8: back, 16: forward; add them together to press multiple buttons at once.")
     holdKey: Optional[str] = Field(None, description="Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
     callId: Optional[str] = str(uuid.uuid4())
