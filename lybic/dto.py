@@ -40,7 +40,11 @@ class StatsResponseDto(BaseModel):
     mcpServers: int
     sandboxes: int
     projects: int
-
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = "ignore"
 
 class McpServerPolicy(BaseModel):
     """
@@ -66,7 +70,11 @@ class McpServerResponseDto(BaseModel):
     projectId: str = Field(..., description="Project ID to which the MCP server belongs.")
     policy: McpServerPolicy
     currentSandboxId: Optional[str] = Field(None, description="ID of the currently connected sandbox.")
-
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = "ignore"
 
 class ListMcpServerResponse(RootModel):
     """
@@ -116,7 +124,11 @@ class Sandbox(BaseModel):
     expiredAt: str = Field(..., description="Expiration date of the sandbox.")
     createdAt: str = Field(..., description="Creation date of the sandbox.")
     projectId: str = Field(..., description="Project ID to which the sandbox belongs.")
-
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = "ignore"
 
 class GatewayAddress(BaseModel):
     """
@@ -127,7 +139,11 @@ class GatewayAddress(BaseModel):
     name: str
     preferredProviders: List[Literal["CHINA_MOBILE", "CHINA_UNICOM", "CHINA_TELECOM", "GLOBAL_BGP", 1, 2, 3, 4]]
     gatewayType: Literal["KCP", "QUIC", "WEB_TRANSPORT", 4, 5, 6]
-
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = "ignore"
 
 class ConnectDetails(BaseModel):
     """
@@ -137,7 +153,11 @@ class ConnectDetails(BaseModel):
     certificateHashBase64: str
     endUserToken: str
     roomId: str
-
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = "ignore"
 
 class SandboxListItem(Sandbox):
     """
@@ -183,7 +203,11 @@ class GetSandboxResponseDto(BaseModel):
     """
     sandbox: Sandbox
     connectDetails: ConnectDetails
-
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = "ignore"
 
 # Computer Use Schemas
 class PixelLength(BaseModel):
@@ -221,7 +245,7 @@ class MouseClickAction(BaseModel):
         """
         Configuration for Pydantic model.
         """
-        extra = "forbid"
+        extra = "ignore"
         # Allow population of fields with default values
         validate_assignment = True
         exclude_none = True
@@ -242,7 +266,7 @@ class MouseDoubleClickAction(BaseModel):
         """
         Configuration for Pydantic model.
         """
-        extra = "forbid"
+        extra = "ignore"
         # Allow population of fields with default values
         validate_assignment = True
         exclude_none = True
@@ -262,7 +286,7 @@ class MouseMoveAction(BaseModel):
         """
         Configuration for Pydantic model.
         """
-        extra = "forbid"
+        extra = "ignore"
         # Allow population of fields with default values
         validate_assignment = True
         exclude_none = True
@@ -284,7 +308,7 @@ class MouseScrollAction(BaseModel):
         """
         Configuration for Pydantic model.
         """
-        extra = "forbid"
+        extra = "ignore"
         # Allow population of fields with default values
         validate_assignment = True
         exclude_none = True
@@ -306,7 +330,7 @@ class MouseDragAction(BaseModel):
         """
         Configuration for Pydantic model.
         """
-        extra = "forbid"
+        extra = "ignore"
         # Allow population of fields with default values
         validate_assignment = True
         exclude_none = True
@@ -321,6 +345,14 @@ class KeyboardTypeAction(BaseModel):
     treatNewLineAsEnter: bool = Field(False, description="Whether to treat line breaks as enter. If true, any line breaks(\\n) in content will be treated as enter key press, and content will be split into multiple lines.")
     callId: Optional[str] = str(uuid.uuid4())
 
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = "ignore"
+        # Allow population of fields with default values
+        validate_assignment = True
+        exclude_none = True
 
 class KeyboardHotkeyAction(BaseModel):
     """
@@ -335,7 +367,7 @@ class KeyboardHotkeyAction(BaseModel):
         """
         Configuration for Pydantic model.
         """
-        extra = "forbid"
+        extra = "ignore"
         # Allow population of fields with default values
         validate_assignment = True
         exclude_none = True
@@ -352,7 +384,7 @@ class ScreenshotAction(BaseModel):
         """
         Configuration for Pydantic model.
         """
-        extra = "forbid"
+        extra = "ignore"
         # Allow population of fields with default values
         validate_assignment = True
         exclude_none = True
@@ -370,6 +402,7 @@ class WaitAction(BaseModel):
         """
         Configuration for Pydantic model.
         """
+        extra = "ignore"
         # Allow population of fields with default values
         validate_assignment = True
         exclude_none = True
@@ -387,6 +420,7 @@ class FinishedAction(BaseModel):
         """
         Configuration for Pydantic model.
         """
+        extra = "ignore"
         # Allow population of fields with default values
         validate_assignment = True
         exclude_none = True
@@ -404,6 +438,7 @@ class FailedAction(BaseModel):
         """
         Configuration for Pydantic model.
         """
+        extra = "ignore"
         # Allow population of fields with default values
         validate_assignment = True
         exclude_none = True
@@ -437,7 +472,7 @@ class ComputerUseActionDto(BaseModel):
         """
         Configuration for Pydantic model.
         """
-        extra = "forbid"
+        extra = "ignore"
         # Allow population of fields with default values
         validate_assignment = True
         exclude_none = True
@@ -453,6 +488,11 @@ class CursorPosition(BaseModel):
     screenHeight: int
     screenIndex: int
 
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = "ignore"
 
 class ExtendSandboxDto(BaseModel):
     """
@@ -467,6 +507,12 @@ class SandboxActionResponseDto(BaseModel):
     """
     screenShot: Optional[str]  # is a picture url of the screen eg. https://example.com/screen.webp
     cursorPosition: Optional[CursorPosition]
+
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = "ignore"
 
 
 @unique
