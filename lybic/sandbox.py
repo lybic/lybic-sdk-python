@@ -68,6 +68,8 @@ class Sandbox:
         """
         if args and isinstance(args[0], dto.CreateSandboxDto):
             data = args[0]
+        elif "data" in kwargs and isinstance(kwargs["data"], dto.CreateSandboxDto):
+            data = kwargs["data"]
         else:
             data = dto.CreateSandboxDto(**kwargs)
         self.client.logger.debug(f"Creating sandbox with data: {data}")
