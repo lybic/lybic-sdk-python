@@ -85,7 +85,7 @@ async def test_mcp(client:LybicClient):
     :param client:
     :return:
     """
-    await Sandbox(client).create(name='test_mcp')
+    await Sandbox(client).create(name='test_mcp',shape="small")
     mcp = MCP(client)
 
     print("Test List MCP:",await mcp.list())

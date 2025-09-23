@@ -131,7 +131,8 @@ class Sandbox(BaseModel):
     createdAt: str = Field(..., description="Creation date of the sandbox.")
     projectId: str = Field(..., description="Project ID to which the sandbox belongs.")
     shapeName: str = Field(..., description="Specs and datacenter of the sandbox.")
-    shape: Shape
+    shape: Optional[Shape] = None # This field does not exist in SandboxListResponseDto (that is, this field is optional)
+
 
 class GatewayAddress(BaseModel):
     """
@@ -182,7 +183,7 @@ class CreateSandboxDto(BaseModel):
                                 description="The maximum life time of the sandbox in seconds. Default is 1 hour, max is 1 day.",
                                 ge=1, le=86400)
     projectId: Optional[str] = Field(None, description="The project id to use for the sandbox. Use default if not provided.")
-    shape: Optional[str] = Field(None, description="Specs and datacenter of the sandbox.")
+    shape: str = Field("", description="Specs and datacenter of the sandbox.")
 
     class Config:
         """
