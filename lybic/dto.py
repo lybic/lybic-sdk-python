@@ -192,7 +192,7 @@ class CreateSandboxDto(BaseModel):
                                 description="The maximum life time of the sandbox in seconds. Default is 1 hour, max is 1 day.",
                                 ge=1, le=86400)
     projectId: Optional[str] = Field(None, description="The project id to use for the sandbox. Use default if not provided.")
-    shape: str = Field("", description="Specs and datacenter of the sandbox.")
+    shape: str = Field(..., description="Specs and datacenter of the sandbox.")
 
     class Config:
         """
