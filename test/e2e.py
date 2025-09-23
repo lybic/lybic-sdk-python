@@ -67,7 +67,7 @@ async def test_sandbox(client:LybicClient):
     sandbox = Sandbox(client)
 
     print("Test List Sandbox:",await sandbox.list())
-    print("Test Create Sandbox:",await sandbox.create(name="test_sandbox"))
+    print("Test Create Sandbox:",await sandbox.create(name="test_sandbox", shape="small"))
 
     print("Test Get Sandbox:")
     result = await sandbox.get("test_sandbox")
@@ -100,7 +100,7 @@ async def test_computer_use(client:LybicClient):
     :param client:
     :return:
     """
-    await Sandbox(client).create(name='test_computer_use')
+    await Sandbox(client).create(name='test_computer_use',shape="small")
     computer_use = ComputerUse(client)
 
     print("Test parse model output:")
@@ -160,7 +160,7 @@ async def restful_test() -> None:
             asyncio.create_task(test_sandbox(client)),
             asyncio.create_task(test_mcp(client)),
             asyncio.create_task(test_computer_use(client)),
-            asyncio.create_task(Sandbox(client).create(name='test_pyautogui'))
+            asyncio.create_task(Sandbox(client).create(name='test_pyautogui', shape="small"))
         ]
         await asyncio.gather(*tasks)
 

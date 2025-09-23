@@ -139,7 +139,7 @@ class Sandbox(BaseModel):
     expiredAt: str = Field(..., description="Expiration date of the sandbox.")
     createdAt: str = Field(..., description="Creation date of the sandbox.")
     projectId: str = Field(..., description="Project ID to which the sandbox belongs.")
-    shapeName: str = Field(..., description="Specs and datacenter of the sandbox.")
+    shapeName: Optional[str] = Field(None, description="Specs and datacenter of the sandbox.") # This field does not exist in GetSandboxResponseDto (that is, this field is optional)
     shape: Optional[Shape] = None # This field does not exist in SandboxListResponseDto (that is, this field is optional)
 
 
