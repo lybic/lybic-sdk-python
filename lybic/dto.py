@@ -337,10 +337,10 @@ class MouseDragAction(BaseModel):
     startY: Length
     endX: Length
     endY: Length
-    startRelative: bool = Field(False, description="Whether the coordinates are relative to the current mouse position")
-    endRelative: bool = Field(False, description="Whether the coordinates are relative to the current mouse position")
+    startRelative: bool = Field(False, description="Whether the start coordinates are relative to the current mouse position.")
+    endRelative: bool = Field(False, description="Whether the end coordinates are relative to the start coordinates of the drag. If false, they are absolute screen coordinates.")
     button: int = Field(..., description="Mouse button flag combination. 1: left, 2: right, 4: middle, 8: back, 16: forward; add them together to press multiple buttons at once.")
-    holdKey: Optional[str] = Field(None, description="Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
+    holdKey: Optional[str] = Field(None, description="Key to hold down during drag, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
     callId: Optional[str] = str(uuid.uuid4())
 
     class Config:
