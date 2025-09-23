@@ -214,6 +214,7 @@ class MouseClickAction(BaseModel):
     x: Length
     y: Length
     button: int = Field(..., description="Mouse button flag combination. 1: left, 2: right, 4: middle, 8: back, 16: forward; add them together to press multiple buttons at once.")
+    relative: bool
     holdKey: Optional[str] = Field(None, description="Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
     callId: Optional[str] = str(uuid.uuid4())
 
@@ -226,6 +227,26 @@ class MouseClickAction(BaseModel):
         validate_assignment = True
         exclude_none = True
 
+class MouseTripleClickAction(BaseModel):
+    """
+    Represents a mouse click action at a specified location.
+    """
+    type: Literal["mouse:tripleClick"]
+    x: Length
+    y: Length
+    button: int = Field(..., description="Mouse button flag combination. 1: left, 2: right, 4: middle, 8: back, 16: forward; add them together to press multiple buttons at once.")
+    relative: bool
+    holdKey: Optional[str] = Field(None, description="Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
+    callId: Optional[str] = str(uuid.uuid4())
+
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = "ignore"
+        # Allow population of fields with default values
+        validate_assignment = True
+        exclude_none = True
 
 class MouseDoubleClickAction(BaseModel):
     """
@@ -235,6 +256,7 @@ class MouseDoubleClickAction(BaseModel):
     x: Length
     y: Length
     button: int = Field(..., description="Mouse button flag combination. 1: left, 2: right, 4: middle, 8: back, 16: forward; add them together to press multiple buttons at once.")
+    relative: bool
     holdKey: Optional[str] = Field(None, description="Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
     callId: Optional[str] = str(uuid.uuid4())
 
@@ -255,6 +277,7 @@ class MouseMoveAction(BaseModel):
     type: Literal["mouse:move"]
     x: Length
     y: Length
+    relative: bool
     holdKey: Optional[str] = Field(None, description="Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
     callId: Optional[str] = str(uuid.uuid4())
 
@@ -299,6 +322,9 @@ class MouseDragAction(BaseModel):
     startY: Length
     endX: Length
     endY: Length
+    startRelative: bool
+    endRelative: bool
+    button: int = Field(..., description="Mouse button flag combination. 1: left, 2: right, 4: middle, 8: back, 16: forward; add them together to press multiple buttons at once.")
     holdKey: Optional[str] = Field(None, description="Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
     callId: Optional[str] = str(uuid.uuid4())
 
@@ -411,6 +437,7 @@ class FailedAction(BaseModel):
 
 ComputerUseAction = Union[
     MouseClickAction,
+    MouseTripleClickAction,
     MouseDoubleClickAction,
     MouseMoveAction,
     MouseScrollAction,
