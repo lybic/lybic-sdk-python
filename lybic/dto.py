@@ -32,6 +32,15 @@ from pydantic import BaseModel, Field, RootModel
 
 from lybic._api import deprecated
 
+# pylint: disable=invalid-name
+
+# Strategy for handling extra fields in the lybic api response
+# "ignore" means ignore extra fields, which will ensure that your SDK version remains compatible with the Lybic platform,
+# but it may cause compatibility issues with future versions of the SDK.
+# "forbid" means that the SDK will throw an error if it encounters extra fields in the response, which will force you to
+# update your SDK when the Lybic platform is updated, and may have a certain impact on your online environment.
+json_extra_fields_policy = "ignore"
+
 
 class StatsResponseDto(BaseModel):
     """
@@ -46,6 +55,7 @@ class McpServerPolicy(BaseModel):
     """
     MCP server sandbox policy.
     """
+    sandboxShape: str = Field('', description="The shape of the sandbox created by the MCP server.")
     sandboxMaxLifetimeSeconds: int = Field(3600, description="The maximum lifetime of a sandbox.")
     sandboxMaxIdleTimeSeconds: int = Field(3600, description="The maximum idle time of a sandbox.")
     sandboxAutoCreation: bool = Field(False,
@@ -88,6 +98,7 @@ class CreateMcpServerDto(McpServerPolicy):
     """
     name: str = Field(..., description="Name of the MCP server.")
     projectId: Optional[str] = Field('', description="Project to which the MCP server belongs to.")
+    sandboxShape: str = Field('', description="The shape of the sandbox created by the MCP server.")
 
     sandboxMaxLifetimeSeconds: Optional[int] = Field(3600, description="The maximum lifetime of a sandbox.")
     sandboxMaxIdleTimeSeconds: Optional[int] = Field(3600, description="The maximum idle time of a sandbox.")
@@ -101,10 +112,22 @@ class CreateMcpServerDto(McpServerPolicy):
         """
         Configuration for Pydantic model.
         """
-        extra = "ignore"
+        extra = json_extra_fields_policy
         # Allow population of fields with default values
         validate_assignment = True
 
+class Shape(BaseModel):
+    """
+    Represents a shape of a sandbox.
+    """
+    name: str = Field(..., description="Name of the shape.")
+    description: str = Field(..., description="Description of the shape.")
+    hardwareAcceleratedEncoding: bool = Field(False, description="Whether the shape supports hardware accelerated encoding.")
+    pricePerHour: float = Field(..., description="This price acts as a multiplier, e.g. if it is set to 0.5, each hour of usage will be billed as 0.5 hours.")
+    requiredPlanTier: float = Field(..., description="Required plan tier to use this shape.")
+    os: Literal["Windows","Linux","Android"]
+    virtualization: Literal["KVM","Container"]
+    architecture: Literal["x86_64","aarch64"]
 
 # Sandbox Schemas
 class Sandbox(BaseModel):
@@ -116,6 +139,8 @@ class Sandbox(BaseModel):
     expiredAt: str = Field(..., description="Expiration date of the sandbox.")
     createdAt: str = Field(..., description="Creation date of the sandbox.")
     projectId: str = Field(..., description="Project ID to which the sandbox belongs.")
+    shapeName: Optional[str] = Field(None, description="Specs and datacenter of the sandbox.") # This field does not exist in GetSandboxResponseDto (that is, this field is optional)
+    shape: Optional[Shape] = None # This field does not exist in SandboxListResponseDto (that is, this field is optional)
 
 
 class GatewayAddress(BaseModel):
@@ -167,8 +192,7 @@ class CreateSandboxDto(BaseModel):
                                 description="The maximum life time of the sandbox in seconds. Default is 1 hour, max is 1 day.",
                                 ge=1, le=86400)
     projectId: Optional[str] = Field(None, description="The project id to use for the sandbox. Use default if not provided.")
-    specId: Optional[str] = Field(None, description="The spec of the sandbox. Use default if not provided.")
-    datacenterId: Optional[str] = Field(None, description="The datacenter id to use for the sandbox. Use default if not provided.")
+    shape: str = Field(..., description="Specs and datacenter of the sandbox.")
 
     class Config:
         """
@@ -214,6 +238,7 @@ class MouseClickAction(BaseModel):
     x: Length
     y: Length
     button: int = Field(..., description="Mouse button flag combination. 1: left, 2: right, 4: middle, 8: back, 16: forward; add them together to press multiple buttons at once.")
+    relative: bool = Field(False, description="Whether the coordinates are relative to the current mouse position")
     holdKey: Optional[str] = Field(None, description="Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
     callId: Optional[str] = str(uuid.uuid4())
 
@@ -221,11 +246,31 @@ class MouseClickAction(BaseModel):
         """
         Configuration for Pydantic model.
         """
-        extra = "forbid"
+        extra = json_extra_fields_policy
         # Allow population of fields with default values
         validate_assignment = True
         exclude_none = True
 
+class MouseTripleClickAction(BaseModel):
+    """
+    Represents a mouse triple-click action at a specified location.
+    """
+    type: Literal["mouse:tripleClick"]
+    x: Length
+    y: Length
+    button: int = Field(..., description="Mouse button flag combination. 1: left, 2: right, 4: middle, 8: back, 16: forward; add them together to press multiple buttons at once.")
+    relative: bool = Field(False, description="Whether the coordinates are relative to the current mouse position.")
+    holdKey: Optional[str] = Field(None, description="Key to hold down during triple click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
+    callId: Optional[str] = str(uuid.uuid4())
+
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = json_extra_fields_policy
+        # Allow population of fields with default values
+        validate_assignment = True
+        exclude_none = True
 
 class MouseDoubleClickAction(BaseModel):
     """
@@ -235,6 +280,7 @@ class MouseDoubleClickAction(BaseModel):
     x: Length
     y: Length
     button: int = Field(..., description="Mouse button flag combination. 1: left, 2: right, 4: middle, 8: back, 16: forward; add them together to press multiple buttons at once.")
+    relative: bool = Field(False, description="Whether the coordinates are relative to the current mouse position")
     holdKey: Optional[str] = Field(None, description="Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
     callId: Optional[str] = str(uuid.uuid4())
 
@@ -242,7 +288,7 @@ class MouseDoubleClickAction(BaseModel):
         """
         Configuration for Pydantic model.
         """
-        extra = "forbid"
+        extra = json_extra_fields_policy
         # Allow population of fields with default values
         validate_assignment = True
         exclude_none = True
@@ -255,14 +301,15 @@ class MouseMoveAction(BaseModel):
     type: Literal["mouse:move"]
     x: Length
     y: Length
-    holdKey: Optional[str] = Field(None, description="Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
+    relative: bool = Field(False, description="Whether the coordinates are relative to the current mouse position")
+    holdKey: Optional[str] = Field(None, description="Key to hold down during move, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
     callId: Optional[str] = str(uuid.uuid4())
 
     class Config:
         """
         Configuration for Pydantic model.
         """
-        extra = "forbid"
+        extra = json_extra_fields_policy
         # Allow population of fields with default values
         validate_assignment = True
         exclude_none = True
@@ -277,14 +324,15 @@ class MouseScrollAction(BaseModel):
     y: Length
     stepVertical: int
     stepHorizontal: int
-    holdKey: Optional[str] = Field(None, description="Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
+    relative: bool = Field(False, description="Whether the coordinates are relative to the current mouse position")
+    holdKey: Optional[str] = Field(None, description="Key to hold down during scroll, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
     callId: Optional[str] = str(uuid.uuid4())
 
     class Config:
         """
         Configuration for Pydantic model.
         """
-        extra = "forbid"
+        extra = json_extra_fields_policy
         # Allow population of fields with default values
         validate_assignment = True
         exclude_none = True
@@ -299,14 +347,17 @@ class MouseDragAction(BaseModel):
     startY: Length
     endX: Length
     endY: Length
-    holdKey: Optional[str] = Field(None, description="Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
+    startRelative: bool = Field(False, description="Whether the start coordinates are relative to the current mouse position.")
+    endRelative: bool = Field(False, description="Whether the end coordinates are relative to the start coordinates of the drag. If false, they are absolute screen coordinates.")
+    button: int = Field(..., description="Mouse button flag combination. 1: left, 2: right, 4: middle, 8: back, 16: forward; add them together to press multiple buttons at once.")
+    holdKey: Optional[str] = Field(None, description="Key to hold down during drag, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
     callId: Optional[str] = str(uuid.uuid4())
 
     class Config:
         """
         Configuration for Pydantic model.
         """
-        extra = "forbid"
+        extra = json_extra_fields_policy
         # Allow population of fields with default values
         validate_assignment = True
         exclude_none = True
@@ -335,7 +386,7 @@ class KeyboardHotkeyAction(BaseModel):
         """
         Configuration for Pydantic model.
         """
-        extra = "forbid"
+        extra = json_extra_fields_policy
         # Allow population of fields with default values
         validate_assignment = True
         exclude_none = True
@@ -352,7 +403,7 @@ class ScreenshotAction(BaseModel):
         """
         Configuration for Pydantic model.
         """
-        extra = "forbid"
+        extra = json_extra_fields_policy
         # Allow population of fields with default values
         validate_assignment = True
         exclude_none = True
@@ -411,6 +462,7 @@ class FailedAction(BaseModel):
 
 ComputerUseAction = Union[
     MouseClickAction,
+    MouseTripleClickAction,
     MouseDoubleClickAction,
     MouseMoveAction,
     MouseScrollAction,
@@ -437,7 +489,7 @@ class ComputerUseActionDto(BaseModel):
         """
         Configuration for Pydantic model.
         """
-        extra = "forbid"
+        extra = json_extra_fields_policy
         # Allow population of fields with default values
         validate_assignment = True
         exclude_none = True
