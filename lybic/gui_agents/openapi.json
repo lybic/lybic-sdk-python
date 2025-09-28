@@ -10,7 +10,7 @@
       "get": {
         "summary": "Get Agent Info",
         "deprecated": false,
-        "description": "",
+        "description": "Retrieves information about the agent, such as version and capabilities.",
         "operationId": "getAgentInfo",
         "tags": [],
         "parameters": [],
