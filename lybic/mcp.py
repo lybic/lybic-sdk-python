@@ -34,6 +34,7 @@ from lybic import dto
 from lybic._api import deprecated
 from lybic.lybic import LybicClient
 
+# pylint: disable=invalid-name
 try:
     from mcp import ClientSession
     from mcp.client.streamable_http import streamablehttp_client
