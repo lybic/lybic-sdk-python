@@ -25,7 +25,7 @@ class TaskStatus(str, Enum):
 class AgentInfo(BaseModel):
     version: str
     maxConcurrentTasks: Optional[int] = None
-    log_level: Optional[str] = None
+    logLevel: Optional[str] = None
     domain: Optional[str] = None
 
 class Sandbox(BaseModel):
