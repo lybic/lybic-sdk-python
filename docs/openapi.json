@@ -626,7 +626,8 @@
                 "seed",
                 "glm-4.1v",
                 "glm-4.5v",
-                "qwen-2.5-vl"
+                "qwen-2.5-vl",
+                "pyautogui"
               ],
               "type": "string"
             }
@@ -657,20 +658,6 @@
         "summary": "Parse LLM Text Output",
         "tags": [
           "ComputerUse"
-        ]
-      }
-    },
-    "/api/healthz": {
-      "get": {
-        "operationId": "HealthCheckController_healthCheck",
-        "parameters": [],
-        "responses": {
-          "204": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "HealthCheck"
         ]
       }
     },
@@ -746,6 +733,10 @@
             "policy": {
               "type": "object",
               "properties": {
+                "sandboxShape": {
+                  "description": "The shape of the sandbox created by the MCP server.",
+                  "type": "string"
+                },
                 "sandboxMaxLifetimeSeconds": {
                   "description": "The maximum lifetime of a sandbox.",
                   "type": "number",
@@ -776,7 +767,10 @@
                   "type": "boolean",
                   "default": false
                 }
-              }
+              },
+              "required": [
+                "sandboxShape"
+              ]
             },
             "currentSandboxId": {
               "description": "ID of the currently connected sandbox.",
@@ -821,6 +815,10 @@
           "policy": {
             "type": "object",
             "properties": {
+              "sandboxShape": {
+                "description": "The shape of the sandbox created by the MCP server.",
+                "type": "string"
+              },
               "sandboxMaxLifetimeSeconds": {
                 "description": "The maximum lifetime of a sandbox.",
                 "type": "number",
@@ -851,7 +849,10 @@
                 "type": "boolean",
                 "default": false
               }
-            }
+            },
+            "required": [
+              "sandboxShape"
+            ]
           },
           "currentSandboxId": {
             "description": "ID of the currently connected sandbox.",
@@ -878,6 +879,10 @@
           },
           "projectId": {
             "description": "Project to which the MCP server belongs to.",
+            "type": "string"
+          },
+          "sandboxShape": {
+            "description": "The shape of the sandbox created by the MCP server.",
             "type": "string"
           },
           "sandboxMaxLifetimeSeconds": {
@@ -912,7 +917,8 @@
           }
         },
         "required": [
-          "name"
+          "name",
+          "sandboxShape"
         ]
       },
       "SetMcpServerToSandboxResponseDto": {
@@ -954,6 +960,9 @@
             },
             "projectId": {
               "type": "string"
+            },
+            "shapeName": {
+              "type": "string"
             }
           },
           "required": [
@@ -962,7 +971,8 @@
             "expiredAt",
             "expiresAt",
             "createdAt",
-            "projectId"
+            "projectId",
+            "shapeName"
           ]
         }
       },
@@ -987,15 +997,14 @@
             "description": "The project id to use for the sandbox. Use default if not provided.",
             "type": "string"
           },
-          "specId": {
-            "description": "The spec of the sandbox. Use default if not provided.",
-            "type": "string"
-          },
-          "datacenterId": {
-            "description": "The datacenter id to use for the sandbox. Use default if not provided.",
+          "shape": {
+            "description": "Specs and datacenter of the sandbox.",
             "type": "string"
           }
-        }
+        },
+        "required": [
+          "shape"
+        ]
       },
       "GetSandboxResponseDto": {
         "type": "object",
@@ -1024,6 +1033,62 @@
               },
               "projectId": {
                 "type": "string"
+              },
+              "shapeName": {
+                "type": "string"
+              },
+              "shape": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "hardwareAcceleratedEncoding": {
+                    "type": "boolean"
+                  },
+                  "pricePerHour": {
+                    "description": "This price acts as a multiplier, e.g. if it is set to 0.5, each hour of usage will be billed as 0.5 hours.",
+                    "type": "number"
+                  },
+                  "requiredPlanTier": {
+                    "type": "number"
+                  },
+                  "os": {
+                    "type": "string",
+                    "enum": [
+                      "Windows",
+                      "Linux",
+                      "Android"
+                    ]
+                  },
+                  "virtualization": {
+                    "type": "string",
+                    "enum": [
+                      "KVM",
+                      "Container"
+                    ]
+                  },
+                  "architecture": {
+                    "type": "string",
+                    "enum": [
+                      "x86_64",
+                      "aarch64"
+                    ]
+                  }
+                },
+                "required": [
+                  "name",
+                  "description",
+                  "hardwareAcceleratedEncoding",
+                  "pricePerHour",
+                  "requiredPlanTier",
+                  "os",
+                  "virtualization",
+                  "architecture"
+                ]
               }
             },
             "required": [
@@ -1032,7 +1097,9 @@
               "expiredAt",
               "expiresAt",
               "createdAt",
-              "projectId"
+              "projectId",
+              "shapeName",
+              "shape"
             ]
           },
           "connectDetails": {
@@ -1269,6 +1336,10 @@
                   "holdKey": {
                     "description": "Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\".",
                     "type": "string"
+                  },
+                  "relative": {
+                    "description": "Whether the coordinates are relative to the current mouse position.",
+                    "type": "boolean"
                   }
                 },
                 "required": [
@@ -1397,6 +1468,142 @@
                   "holdKey": {
                     "description": "Key to hold down during double click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\".",
                     "type": "string"
+                  },
+                  "relative": {
+                    "description": "Whether the coordinates are relative to the current mouse position.",
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "type",
+                  "x",
+                  "y",
+                  "button"
+                ]
+              },
+              {
+                "description": "Triple click the mouse at the specified coordinates",
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "mouse:tripleClick"
+                    ]
+                  },
+                  "x": {
+                    "description": "X coordinate",
+                    "oneOf": [
+                      {
+                        "description": "Length in pixels",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "description": "Indicates the unit is pixel",
+                            "type": "string",
+                            "enum": [
+                              "px"
+                            ]
+                          },
+                          "value": {
+                            "description": "Length in pixels",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "value"
+                        ]
+                      },
+                      {
+                        "description": "Length as a fraction",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "/"
+                            ]
+                          },
+                          "numerator": {
+                            "description": "Numerator of the fraction",
+                            "type": "number"
+                          },
+                          "denominator": {
+                            "description": "Denominator of the fraction",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "numerator",
+                          "denominator"
+                        ]
+                      }
+                    ]
+                  },
+                  "y": {
+                    "description": "Y coordinate",
+                    "oneOf": [
+                      {
+                        "description": "Length in pixels",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "description": "Indicates the unit is pixel",
+                            "type": "string",
+                            "enum": [
+                              "px"
+                            ]
+                          },
+                          "value": {
+                            "description": "Length in pixels",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "value"
+                        ]
+                      },
+                      {
+                        "description": "Length as a fraction",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "/"
+                            ]
+                          },
+                          "numerator": {
+                            "description": "Numerator of the fraction",
+                            "type": "number"
+                          },
+                          "denominator": {
+                            "description": "Denominator of the fraction",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "numerator",
+                          "denominator"
+                        ]
+                      }
+                    ]
+                  },
+                  "button": {
+                    "description": "Mouse button index",
+                    "type": "number"
+                  },
+                  "holdKey": {
+                    "description": "Key to hold down during triple click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\".",
+                    "type": "string"
+                  },
+                  "relative": {
+                    "description": "Whether the coordinates are relative to the current mouse position.",
+                    "type": "boolean"
                   }
                 },
                 "required": [
@@ -1521,6 +1728,10 @@
                   "holdKey": {
                     "description": "Key to hold down during move, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\".",
                     "type": "string"
+                  },
+                  "relative": {
+                    "description": "Whether the coordinates are relative to the current mouse position.",
+                    "type": "boolean"
                   }
                 },
                 "required": [
@@ -1652,6 +1863,10 @@
                   "holdKey": {
                     "description": "Key to hold down during scroll, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\".",
                     "type": "string"
+                  },
+                  "relative": {
+                    "description": "Whether the coordinates are relative to the current mouse position.",
+                    "type": "boolean"
                   }
                 },
                 "required": [
@@ -1876,9 +2091,21 @@
                       }
                     ]
                   },
+                  "button": {
+                    "description": "Mouse button index",
+                    "type": "number"
+                  },
                   "holdKey": {
                     "description": "Key to hold down during drag, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\".",
                     "type": "string"
+                  },
+                  "startRelative": {
+                    "description": "Whether the coordinates are relative to the current mouse position.",
+                    "type": "boolean"
+                  },
+                  "endRelative": {
+                    "description": "Whether the coordinates are relative to the current mouse position.",
+                    "type": "boolean"
                   }
                 },
                 "required": [
@@ -2347,6 +2574,10 @@
                     "holdKey": {
                       "description": "Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\".",
                       "type": "string"
+                    },
+                    "relative": {
+                      "description": "Whether the coordinates are relative to the current mouse position.",
+                      "type": "boolean"
                     }
                   },
                   "required": [
@@ -2475,6 +2706,142 @@
                     "holdKey": {
                       "description": "Key to hold down during double click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\".",
                       "type": "string"
+                    },
+                    "relative": {
+                      "description": "Whether the coordinates are relative to the current mouse position.",
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "x",
+                    "y",
+                    "button"
+                  ]
+                },
+                {
+                  "description": "Triple click the mouse at the specified coordinates",
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "mouse:tripleClick"
+                      ]
+                    },
+                    "x": {
+                      "description": "X coordinate",
+                      "oneOf": [
+                        {
+                          "description": "Length in pixels",
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "description": "Indicates the unit is pixel",
+                              "type": "string",
+                              "enum": [
+                                "px"
+                              ]
+                            },
+                            "value": {
+                              "description": "Length in pixels",
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "type",
+                            "value"
+                          ]
+                        },
+                        {
+                          "description": "Length as a fraction",
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string",
+                              "enum": [
+                                "/"
+                              ]
+                            },
+                            "numerator": {
+                              "description": "Numerator of the fraction",
+                              "type": "number"
+                            },
+                            "denominator": {
+                              "description": "Denominator of the fraction",
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "type",
+                            "numerator",
+                            "denominator"
+                          ]
+                        }
+                      ]
+                    },
+                    "y": {
+                      "description": "Y coordinate",
+                      "oneOf": [
+                        {
+                          "description": "Length in pixels",
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "description": "Indicates the unit is pixel",
+                              "type": "string",
+                              "enum": [
+                                "px"
+                              ]
+                            },
+                            "value": {
+                              "description": "Length in pixels",
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "type",
+                            "value"
+                          ]
+                        },
+                        {
+                          "description": "Length as a fraction",
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string",
+                              "enum": [
+                                "/"
+                              ]
+                            },
+                            "numerator": {
+                              "description": "Numerator of the fraction",
+                              "type": "number"
+                            },
+                            "denominator": {
+                              "description": "Denominator of the fraction",
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "type",
+                            "numerator",
+                            "denominator"
+                          ]
+                        }
+                      ]
+                    },
+                    "button": {
+                      "description": "Mouse button index",
+                      "type": "number"
+                    },
+                    "holdKey": {
+                      "description": "Key to hold down during triple click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\".",
+                      "type": "string"
+                    },
+                    "relative": {
+                      "description": "Whether the coordinates are relative to the current mouse position.",
+                      "type": "boolean"
                     }
                   },
                   "required": [
@@ -2599,6 +2966,10 @@
                     "holdKey": {
                       "description": "Key to hold down during move, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\".",
                       "type": "string"
+                    },
+                    "relative": {
+                      "description": "Whether the coordinates are relative to the current mouse position.",
+                      "type": "boolean"
                     }
                   },
                   "required": [
@@ -2730,6 +3101,10 @@
                     "holdKey": {
                       "description": "Key to hold down during scroll, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\".",
                       "type": "string"
+                    },
+                    "relative": {
+                      "description": "Whether the coordinates are relative to the current mouse position.",
+                      "type": "boolean"
                     }
                   },
                   "required": [
@@ -2954,9 +3329,21 @@
                         }
                       ]
                     },
+                    "button": {
+                      "description": "Mouse button index",
+                      "type": "number"
+                    },
                     "holdKey": {
                       "description": "Key to hold down during drag, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\".",
                       "type": "string"
+                    },
+                    "startRelative": {
+                      "description": "Whether the coordinates are relative to the current mouse position.",
+                      "type": "boolean"
+                    },
+                    "endRelative": {
+                      "description": "Whether the coordinates are relative to the current mouse position.",
+                      "type": "boolean"
                     }
                   },
                   "required": [
