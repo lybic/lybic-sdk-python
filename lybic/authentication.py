@@ -29,7 +29,7 @@ class LybicAuth:
     """LybicAuth holds the authentication for Lybic API."""
 
     org_id:  str # Your organization ID
-    apikey: str # Your API key
+    api_key: str # Your API key
     endpoint: str # Your API endpoint
     headers: dict # Extra headers if needed
 
@@ -40,11 +40,12 @@ class LybicAuth:
                  extra_headers: dict = None,
                  ):
         """
-        Init lybic auth with org_id, api_key and endpoint
+        Initializes the LybicAuth instance.
 
-        :param org_id:
-        :param api_key:
-        :param endpoint:
+        :param org_id: Your organization ID. Defaults to the `LYBIC_ORG_ID` environment variable. Required.
+        :param api_key: Your API key. Defaults to the `LYBIC_API_KEY` environment variable. Required unless `x-trial-session-token` is in `extra_headers`.
+        :param endpoint: The API endpoint. Defaults to the `LYBIC_API_ENDPOINT` environment variable or "https://api.lybic.cn". Required.
+        :param extra_headers: A dictionary of extra headers to include in requests.
         """
         assert org_id, "LYBIC_ORG_ID is required"
         assert endpoint, "LYBIC_API_ENDPOINT is required"
@@ -57,7 +58,7 @@ class LybicAuth:
         if not (extra_headers and 'x-trial-session-token' in extra_headers):
             assert api_key, "LYBIC_API_KEY is required when x-trial-session-token is not provided"
             self.headers["x-api-key"] = api_key
-        self.apikey = api_key
+        self.api_key = api_key
 
         if endpoint.endswith("/"):
             self.endpoint = endpoint[:-1]
@@ -66,9 +67,3 @@ class LybicAuth:
 
         self.org_id = org_id
         self.headers["Content-Type"] = "application/json"
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        pass

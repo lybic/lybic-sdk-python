@@ -120,8 +120,8 @@ class _LybicBaseClient:
         return self.auth.org_id
 
     @property
-    def _apikey(self):
-        return self.auth.apikey
+    def _api_key(self):
+        return self.auth.api_key
 
     def make_mcp_endpoint(self, mcp_server_id: str) -> str:
         """

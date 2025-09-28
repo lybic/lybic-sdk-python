@@ -90,7 +90,7 @@ class Pyautogui:
             )
             self.client = LybicClient(
                 org_id=client.org_id,
-                api_key=client._apikey,
+                api_key=client._api_key,
                 endpoint=client.endpoint,
                 timeout=client.timeout,
                 extra_headers=client.headers,

@@ -74,7 +74,7 @@ Getting started is simple. First, install the package from PyPI:
 pip install lybic
 ```
 
-To use features like the `Mcp` mcp-lybic-client, you need to install the optional dependencies:
+To use features like the `Mcp` client, you need to install the optional dependencies:
 ```bash
 pip install 'lybic[mcp]'
 ```
