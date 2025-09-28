@@ -41,6 +41,9 @@ try:
     MCP_INSTALLED = True
 except ImportError:
     MCP_INSTALLED = False
+    ClientSession = object
+    streamablehttp_client = object
+    CallToolResult = object
 
 class Mcp:
     """Mcp is an async client for lybic MCP(Model Context Protocol) and Restful Interface API."""
