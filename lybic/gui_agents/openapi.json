@@ -395,7 +395,7 @@
             "type": "integer",
             "format": "int32"
           },
-          "log_level": {
+          "logLevel": {
             "type": "string"
           },
           "domain": {
@@ -448,7 +448,6 @@
       "SandboxOS": {
         "type": "string",
         "enum": [
-          "OSUNDEFINED",
           "WINDOWS",
           "LINUX",
           "ANDROID"
@@ -587,7 +586,6 @@
       "InstanceMode": {
         "type": "string",
         "enum": [
-          "MODEUNDEFINED",
           "NORMAL",
           "FAST"
         ]
@@ -623,7 +621,6 @@
       "TaskStatus": {
         "type": "string",
         "enum": [
-          "TASKSTATUSUNDEFINED",
           "PENDING",
           "RUNNING",
           "SUCCESS",
