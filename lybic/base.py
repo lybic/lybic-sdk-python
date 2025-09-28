@@ -94,14 +94,29 @@ class _LybicBaseClient:
 
     @property
     def headers(self):
+        """
+        Get headers for requests
+
+        :return:
+        """
         return self.auth.headers
 
     @property
     def endpoint(self):
+        """
+        Get endpoint for requests
+
+        :return:
+        """
         return self.auth.endpoint
 
     @property
     def org_id(self):
+        """
+        Get org_id for requests
+
+        :return:
+        """
         return self.auth.org_id
 
     @property

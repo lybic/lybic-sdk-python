@@ -26,7 +26,6 @@
 
 """lybic.py is the main entry point for Lybic API."""
 import asyncio
-import os
 from typing import Optional
 import httpx
 

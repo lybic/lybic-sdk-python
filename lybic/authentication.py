@@ -66,3 +66,9 @@ class LybicAuth:
 
         self.org_id = org_id
         self.headers["Content-Type"] = "application/json"
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        pass

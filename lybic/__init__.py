@@ -29,6 +29,7 @@
 __version__ = "0.8.0"
 
 # Lybic Client
+from .authentication import LybicAuth
 from .lybic import LybicClient
 
 # MCP Operations
@@ -48,8 +49,6 @@ from .sandbox import Sandbox
 
 # Stats
 from .stats import Stats
-
-from .authentication import LybicAuth
 
 __all__ = [
     "__version__",
