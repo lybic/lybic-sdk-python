@@ -49,9 +49,6 @@ from .sandbox import Sandbox
 # Stats
 from .stats import Stats
 
-# from gui_agents import *
-import gui_agents
-
 __all__ = [
     "__version__",
     "LybicClient",
@@ -61,7 +58,6 @@ __all__ = [
     "Pyautogui",
     "Sandbox",
     "Stats",
-    "gui_agents",
 ]
 
 def __dir__() -> list[str]:
