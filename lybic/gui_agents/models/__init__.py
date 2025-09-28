@@ -2,9 +2,6 @@
 #
 # Copyright (c) 2019-2025   Beijing Tingyu Technology Co., Ltd.
 # Copyright (c) 2025        Lybic Development Team <team@lybic.ai, lybic@tingyutech.com>
-# Copyright (c) 2025        Lu Yicheng <luyicheng@tingyutech.com>
-#
-# Author: AEnjoy <aenjoyable@163.com>
 #
 # These Terms of Service ("Terms") set forth the rules governing your access to and use of the website lybic.ai
 # ("Website"), our web applications, and other services (collectively, the "Services") provided by Beijing Tingyu
@@ -23,41 +20,37 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
-
-""" Lybic SDK import header"""
-
-__version__ = "0.8.0"
-
-# Lybic Client
-from .lybic import LybicClient
-
-# MCP Operations
-from .mcp import MCP, Mcp
-
-#  Tools
-from .tools import ComputerUse
-
-# Project
-from .project import Project
-
-# Pyautogui
-from .pyautogui import Pyautogui
-
-# Sandbox
-from .sandbox import Sandbox
-
-# Stats
-from .stats import Stats
+"""This file makes the 'models' directory a Python package."""
+from .api_models import (
+    AgentInfo,
+    Authorization,
+    CommonConfig,
+    InstanceMode,
+    LLMConfig,
+    QueryTaskStatusResponse,
+    RunAgentInstructionAsyncResponse,
+    RunAgentInstructionRequest,
+    SandboxOS,
+    SetCommonConfigResponse,
+    StageModelConfig,
+    TaskStatus,
+    TaskStream,
+)
 
 __all__ = [
-    "__version__",
-    "LybicClient",
-    "MCP",
-    "ComputerUse",
-    "Project",
-    "Pyautogui",
-    "Sandbox",
-    "Stats",
+    "AgentInfo",
+    "Authorization",
+    "CommonConfig",
+    "InstanceMode",
+    "LLMConfig",
+    "QueryTaskStatusResponse",
+    "RunAgentInstructionAsyncResponse",
+    "RunAgentInstructionRequest",
+    "SandboxOS",
+    "SetCommonConfigResponse",
+    "StageModelConfig",
+    "TaskStatus",
+    "TaskStream",
 ]
 
 def __dir__() -> list[str]:
