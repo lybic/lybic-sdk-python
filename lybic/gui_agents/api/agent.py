@@ -35,20 +35,20 @@ class Client:
         self.auth = auth
         self.timeout = timeout
         self.max_retries = max_retries
-        self.httpclient: httpx.AsyncClient | None = None
+        self._httpclient: httpx.AsyncClient | None = None
         self._in_context = False
         self.logger = logging.getLogger(__name__)
 
     def _ensure_client_is_open(self):
-        if self.httpclient is None:
-            self.httpclient = httpx.AsyncClient(headers=self.auth.headers, timeout=self.timeout)
-        elif self.httpclient.is_closed:
+        if self._httpclient is None:
+            self._httpclient = httpx.AsyncClient(headers=self.auth.headers, timeout=self.timeout)
+        elif self._httpclient.is_closed:
             raise RuntimeError("The client has been closed and cannot be reused. Please create a new client instance.")
 
     async def __aenter__(self):
         if self._in_context:
             raise RuntimeError("Cannot re-enter context.")
-        if self.httpclient and not self.httpclient.is_closed:
+        if self._httpclient and not self._httpclient.is_closed:
             raise RuntimeError("Cannot enter context with an already-active client.")
 
         self._in_context = True
@@ -63,8 +63,8 @@ class Client:
         """Close the underlying httpx.AsyncClient."""
         if self._in_context:
             return
-        if self.httpclient:
-            await self.httpclient.aclose()
+        if self._httpclient:
+            await self._httpclient.aclose()
 
     async def _get(self, path: str) -> httpx.Response:
         """
@@ -81,7 +81,7 @@ class Client:
         last_exception = None
         for attempt in range(self.max_retries + 1):
             try:
-                response = await self.httpclient.get(url, headers=headers)
+                response = await self._httpclient.get(url, headers=headers)
                 response.raise_for_status()
                 return response
             except (httpx.RequestError, httpx.HTTPStatusError) as e:
@@ -105,11 +105,10 @@ class Client:
         self._ensure_client_is_open()
 
         url = f"{self.auth.agent_service_endpoint}{path}"
-        headers = self.auth.headers.copy()
         last_exception = None
         for attempt in range(self.max_retries + 1):
             try:
-                response = await self.httpclient.post(url, headers=headers,json= data)
+                response = await self._httpclient.post(url, headers=self.auth.headers,json= data)
                 response.raise_for_status()
                 return response
             except (httpx.RequestError, httpx.HTTPStatusError) as e:
@@ -122,3 +121,23 @@ class Client:
 
         raise last_exception
 
+    async def _stream(self, path: str,data: dict|None = None):
+        """
+        Make a request to Lybic Restful API(SSE)
+
+        :param path: API endpoint
+        :return: httpx.Response object
+        """
+        self._ensure_client_is_open()
+
+        url = f"{self.auth.agent_service_endpoint}{path}"
+        headers = self.auth.headers.copy()
+
+        if not data:
+            headers.pop("Content-Type", None)
+
+        async with self._httpclient.stream("GET", url) as response:
+            async for line in response.aiter_lines():
+                if line.strip():
+                    if line.startswith("data:"):
+                        yield line[len("data:"):].strip()
