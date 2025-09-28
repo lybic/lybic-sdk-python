@@ -1,0 +1,124 @@
+# -*- coding: UTF-8 -*-
+#
+# Copyright (c) 2019-2025   Beijing Tingyu Technology Co., Ltd.
+# Copyright (c) 2025        Lybic Development Team <team@lybic.ai, lybic@tingyutech.com>
+#
+# These Terms of Service ("Terms") set forth the rules governing your access to and use of the website lybic.ai
+# ("Website"), our web applications, and other services (collectively, the "Services") provided by Beijing Tingyu
+# Technology Co., Ltd. ("Company," "we," "us," or "our"), a company registered in Haidian District, Beijing. Any
+# breach of these Terms may result in the suspension or termination of your access to the Services.
+# By accessing and using the Services and/or the Website, you represent that you are at least 18 years old,
+# acknowledge that you have read and understood these Terms, and agree to be bound by them. By using or accessing
+# the Services and/or the Website, you further represent and warrant that you have the legal capacity and authority
+# to agree to these Terms, whether as an individual or on behalf of a company. If you do not agree to all of these
+# Terms, do not access or use the Website or Services.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+"""Agentic Lybic Restful API client"""
+import asyncio
+import logging
+
+import httpx
+
+from lybic import LybicAuth
+
+
+class Client:
+    def __init__(self, auth: LybicAuth,timeout: int = 10,max_retries: int = 3):
+        """Agentic Lybic Restful API client"""
+        self.auth = auth
+        self.timeout = timeout
+        self.max_retries = max_retries
+        self.httpclient: httpx.AsyncClient | None = None
+        self._in_context = False
+        self.logger = logging.getLogger(__name__)
+
+    def _ensure_client_is_open(self):
+        if self.httpclient is None:
+            self.httpclient = httpx.AsyncClient(headers=self.auth.headers, timeout=self.timeout)
+        elif self.httpclient.is_closed:
+            raise RuntimeError("The client has been closed and cannot be reused. Please create a new client instance.")
+
+    async def __aenter__(self):
+        if self._in_context:
+            raise RuntimeError("Cannot re-enter context.")
+        if self.httpclient and not self.httpclient.is_closed:
+            raise RuntimeError("Cannot enter context with an already-active client.")
+
+        self._in_context = True
+        self._ensure_client_is_open()
+        return self
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        self._in_context = False
+        await self.close()
+
+    async def close(self):
+        """Close the underlying httpx.AsyncClient."""
+        if self._in_context:
+            return
+        if self.httpclient:
+            await self.httpclient.aclose()
+
+    async def _get(self, path: str) -> httpx.Response:
+        """
+        Make a request to Lybic Restful API
+
+        :param path: API endpoint
+        :return: httpx.Response object
+        """
+        self._ensure_client_is_open()
+
+        url = f"{self.auth.agent_service_endpoint}{path}"
+        headers = self.auth.headers.copy()
+        headers.pop("Content-Type", None)
+        last_exception = None
+        for attempt in range(self.max_retries + 1):
+            try:
+                response = await self.httpclient.get(url, headers=headers)
+                response.raise_for_status()
+                return response
+            except (httpx.RequestError, httpx.HTTPStatusError) as e:
+                last_exception = e
+                if attempt < self.max_retries:
+                    self.logger.debug(f"Request failed (attempt {attempt + 1}/{self.max_retries + 1}): {e}")
+                else:
+                    self.logger.error("Request failed after %d attempts", self.max_retries + 1)
+                await asyncio.sleep(2 ** attempt)
+
+        raise last_exception
+
+    async def _post(self, path: str, data: dict) -> httpx.Response:
+        """
+        Make a request to Lybic Restful API
+
+        :param path: API endpoint
+        :param data: request data
+        :return: httpx.Response object
+        """
+        self._ensure_client_is_open()
+
+        url = f"{self.auth.agent_service_endpoint}{path}"
+        headers = self.auth.headers.copy()
+        last_exception = None
+        for attempt in range(self.max_retries + 1):
+            try:
+                response = await self.httpclient.post(url, headers=headers,json= data)
+                response.raise_for_status()
+                return response
+            except (httpx.RequestError, httpx.HTTPStatusError) as e:
+                last_exception = e
+                if attempt < self.max_retries:
+                    self.logger.debug(f"Request failed (attempt {attempt + 1}/{self.max_retries + 1}): {e}")
+                else:
+                    self.logger.error("Request failed after %d attempts", self.max_retries + 1)
+                await asyncio.sleep(2 ** attempt)
+
+        raise last_exception
+

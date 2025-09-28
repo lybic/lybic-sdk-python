@@ -33,10 +33,13 @@ class LybicAuth:
     endpoint: str # Your API endpoint
     headers: dict # Extra headers if needed
 
+    agent_service_endpoint: str
+
     def __init__(self,
                  org_id: str = os.getenv("LYBIC_ORG_ID"),
                  api_key: str = os.getenv("LYBIC_API_KEY"),
                  endpoint: str = os.getenv("LYBIC_API_ENDPOINT", "https://api.lybic.cn"),
+                 agent_service_endpoint: str = os.getenv("LYBIC_AGENT_SERVICE_ENDPOINT", "https://agent.lybic.cn"),
                  extra_headers: dict = None,
                  ):
         """
@@ -47,9 +50,6 @@ class LybicAuth:
         :param endpoint: The API endpoint. Defaults to the `LYBIC_API_ENDPOINT` environment variable or "https://api.lybic.cn". Required.
         :param extra_headers: A dictionary of extra headers to include in requests.
         """
-        assert org_id, "LYBIC_ORG_ID is required"
-        assert endpoint, "LYBIC_API_ENDPOINT is required"
-
         self.headers = {}
         if extra_headers:
             self.headers.update(extra_headers)
@@ -64,6 +64,10 @@ class LybicAuth:
             self.endpoint = endpoint[:-1]
         else:
             self.endpoint = endpoint
+        if agent_service_endpoint.endswith("/"):
+            self.agent_service_endpoint = agent_service_endpoint[:-1]
+        else:
+            self.agent_service_endpoint = agent_service_endpoint
 
         self.org_id = org_id
         self.headers["Content-Type"] = "application/json"
