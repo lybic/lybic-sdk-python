@@ -1,9 +1,17 @@
 # Mcp example:
 
-You can use the `MCP(Model Context Protocol)` to execute action via `lybic.lmcp`.
+To use the `Mcp` client, you must first install it with the optional dependencies:
+```bash
+pip install 'lybic[mcp]'
+```
+
+You can use the `MCP(Model Context Protocol)` to execute action via `lybic.mcp`.
+
+> [!NOTE]
+> The `MCP` class is deprecated and will be removed in a future version (>=1.0.0). Please use `Mcp` instead, which follows Python's naming conventions.
 
 ```python
-class MCP:
+class Mcp:
     async def call_tool_async(self,
                               mcp_server_id: str,
                               tool_name: str = "computer-use",
@@ -32,9 +40,9 @@ You can get it from the website or the SDK.
 - SDK:
 ```python
 import asyncio
-from lybic import MCP
+from lybic import Mcp
 
-mcp = MCP(client)
+mcp = Mcp(client)
 
 list_result =  asyncio.run(mcp.list())
 
@@ -121,11 +129,11 @@ view_range: The range to be viewed.
     import base64
     from io import BytesIO
     from PIL import Image
-    from lybic import LybicClient, MCP
+    from lybic import LybicClient, Mcp
     
     async def main():
         async with LybicClient() as client:
-            mcp = MCP(client)
+            mcp = Mcp(client)
             result = await mcp.call_tool_async(mcp_server_id='server_id',tool_args={"action": "screenShot"})
             img_b64 = result.content[0].data
             img_bytes = base64.b64decode(img_b64)
@@ -140,11 +148,11 @@ view_range: The range to be viewed.
 
     ```python
     import asyncio
-    from lybic import LybicClient, MCP
+    from lybic import LybicClient, Mcp
     
     async def main():
         async with LybicClient() as client:
-            mcp = MCP(client)
+            mcp = Mcp(client)
             result = await mcp.call_tool_async(mcp_server_id='server_id',tool_args={"action": "type", "text": "This is a English text,and 这是一个中文文本"})
             print(result)
     if __name__ == '__main__':
@@ -155,11 +163,11 @@ view_range: The range to be viewed.
 
     ```python
     import asyncio
-    from lybic import LybicClient, MCP
+    from lybic import LybicClient, Mcp
     
     async def main():
         async with LybicClient() as client:
-            mcp = MCP(client)
+            mcp = Mcp(client)
             result = await mcp.call_tool_async(mcp_server_id='server_id', tool_args={"action": "click", "coordinate": [100, 200]})
             print(result)
     if __name__ == '__main__':
