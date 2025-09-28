@@ -1,13 +1,15 @@
 ## examples
 
 ```python
-from lybic import LybicClient
+from lybic import LybicClient, LybicAuth
 
 async def main():
     async with LybicClient(
-        org_id="ORG-xxxx",
-        api_key="lysk-xxxxxxxxxxx",
-        endpoint="https://api.lybic.cn/",
+        LybicAuth(
+            org_id="ORG-xxxx",
+            api_key="lysk-xxxxxxxxxxx",
+            endpoint="https://api.lybic.cn/",
+        )
     ) as client:
         pass
 ```
@@ -21,9 +23,9 @@ However, please note that this introduces certain risks, and we still recommend 
 
 ```python
 import asyncio 
-from lybic import LybicClient
+from lybic import LybicClient, LybicAuth
 
-client = LybicClient(org_id="ORG-xxxx", api_key="lysk-xxxxxxxxxxx")
+client = LybicClient(LybicAuth(org_id="ORG-xxxx", api_key="lysk-xxxxxxxxxxx"))
 
 async def main():
     await client.request("GET", f"/api/orgs/{client.org_id}/stats")
@@ -291,13 +293,15 @@ if __name__ == "__main__":
 
    ```python
    import asyncio
-   from lybic import LybicClient, dto, ComputerUse
+   from lybic import LybicClient, dto, ComputerUse, LybicAuth
 
    async def main():
        async with LybicClient(
-           org_id="ORG-xxxx",
-           api_key="lysk-xxxxxxxxxxx",
-           endpoint="https://api.lybic.cn/",
+            LybicAuth(
+               org_id="ORG-xxxx",
+               api_key="lysk-xxxxxxxxxxx",
+               endpoint="https://api.lybic.cn/",
+            )
        ) as client:
            computer_use = ComputerUse(client)
            text_content = """Thought: The task requires double-left-clicking the "images" folder. In the File Explorer window, the "images" folder is visible under the Desktop directory. The target element is the folder named "images" with a yellow folder icon. Double-left-clicking this folder will open it.
@@ -336,13 +340,15 @@ This interface enables `Planner` to perform actions on the sandbox through Restf
 
       ```python
       import asyncio
-      from lybic import dto, ComputerUse
+      from lybic import dto, ComputerUse, LybicClient, LybicAuth
       async def main():
           async with LybicClient(
+            LybicAuth(
                org_id="ORG-xxxx",
                api_key="lysk-xxxxxxxxxxx",
                endpoint="https://api.lybic.cn/",
-          ) as client:
+          )
+        ) as client:
               computer_use = ComputerUse(client)
               actions = await computer_use.parse_model_output(
                   model="ui-tars",

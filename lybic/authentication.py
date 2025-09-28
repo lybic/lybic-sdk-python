@@ -2,9 +2,6 @@
 #
 # Copyright (c) 2019-2025   Beijing Tingyu Technology Co., Ltd.
 # Copyright (c) 2025        Lybic Development Team <team@lybic.ai, lybic@tingyutech.com>
-# Copyright (c) 2025        Lu Yicheng <luyicheng@tingyutech.com>
-#
-# Author: AEnjoy <aenjoyable@163.com>
 #
 # These Terms of Service ("Terms") set forth the rules governing your access to and use of the website lybic.ai
 # ("Website"), our web applications, and other services (collectively, the "Services") provided by Beijing Tingyu
@@ -24,45 +21,48 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-""" Lybic SDK import header"""
+"""authentication.py holds the authentication for Lybic API."""
+import os
 
-__version__ = "0.8.0"
 
-# Lybic Client
-from .lybic import LybicClient
+class LybicAuth:
+    """LybicAuth holds the authentication for Lybic API."""
 
-# MCP Operations
-from .mcp import MCP, Mcp
+    org_id:  str # Your organization ID
+    apikey: str # Your API key
+    endpoint: str # Your API endpoint
+    headers: dict # Extra headers if needed
 
-#  Tools
-from .tools import ComputerUse
+    def __init__(self,
+                 org_id: str = os.getenv("LYBIC_ORG_ID"),
+                 api_key: str = os.getenv("LYBIC_API_KEY"),
+                 endpoint: str = os.getenv("LYBIC_API_ENDPOINT", "https://api.lybic.cn"),
+                 extra_headers: dict = None,
+                 ):
+        """
+        Init lybic auth with org_id, api_key and endpoint
 
-# Project
-from .project import Project
+        :param org_id:
+        :param api_key:
+        :param endpoint:
+        """
+        assert org_id, "LYBIC_ORG_ID is required"
+        assert endpoint, "LYBIC_API_ENDPOINT is required"
 
-# Pyautogui
-from .pyautogui import Pyautogui
+        self.headers = {}
+        if extra_headers:
+            self.headers.update(extra_headers)
 
-# Sandbox
-from .sandbox import Sandbox
+        # if x-trial-session-token is provided, use it instead of api_key
+        if not (extra_headers and 'x-trial-session-token' in extra_headers):
+            assert api_key, "LYBIC_API_KEY is required when x-trial-session-token is not provided"
+            self.headers["x-api-key"] = api_key
+        self.apikey = api_key
 
-# Stats
-from .stats import Stats
+        if endpoint.endswith("/"):
+            self.endpoint = endpoint[:-1]
+        else:
+            self.endpoint = endpoint
 
-from .authentication import LybicAuth
-
-__all__ = [
-    "__version__",
-    "LybicAuth",
-    "LybicClient",
-
-    "MCP",
-    "ComputerUse",
-    "Project",
-    "Pyautogui",
-    "Sandbox",
-    "Stats",
-]
-
-def __dir__() -> list[str]:
-    return list(__all__)
+        self.org_id = org_id
+        self.headers["Content-Type"] = "application/json"

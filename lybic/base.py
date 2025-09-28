@@ -27,54 +27,86 @@
 """base.py holds the base client for Lybic API."""
 import logging
 import os
+import warnings
 from sys import stderr
+from typing import Optional
 
+from lybic.authentication import LybicAuth
+
+_sentinel = object()
 
 class _LybicBaseClient:
     """_LybicBaseClient is a base client for all Lybic API."""
 
     def __init__(self,
-                 org_id: str = os.getenv("LYBIC_ORG_ID"),
-                 api_key: str = os.getenv("LYBIC_API_KEY"),
-                 endpoint: str = os.getenv("LYBIC_API_ENDPOINT", "https://api.lybic.cn"),
+                 auth: Optional[LybicAuth] = None,
+                 org_id: str = _sentinel,
+                 api_key: str = _sentinel,
+                 endpoint: str = _sentinel,
                  timeout: int = 10,
-                 extra_headers: dict = None,
+                 extra_headers: dict = _sentinel,
                  max_retries: int = 3,
                  ):
         """
         Init lybic client with org_id, api_key and endpoint
 
+        :param auth: LybicAuth instance
         :param org_id:
         :param api_key:
         :param endpoint:
         """
-        assert org_id, "LYBIC_ORG_ID is required"
-        assert endpoint, "LYBIC_API_ENDPOINT is required"
-
-        self.headers = {}
-        if extra_headers:
-            self.headers.update(extra_headers)
-
-        # if x-trial-session-token is provided, use it instead of api_key
-        if not (extra_headers and 'x-trial-session-token' in extra_headers):
-            assert api_key, "LYBIC_API_KEY is required when x-trial-session-token is not provided"
-            self.headers["x-api-key"] = api_key
-        self._apikey = api_key
-
-        if endpoint.endswith("/"):
-            self.endpoint = endpoint[:-1]
+        if auth:
+            self.auth = auth
         else:
-            self.endpoint = endpoint
+            user_provided_auth_params = any(
+                val is not _sentinel for val in (org_id, api_key, endpoint, extra_headers)
+            )
+            if user_provided_auth_params:
+                warnings.warn(
+                    "Passing `org_id`, `api_key`, `endpoint`, or `extra_headers` to the client constructor is deprecated "
+                    "and will be removed in v1.0.0. Please use `LybicClient(auth=LybicAuth(...))` instead.",
+                    stacklevel=3
+                )
+
+            if org_id is _sentinel:
+                org_id = os.getenv("LYBIC_ORG_ID")
+            if api_key is _sentinel:
+                api_key = os.getenv("LYBIC_API_KEY")
+            if endpoint is _sentinel:
+                endpoint = os.getenv("LYBIC_API_ENDPOINT", "https://api.lybic.cn")
+            if extra_headers is _sentinel:
+                extra_headers = None
+
+            self.auth = LybicAuth(
+                org_id=org_id,
+                api_key=api_key,
+                endpoint=endpoint,
+                extra_headers=extra_headers
+            )
 
         if timeout < 0:
             print("Warning: Timeout cannot be negative, set to 10", file=stderr)
             timeout = 10
         self.timeout = timeout
-        self.org_id = org_id
         self.max_retries = max(max_retries, 0)
-        self.headers["Content-Type"] = "application/json"
 
         self.logger = logging.getLogger(__name__)
+
+    @property
+    def headers(self):
+        return self.auth.headers
+
+    @property
+    def endpoint(self):
+        return self.auth.endpoint
+
+    @property
+    def org_id(self):
+        return self.auth.org_id
+
+    @property
+    def _apikey(self):
+        return self.auth.apikey
 
     def make_mcp_endpoint(self, mcp_server_id: str) -> str:
         """

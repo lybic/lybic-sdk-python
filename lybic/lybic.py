@@ -27,32 +27,36 @@
 """lybic.py is the main entry point for Lybic API."""
 import asyncio
 import os
+from typing import Optional
 import httpx
 
-from lybic.base import _LybicBaseClient
+from lybic.authentication import LybicAuth
+from lybic.base import _LybicBaseClient, _sentinel
 
 
 class LybicClient(_LybicBaseClient):
     """LybicAsyncClient is a client for all Lybic API."""
 
     def __init__(self,
-                 org_id: str = os.getenv("LYBIC_ORG_ID"),
-                 api_key: str = os.getenv("LYBIC_API_KEY"),
-                 endpoint: str = os.getenv("LYBIC_API_ENDPOINT", "https://api.lybic.cn"),
+                 auth: Optional[LybicAuth] = None,
+                 org_id: str = _sentinel,
+                 api_key: str = _sentinel,
+                 endpoint: str = _sentinel,
                  timeout: int = 10,
-                 extra_headers: dict = None,
+                 extra_headers: dict = _sentinel,
                  max_retries: int = 3,
                  ):
         """
         Init lybic client with org_id, api_key and endpoint
 
+        :param auth:
         :param org_id:
         :param api_key:
         :param endpoint:
         :param max_retries: maximum number of retries for failed requests
         """
         super().__init__(
-            org_id=org_id, api_key=api_key, endpoint=endpoint,
+            auth=auth, org_id=org_id, api_key=api_key, endpoint=endpoint,
             timeout=timeout, extra_headers=extra_headers, max_retries=max_retries
         )
 
