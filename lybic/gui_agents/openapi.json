@@ -510,7 +510,7 @@
           "trajReflectorModel": {
             "$ref": "#/components/schemas/LLMConfig"
           },
-          "memoryRetrivalModel": {
+          "memoryRetrievalModel": {
             "$ref": "#/components/schemas/LLMConfig"
           },
           "groundingModel": {

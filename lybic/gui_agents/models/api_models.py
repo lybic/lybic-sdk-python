@@ -109,7 +109,7 @@ class StageModelConfig(BaseModel):
     contextFusionModel: Optional[LLMConfig] = None
     subtaskPlannerModel: Optional[LLMConfig] = None
     trajReflectorModel: Optional[LLMConfig] = None
-    memoryRetrivalModel: Optional[LLMConfig] = None
+    memoryRetrievalModel: Optional[LLMConfig] = None
     groundingModel: Optional[LLMConfig] = None
     taskEvaluatorModel: Optional[LLMConfig] = None
     actionGeneratorModel: Optional[LLMConfig] = None
