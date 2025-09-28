@@ -29,13 +29,18 @@ import asyncio
 from typing import overload
 
 import httpx
-from mcp import ClientSession
-from mcp.client.streamable_http import streamablehttp_client
-from mcp.types import CallToolResult
 
 from lybic import dto
 from lybic._api import deprecated
 from lybic.lybic import LybicClient
+
+try:
+    from mcp import ClientSession
+    from mcp.client.streamable_http import streamablehttp_client
+    from mcp.types import CallToolResult
+    MCP_INSTALLED = True
+except ImportError:
+    MCP_INSTALLED = False
 
 class Mcp:
     """Mcp is an async client for lybic MCP(Model Context Protocol) and Restful Interface API."""
@@ -137,6 +142,8 @@ class Mcp:
         :param tool_args:
         :return:
         """
+        if not MCP_INSTALLED:
+            raise ImportError("mcp is not installed. Please install it with `pip install 'lybic[mcp]'`")
         self.client.logger.debug(f"Call tool request: {tool_name} with arguments: {tool_args}")
 
         last_exception = None

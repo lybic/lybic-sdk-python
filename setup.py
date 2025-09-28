@@ -40,15 +40,17 @@ with open('README.md', encoding='utf-8') as f:
         packages=find_packages(),
         classifiers=[
             'Programming Language :: Python :: 3',
+            "Programming Language :: Python :: 3.10",
+            "Programming Language :: Python :: 3.11",
+            "Programming Language :: Python :: 3.12",
+            "Programming Language :: Python :: 3.13",
             'Operating System :: OS Independent',
             'License :: OSI Approved :: MIT License',
         ],
         license = "MIT",
-        python_requires='>=3.12',
-        install_requires=[
-            'httpx',
-            'pydantic',
-            'mcp',
-            'pillow'
-        ],
+        python_requires='>=3.10',
+        project_urls={
+            "Source": "https://github.com/lybic/lybic-sdk-python",
+            "Bug Reports": "https://github.com/lybic/lybic-sdk-python/issues",
+        },
     )

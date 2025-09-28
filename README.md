@@ -74,6 +74,11 @@ Getting started is simple. First, install the package from PyPI:
 pip install lybic
 ```
 
+To use features like the `Mcp` client, you need to install the optional dependencies:
+```bash
+pip install 'lybic[mcp]'
+```
+
 Then, initialize the client in your Python application. For better security, we recommend using environment variables (`LYBIC_ORG_ID`, `LYBIC_API_KEY`).
 
 ```python
@@ -310,7 +315,7 @@ The `lybic.Pyautogui` class supports a subset of the most common `pyautogui` mou
 
 Please read our [SDK example](docs/example.md).
 
-If you are using MCP, you can read our [MCP Documentation](docs/mcp.md).
+If you are using the `Mcp` client, you can read our [Mcp Documentation](docs/mcp.md).
 
 ## 📚 Full Documentation & API Reference
 
