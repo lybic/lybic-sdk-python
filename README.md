@@ -83,10 +83,11 @@ Then, initialize the client in your Python application. For better security, we 
 
 ```python
 import asyncio
-from lybic import LybicClient
+from lybic import LybicClient, LybicAuth
 
 # The LybicClient automatically picks up credentials from your environment
 # def __init__(self,
+#             auth: LybicAuth | None = None,
 #             org_id: str = os.getenv("LYBIC_ORG_ID"),
 #             api_key: str = os.getenv("LYBIC_API_KEY"),
 #             endpoint: str = os.getenv("LYBIC_API_ENDPOINT", "https://api.lybic.cn"),
@@ -100,12 +101,14 @@ async def main():
 
     # Or, initialize with explicit credentials
     async with LybicClient(
-        org_id="your_org_id", # Lybic organization ID
-        api_key="your_api_key", # Lybic API key
-        endpoint="https://api.lybic.cn", # Lybic API endpoint
+        LybicAuth(
+            org_id="your_org_id", # Lybic organization ID
+            api_key="your_api_key", # Lybic API key
+            endpoint="https://api.lybic.cn", # Lybic API endpoint
+            extra_headers={"User-Agent": "MyAgent/1.0"}, # Custom headers
+         ),
         timeout=10, # Timeout for API requests
         max_retries=3, # Maximum number of request retries
-        extra_headers={"User-Agent": "MyAgent/1.0"}, # Custom headers
     ) as client:
         pass
 
