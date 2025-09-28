@@ -164,11 +164,11 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "New response",
+            "description": "Global grounding LLM configuration",
             "content": {
               "application/json": {
                 "schema": {
-                  "": ""
+                  "$ref": "#/components/schemas/LLMConfig"
                 }
               }
             },
