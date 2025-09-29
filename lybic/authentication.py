@@ -60,14 +60,8 @@ class LybicAuth:
             self.headers["x-api-key"] = api_key
         self.api_key = api_key
 
-        if endpoint.endswith("/"):
-            self.endpoint = endpoint[:-1]
-        else:
-            self.endpoint = endpoint
-        if agent_service_endpoint.endswith("/"):
-            self.agent_service_endpoint = agent_service_endpoint[:-1]
-        else:
-            self.agent_service_endpoint = agent_service_endpoint
+        self.endpoint = endpoint.rstrip('/')
+        self.agent_service_endpoint = agent_service_endpoint.rstrip('/')
 
         self.org_id = org_id
         self.headers["Content-Type"] = "application/json"

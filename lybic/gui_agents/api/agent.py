@@ -132,26 +132,31 @@ class Client:
 
         raise last_exception
 
-    async def _stream(self, path: str,data: dict|None = None):
+    async def _stream(self, path: str, data: dict | None = None):
         """
-        Make a request to Lybic Restful API(SSE)
+        Make a streaming request to the Lybic Restful API (SSE).
 
-        :param path: API endpoint
-        :return: httpx.Response object
+        :param path: API endpoint.
+        :param data: Optional request data. If provided, a POST request is made. Otherwise, a GET request is made.
         """
         self._ensure_client_is_open()
 
         url = f"{self.auth.agent_service_endpoint}{path}"
         headers = self.auth.headers.copy()
 
-        if not data:
+        method = "POST" if data else "GET"
+        request_kwargs = {"headers": headers}
+        if data:
+            request_kwargs["json"] = data
+        else:
+            # No content-type for GET requests with no body
             headers.pop("Content-Type", None)
 
-        async with self._httpclient.stream("GET", url) as response:
+        async with self._httpclient.stream(method, url, **request_kwargs) as response:
+            response.raise_for_status()
             async for line in response.aiter_lines():
-                if line.strip():
-                    if line.startswith("data:"):
-                        yield line[len("data:"):].strip()
+                if line.strip() and line.startswith("data:"):
+                    yield line[len("data:"):].strip()
 
     async def get_agent_info(self) -> AgentInfo:
         """
