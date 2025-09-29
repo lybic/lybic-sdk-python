@@ -27,9 +27,20 @@ import logging
 import httpx
 
 from lybic import LybicAuth
+from lybic.gui_agents.models import (
+    AgentInfo,
+    CommonConfig,
+    SetCommonConfigResponse,
+    LLMConfig,
+    RunAgentInstructionRequest,
+    TaskStream,
+    RunAgentInstructionAsyncResponse,
+    QueryTaskStatusResponse
+)
 
 
 class Client:
+    """Agentic Lybic Restful API client"""
     def __init__(self, auth: LybicAuth,timeout: int = 10,max_retries: int = 3):
         """Agentic Lybic Restful API client"""
         self.auth = auth
@@ -141,3 +152,108 @@ class Client:
                 if line.strip():
                     if line.startswith("data:"):
                         yield line[len("data:"):].strip()
+
+    async def get_agent_info(self) -> AgentInfo:
+        """
+        Get agent info
+        :return:
+        """
+        response = await self._get("/api/agent/info")
+        return AgentInfo.model_validate_json(response.text)
+
+    async def get_global_common_config(self) -> CommonConfig:
+        """
+        Get global common config
+        :return:
+        """
+        response = await self._get("/api/agent/config/global")
+        return CommonConfig.model_validate_json(response.text)
+
+    async def set_global_common_config(self, config: CommonConfig) -> SetCommonConfigResponse:
+        """
+        Set global common config
+        :param config:
+        :return:
+        """
+        response = await self._post("/api/agent/config/global", data=config.model_dump())
+        return SetCommonConfigResponse.model_validate_json(response.text)
+
+    async def get_common_config(self, config_id: str) -> CommonConfig:
+        """
+        Get common config by id
+        :param config_id:
+        :return:
+        """
+        response = await self._get(f"/api/agent/config/{config_id}")
+        return CommonConfig.model_validate_json(response.text)
+
+    async def set_global_common_llm_config(self, config: LLMConfig) -> LLMConfig:
+        """
+        Set global common llm config
+        :param config:
+        :return:
+        """
+        response = await self._post("/api/agent/config/global/llm", data=config.model_dump())
+        return LLMConfig.model_validate_json(response.text)
+
+    async def get_global_grounding_llm_config(self) -> LLMConfig:
+        """
+        Get global grounding llm config
+        :return:
+        """
+        response = await self._get("/api/agent/config/global/grounding-llm")
+        return LLMConfig.model_validate_json(response.text)
+
+    async def set_global_grounding_llm_config(self, config: LLMConfig) -> LLMConfig:
+        """
+        Set global grounding llm config
+        :param config:
+        :return:
+        """
+        response = await self._post("/api/agent/config/global/grounding-llm", data=config.model_dump())
+        return LLMConfig.model_validate_json(response.text)
+
+    async def set_global_embedding_llm_config(self, config: LLMConfig) -> LLMConfig:
+        """
+        Set global embedding llm config
+        :param config:
+        :return:
+        """
+        response = await self._post("/api/agent/config/global/embedding-llm", data=config.model_dump())
+        return LLMConfig.model_validate_json(response.text)
+
+    async def run_agent_instruction(self, request: RunAgentInstructionRequest):
+        """
+        Run agent instruction
+        :param request:
+        :return:
+        """
+        async for line in self._stream("/api/agent/run", data=request.model_dump()):
+            yield TaskStream.model_validate_json(line)
+
+    async def run_agent_instruction_async(self, request: RunAgentInstructionRequest) -> RunAgentInstructionAsyncResponse:
+        """
+        Run agent instruction async
+        :param request:
+        :return:
+        """
+        response = await self._post("/api/agent/run-async", data=request.model_dump())
+        return RunAgentInstructionAsyncResponse.model_validate_json(response.text)
+
+    async def get_agent_task_stream(self, task_id: str):
+        """
+        Get agent task stream
+        :param task_id:
+        :return:
+        """
+        async for line in self._stream(f"/api/agent/tasks/{task_id}/stream"):
+            yield TaskStream.model_validate_json(line)
+
+    async def query_task_status(self, task_id: str) -> QueryTaskStatusResponse:
+        """
+        Query task status
+        :param task_id:
+        :return:
+        """
+        response = await self._get(f"/api/agent/tasks/{task_id}/status")
+        return QueryTaskStatusResponse.model_validate_json(response.text)
