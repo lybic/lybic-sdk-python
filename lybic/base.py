@@ -76,6 +76,8 @@ class _LybicBaseClient:
                 endpoint = os.getenv("LYBIC_API_ENDPOINT", "https://api.lybic.cn")
             if extra_headers is _sentinel:
                 extra_headers = None
+            assert org_id, "LYBIC_ORG_ID is required"
+            assert endpoint, "LYBIC_API_ENDPOINT is required"
 
             self.auth = LybicAuth(
                 org_id=org_id,
