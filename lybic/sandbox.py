@@ -57,12 +57,12 @@ class Sandbox:
         return dto.SandboxListResponseDto.model_validate_json(response.text)
 
     @overload
-    async def create(self, data: dto.CreateSandboxDto) -> dto.GetSandboxResponseDto: ...
+    async def create(self, data: dto.CreateSandboxDto) -> dto.Sandbox: ...
 
     @overload
-    async def create(self, **kwargs) -> dto.GetSandboxResponseDto: ...
+    async def create(self, **kwargs) -> dto.Sandbox: ...
 
-    async def create(self, *args, **kwargs) -> dto.GetSandboxResponseDto:
+    async def create(self, *args, **kwargs) -> dto.Sandbox:
         """
         Create a new sandbox
         """
@@ -77,7 +77,7 @@ class Sandbox:
             "POST",
             f"/api/orgs/{self.client.org_id}/sandboxes", json=data.model_dump(exclude_none=True))
         self.client.logger.debug(f"Create sandbox response: {response.text}")
-        return dto.GetSandboxResponseDto.model_validate_json(response.text)
+        return dto.Sandbox.model_validate_json(response.text)
 
     async def get(self, sandbox_id: str) -> dto.GetSandboxResponseDto:
         """
