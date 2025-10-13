@@ -227,7 +227,7 @@ class Sandbox:
         :return:
         GetShapersResponseDto
         """
-        self.client.logger.debug(f"Getting shapes")
+        self.client.logger.debug("Getting shapes")
         response = await self.client.request(
             "GET",
             f"/api/orgs/{self.client.org_id}/shapes"
