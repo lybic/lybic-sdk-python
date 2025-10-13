@@ -603,3 +603,37 @@ class SetMcpServerToSandboxResponseDto(BaseModel):
     Response DTO for setting a MCP server to a sandbox.
     """
     sandboxId: Optional[str] = Field(None, description="The ID of the sandbox to connect the MCP server to.")
+
+
+class Shapes(BaseModel):
+    """
+    Shapes
+    """
+    name: str
+    description: str
+    hardwareAcceleratedEncoding: bool
+    pricePerHour: str
+    requiredPlanTier: int
+    os: str
+    virtualization:  str
+    architecture:  str
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = json_extra_fields_policy
+        # Allow population of fields with default values
+        validate_assignment = True
+        exclude_none = True
+
+class GetShapesResponseDto(RootModel):
+    """
+    Response DTO for getting shapers.
+    """
+    root: List[Shapes]
+
+    def __iter__(self):
+        return iter(self.root)
+
+    def __getitem__(self, item):
+        return self.root[item]
