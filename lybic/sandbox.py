@@ -221,4 +221,18 @@ class Sandbox:
         _, _, base64_str = await self.get_screenshot(sandbox_id)
         return base64_str
 
+    async def get_shapes(self)-> dto.GetShapesResponseDto:
+        """
+        Get shapes of a sandbox
+        :return:
+        GetShapersResponseDto
+        """
+        self.client.logger.debug(f"Getting shapes")
+        response = await self.client.request(
+            "GET",
+            f"/api/orgs/{self.client.org_id}/shapes"
+        )
+        self.client.logger.debug(f"Get shapes response: {response.text}")
+        return dto.GetShapesResponseDto.model_validate_json(response.text)
+
     # todo: 2025-09-02 a method called "execute_action" for computer-use, mobile-use and other sandbox tools.
