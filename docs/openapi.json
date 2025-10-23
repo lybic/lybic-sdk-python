@@ -248,7 +248,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetSandboxResponseDto"
+                  "$ref": "#/components/schemas/CreateSandboxResponseDto"
                 }
               }
             }
@@ -1122,6 +1122,59 @@
           "shape"
         ]
       },
+      "CreateSandboxResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "expiredAt": {
+            "description": "Deprecated, use `expiresAt` instead.",
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "shapeName": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "expiredAt",
+          "expiresAt",
+          "createdAt",
+          "projectId",
+          "shapeName"
+        ]
+      },
+      "ExtendSandboxDto": {
+        "type": "object",
+        "properties": {
+          "maxLifeSeconds": {
+            "description": "The new max life time of the sandbox (relative to the current time) in seconds. Should not less than 30 seconds or more than 24 hours. Note that the total maximum lifetime of a sandbox should not longer than 13 days.",
+            "type": "number",
+            "minimum": 30,
+            "exclusiveMinimum": false,
+            "maximum": 86400,
+            "exclusiveMaximum": false,
+            "default": 3600
+          }
+        }
+      },
       "GetSandboxResponseDto": {
         "type": "object",
         "properties": {
@@ -1316,20 +1369,6 @@
           "sandbox",
           "connectDetails"
         ]
-      },
-      "ExtendSandboxDto": {
-        "type": "object",
-        "properties": {
-          "maxLifeSeconds": {
-            "description": "The new max life time of the sandbox (relative to the current time) in seconds. Should not less than 30 seconds or more than 24 hours. Note that the total maximum lifetime of a sandbox should not longer than 13 days.",
-            "type": "number",
-            "minimum": 30,
-            "exclusiveMinimum": false,
-            "maximum": 86400,
-            "exclusiveMaximum": false,
-            "default": 3600
-          }
-        }
       },
       "ComputerUseActionDto": {
         "type": "object",
@@ -2481,6 +2520,9 @@
               "screenHeight",
               "screenIndex"
             ]
+          },
+          "actionResult": {
+            "description": "The result of the action. Schema is based on the action type and there's no guarantee on the schema. Pass it directly to the LLM if it exists."
           }
         }
       },
