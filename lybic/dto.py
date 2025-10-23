@@ -136,7 +136,7 @@ class Sandbox(BaseModel):
     """
     id: str = Field(..., description="ID of the sandbox.")
     name: str = Field(..., description="Name of the sandbox.")
-    expiredAt: str = Field(..., description="Deprecated, use `expiresAt` instead.")
+    expiredAt: str = Field(..., description="Deprecated, use `expiresAt` instead, will be removed in v1.0.0")
     expiresAt: str = Field(..., description="Expiration date of the sandbox.")
     createdAt: str = Field(..., description="Creation date of the sandbox.")
     projectId: str = Field(..., description="Project ID to which the sandbox belongs.")

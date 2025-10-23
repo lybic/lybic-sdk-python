@@ -99,23 +99,32 @@ class Sandbox:
             "DELETE",
             f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}")
     @deprecated(
-        since="0.8.0",
+        since="0.7.0",
         removal="1.0.0",
-        message="Use `execute_sandbox_action` instead, which supports both computer and mobile use actions."
+        message="Lybic Sandbox has support multiple types of tools now and will no longer be limited to computer_use. "
+                "To execute a single action tool, such as computer_use, use the execute_computer_use_action method "
+                "in the ComputerUse class. If no distinction is made, use the `execute_sandbox_action` method in "
+                "the Sandbox class,which is the recommended approach."
     )
     @overload
     async def execute_computer_use_action(self, sandbox_id: str, data: dto.ComputerUseActionDto) -> dto.SandboxActionResponseDto: ...
     @deprecated(
-        since="0.8.0",
+        since="0.7.0",
         removal="1.0.0",
-        message="Use `execute_sandbox_action` instead, which supports both computer and mobile use actions."
+        message="Lybic Sandbox has support multiple types of tools now and will no longer be limited to computer_use. "
+                "To execute a single action tool, such as computer_use, use the execute_computer_use_action method "
+                "in the ComputerUse class. If no distinction is made, use the `execute_sandbox_action` method in "
+                "the Sandbox class,which is the recommended approach."
     )
     @overload
     async def execute_computer_use_action(self, sandbox_id: str, **kwargs) -> dto.SandboxActionResponseDto: ...
     @deprecated(
-        since="0.8.0",
+        since="0.7.0",
         removal="1.0.0",
-        message="Use `execute_sandbox_action` instead, which supports both computer and mobile use actions."
+        message="Lybic Sandbox has support multiple types of tools now and will no longer be limited to computer_use. "
+                "To execute a single action tool, such as computer_use, use the execute_computer_use_action method "
+                "in the ComputerUse class. If no distinction is made, use the `execute_sandbox_action` method in "
+                "the Sandbox class,which is the recommended approach."
     )
     async def execute_computer_use_action(self, sandbox_id: str, *args, **kwargs) -> dto.SandboxActionResponseDto:
         """
