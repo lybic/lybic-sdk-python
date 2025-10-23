@@ -125,8 +125,9 @@ from lybic import LybicClient, Sandbox
 async def main():
     async with LybicClient() as client:
         sandbox = Sandbox(client)
-        new_sandbox = await sandbox.create(name="my-sandbox")
-        print(new_sandbox)
+        # The create method returns a GetSandboxResponseDto object
+        new_sandbox_response = await sandbox.create(name="my-sandbox", shape="xxx")
+        print(new_sandbox_response.sandbox)
 
 if __name__ == '__main__':
     asyncio.run(main())

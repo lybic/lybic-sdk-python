@@ -136,11 +136,17 @@ class Sandbox(BaseModel):
     """
     id: str = Field(..., description="ID of the sandbox.")
     name: str = Field(..., description="Name of the sandbox.")
-    expiredAt: str = Field(..., description="Expiration date of the sandbox.")
+    expiredAt: str = Field(..., description="Deprecated, use `expiresAt` instead, will be removed in v1.0.0")
+    expiresAt: str = Field(..., description="Expiration date of the sandbox.")
     createdAt: str = Field(..., description="Creation date of the sandbox.")
     projectId: str = Field(..., description="Project ID to which the sandbox belongs.")
     shapeName: Optional[str] = Field(None, description="Specs and datacenter of the sandbox.") # This field does not exist in GetSandboxResponseDto (that is, this field is optional)
     shape: Optional[Shape] = None # This field does not exist in SandboxListResponseDto (that is, this field is optional)
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = json_extra_fields_policy
 
 
 class GatewayAddress(BaseModel):
@@ -151,7 +157,7 @@ class GatewayAddress(BaseModel):
     port: int
     name: str
     preferredProviders: List[Literal["CHINA_MOBILE", "CHINA_UNICOM", "CHINA_TELECOM", "GLOBAL_BGP", 1, 2, 3, 4]]
-    gatewayType: Literal["KCP", "QUIC", "WEB_TRANSPORT", 4, 5, 6]
+    gatewayType: Literal["KCP", "QUIC", "WEB_TRANSPORT", "WEBSOCKET", 4, 5, 6, 7]
 
 
 class ConnectDetails(BaseModel):
@@ -476,6 +482,11 @@ ComputerUseAction = Union[
 ]
 
 
+@deprecated(
+    since="0.8.0",
+    removal="1.0.0",
+    message="Use `ExecuteSandboxActionDto` instead, which supports both computer and mobile use actions."
+)
 class ComputerUseActionDto(BaseModel):
     """
     Computer use action request.
@@ -534,6 +545,13 @@ class ModelType(Enum):
     PYAUTOGUI = "pyautogui"
 
 
+class ParseTextRequestDto(BaseModel):
+    """
+    Request DTO for parsing text content.
+    """
+    textContent: str
+
+
 @deprecated(
     since="0.7.0",
     removal="1.0.0",
@@ -559,6 +577,137 @@ class ComputerUseActionResponseDto(BaseModel):
     memory: Optional[str] = None
 
     actions: List[ComputerUseAction]
+
+
+# Mobile Use Schemas
+class MobileTapAction(BaseModel):
+    """
+    Represents a mobile tap action.
+    """
+    type: Literal["mobile:tap"]
+    x: Length
+    y: Length
+    callId: Optional[str] = str(uuid.uuid4())
+
+
+class MobileDoubleTapAction(BaseModel):
+    """
+    Represents a mobile double tap action.
+    """
+    type: Literal["mobile:doubleTap"]
+    x: Length
+    y: Length
+    callId: Optional[str] = str(uuid.uuid4())
+
+
+class MobileSwipeAction(BaseModel):
+    """
+    Represents a mobile swipe action.
+    """
+    type: Literal["mobile:swipe"]
+    startX: Length
+    startY: Length
+    endX: Length
+    endY: Length
+    duration: int
+    callId: Optional[str] = str(uuid.uuid4())
+
+
+class MobileTypeAction(BaseModel):
+    """
+    Represents a mobile type action.
+    """
+    type: Literal["mobile:type"]
+    content: str
+    callId: Optional[str] = str(uuid.uuid4())
+
+
+class MobileHotkeyAction(BaseModel):
+    """
+    Represents a mobile hotkey action.
+    """
+    type: Literal["mobile:hotkey"]
+    key: str
+    callId: Optional[str] = str(uuid.uuid4())
+
+
+class MobileHomeAction(BaseModel):
+    """
+    Represents a mobile home action.
+    """
+    type: Literal["mobile:home"]
+    callId: Optional[str] = str(uuid.uuid4())
+
+
+class MobileBackAction(BaseModel):
+    """
+    Represents a mobile back action.
+    """
+    type: Literal["mobile:back"]
+    callId: Optional[str] = str(uuid.uuid4())
+
+
+class MobileScreenshotAction(BaseModel):
+    """
+    Represents a mobile screenshot action.
+    """
+    type: Literal["mobile:screenshot"]
+    callId: Optional[str] = str(uuid.uuid4())
+
+
+class MobileWaitAction(BaseModel):
+    """
+    Represents a mobile wait action.
+    """
+    type: Literal["mobile:wait"]
+    duration: int
+    callId: Optional[str] = str(uuid.uuid4())
+
+
+class MobileFinishedAction(BaseModel):
+    """
+    Represents a mobile finished action.
+    """
+    type: Literal["mobile:finished"]
+    message: Optional[str] = None
+    callId: Optional[str] = str(uuid.uuid4())
+
+
+class MobileFailedAction(BaseModel):
+    """
+    Represents a mobile failed action.
+    """
+    type: Literal["mobile:failed"]
+    message: Optional[str] = None
+    callId: Optional[str] = str(uuid.uuid4())
+
+
+MobileUseAction = Union[
+    MobileTapAction,
+    MobileDoubleTapAction,
+    MobileSwipeAction,
+    MobileTypeAction,
+    MobileHotkeyAction,
+    MobileHomeAction,
+    MobileBackAction,
+    MobileScreenshotAction,
+    MobileWaitAction,
+    MobileFinishedAction,
+    MobileFailedAction,
+]
+
+
+Action = Union[ComputerUseAction, MobileUseAction]
+
+
+class ExecuteSandboxActionDto(BaseModel):
+    """
+    Sandbox action request, supporting both computer and mobile use actions.
+    """
+    action: Action | dict
+    includeScreenShot: bool = True
+    includeCursorPosition: bool = True
+    callId: Optional[str] = str(uuid.uuid4())
 
 
 # Project Schemas

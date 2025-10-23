@@ -101,30 +101,30 @@ class Sandbox:
     @deprecated(
         since="0.7.0",
         removal="1.0.0",
-        message="Lybic Sandbox will support multiple types of tools in the future and will no longer be limited to computer_use. "
-                "To execute a single action tool, such as computer_use, use the action execution method "
-                "in the ComputerUse class. If no distinction is made, use the `execute_action` method in "
-                "the Sandbox class."
+        message="Lybic Sandbox has support multiple types of tools now and will no longer be limited to computer_use. "
+                "To execute a single action tool, such as computer_use, use the execute_computer_use_action method "
+                "in the ComputerUse class. If no distinction is made, use the `execute_sandbox_action` method in "
+                "the Sandbox class,which is the recommended approach."
     )
     @overload
     async def execute_computer_use_action(self, sandbox_id: str, data: dto.ComputerUseActionDto) -> dto.SandboxActionResponseDto: ...
     @deprecated(
         since="0.7.0",
         removal="1.0.0",
-        message="Lybic Sandbox will support multiple types of tools in the future and will no longer be limited to computer_use. "
-                "To execute a single action tool, such as computer_use, use the action execution method "
-                "in the ComputerUse class. If no distinction is made, use the `execute_action` method in "
-                "the Sandbox class."
+        message="Lybic Sandbox has support multiple types of tools now and will no longer be limited to computer_use. "
+                "To execute a single action tool, such as computer_use, use the execute_computer_use_action method "
+                "in the ComputerUse class. If no distinction is made, use the `execute_sandbox_action` method in "
+                "the Sandbox class,which is the recommended approach."
     )
     @overload
     async def execute_computer_use_action(self, sandbox_id: str, **kwargs) -> dto.SandboxActionResponseDto: ...
     @deprecated(
         since="0.7.0",
         removal="1.0.0",
-        message="Lybic Sandbox will support multiple types of tools in the future and will no longer be limited to computer_use. "
-                "To execute a single action tool, such as computer_use, use the action execution method "
-                "in the ComputerUse class. If no distinction is made, use the `execute_action` method in "
-                "the Sandbox class."
+        message="Lybic Sandbox has support multiple types of tools now and will no longer be limited to computer_use. "
+                "To execute a single action tool, such as computer_use, use the execute_computer_use_action method "
+                "in the ComputerUse class. If no distinction is made, use the `execute_sandbox_action` method in "
+                "the Sandbox class,which is the recommended approach."
     )
     async def execute_computer_use_action(self, sandbox_id: str, *args, **kwargs) -> dto.SandboxActionResponseDto:
         """
@@ -235,4 +235,32 @@ class Sandbox:
         self.client.logger.debug(f"Get shapes response: {response.text}")
         return dto.GetShapesResponseDto.model_validate_json(response.text)
 
-    # todo: 2025-09-02 a method called "execute_action" for computer-use, mobile-use and other sandbox tools.
+    @overload
+    async def execute_sandbox_action(self, sandbox_id: str, data: dto.ExecuteSandboxActionDto) -> dto.SandboxActionResponseDto: ...
+
+    @overload
+    async def execute_sandbox_action(self, sandbox_id: str, **kwargs) -> dto.SandboxActionResponseDto: ...
+
+    async def execute_sandbox_action(self, sandbox_id: str, *args, **kwargs) -> dto.SandboxActionResponseDto:
+        """
+        Executes a computer use or mobile use action on the sandbox.
+        The action can be either a computer use or mobile use action.
+        """
+        if args and isinstance(args[0], dto.ExecuteSandboxActionDto):
+            data = args[0]
+        elif "data" in kwargs:
+            data_arg = kwargs["data"]
+            if isinstance(data_arg, dto.ExecuteSandboxActionDto):
+                data = data_arg
+            elif isinstance(data_arg, dict):
+                data = dto.ExecuteSandboxActionDto(**data_arg)
+            else:
+                raise TypeError(f"The 'data' argument must be of type {dto.ExecuteSandboxActionDto.__name__} or dict")
+        else:
+            data = dto.ExecuteSandboxActionDto(**kwargs)
+        self.client.logger.debug(f"Execute sandbox action request: {data.model_dump_json(exclude_none=True)}")
+        response = await self.client.request("POST",
+                                             f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/actions/execute",
+                                             json=data.model_dump(exclude_none=True))
+        self.client.logger.debug(f"Execute sandbox action response: {response.text}")
+        return dto.SandboxActionResponseDto.model_validate_json(response.text)
