@@ -240,17 +240,17 @@ if __name__ == "__main__":
 
 `ComputerUse` is a client for the Lybic ComputerUse API, used for parsing model outputs and executing actions.
 
-1. Parse model output into computer action.(support `ui-tars` and `oai-compute-use`[openai])
+1. Parse LLM output into computer action
 
-   if you want to parse the model output, you can use this method.
+   If you want to parse the model output, you can use this method.
 
-   method: `parse_model_output(data: dto.ComputerUseParseRequestDto)` or `parse_model_output(**kwargs)`
-   - args: class dto.ComputerUseParseRequestDto
-     - *model: str The model to use (e.g., "ui-tars")
-     - *textContent: str The text content to parse
+   method: `parse_llm_output(model_type: dto.ModelType | str, llm_output: str)`
+   - args: 
+     - *model_type: The type of the large language model.
+     - *llm_output: The text output from the large language model.
    - return: class dto.ComputerUseActionResponseDto
 
-   if the model you use is "ui-tars", and its prompts like this:
+   If the model you use is "ui-tars", and its prompts like this:
 
    ```markdown
    You are a GUI agent. You are given a task and your action history, with screenshots. You need to perform the next action to complete the task.
@@ -308,17 +308,13 @@ if __name__ == "__main__":
         
            Next action: Left - double - click on the "images" folder icon located in the File Explorer window, under the Desktop directory, with the name "images" and yellow folder icon.
            Action: left_double(point='<point>213 257</point>')"""
-           # Using DTO
-           actions = await computer_use.parse_model_output(
-               dto.ComputerUseParseRequestDto(
-                   model="ui-tars",
-                   textContent=text_content
-               )
+           
+           actions = await computer_use.parse_llm_output(
+               model_type="ui-tars",
+               llm_output=text_content
            )
            print(actions)
-           # Using keyword arguments
-           actions_2 = await computer_use.parse_model_output(model="ui-tars", textContent=text_content)
-           print(actions_2)
+
    if __name__ == "__main__":
        asyncio.run(main())
    ```
@@ -327,51 +323,6 @@ if __name__ == "__main__":
    ```
    actions=[MouseDoubleClickAction(type='mouse:doubleClick', x=FractionalLength(type='/', numerator=213, denominator=1000), y=FractionalLength(type='/', numerator=257, denominator=1000), button=1)]
    ```
-
-2. Execute a computer use action
-
-This interface enables `Planner` to perform actions on the sandbox through Restful calls
-
-   method: `execute_computer_use_action(sandbox_id: str, data: dto.ComputerUseActionDto)` or `execute_computer_use_action(sandbox_id: str, **kwargs)`
-   - args:
-     - *sandbox_id: str ID of the sandbox
-     - *data: class dto.ComputerUseActionDto The action to execute
-   - return: class dto.SandboxActionResponseDto
-
-      ```python
-      import asyncio
-      from lybic import dto, ComputerUse, LybicClient, LybicAuth
-      async def main():
-          async with LybicClient(
-            LybicAuth(
-               org_id="ORG-xxxx",
-               api_key="lysk-xxxxxxxxxxx",
-               endpoint="https://api.lybic.cn/",
-          )
-        ) as client:
-              computer_use = ComputerUse(client)
-              actions = await computer_use.parse_model_output(
-                  model="ui-tars",
-                  textContent="""Thought: The task requires double-left-clicking the "images" folder. In the File Explorer window, the "images" folder is visible under the Desktop directory. The target element is the folder named "images" with a yellow folder icon. Double-left-clicking this folder will open it.
-        
-              Next action: Left - double - click on the "images" folder icon located in the File Explorer window, under the Desktop directory, with the name "images" and yellow folder icon.
-              Action: left_double(point='<point>213 257</point>')"""
-              )
-              # Using DTO
-              response = await computer_use.execute_computer_use_action(
-                  sandbox_id="SBX-xxxx",
-                  data=dto.ComputerUseActionDto(action=actions[0])
-              )
-              print(response)
-              # Using keyword arguments
-              response_2 = await computer_use.execute_computer_use_action(
-                  sandbox_id="SBX-xxxx",
-                  action=actions[0]
-              )
-              print(response_2)
-      if __name__ == "__main__":
-          asyncio.run(main())
-      ```
 
 ### Class Sandbox
 
@@ -394,8 +345,8 @@ This interface enables `Planner` to perform actions on the sandbox through Restf
    ```
    It will out put something like this:
    ```
-   id='SBX-xxxxx' name='xxxx' expiredAt='2025-07-25T07:21:31.026Z' createdAt='2025-07-25T06:21:31.027Z' projectId='PRJ-xxxxxxx'
-   id='SBX-xxxxx' name='xxxx' expiredAt='2025-07-26T08:24:11.198Z' createdAt='2025-07-26T07:24:11.199Z' projectId='PRJ-xxxxxxx'
+   id='SBX-xxxxx' name='xxxx' expiredAt='2025-07-25T07:21:31.026Z' expiresAt='2025-07-25T07:21:31.026Z' createdAt='2025-07-25T06:21:31.027Z' projectId='PRJ-xxxxxxx'
+   id='SBX-xxxxx' name='xxxx' expiredAt='2025-07-26T08:24:11.198Z' expiresAt='2025-07-26T08:24:11.198Z' createdAt='2025-07-26T07:24:11.199Z' projectId='PRJ-xxxxxxx'
    ```
 
 2. Create a new sandbox
@@ -405,8 +356,7 @@ This interface enables `Planner` to perform actions on the sandbox through Restf
      - name: str (optional) Name for the sandbox, if not provided, it will use a default name(sandbox).
      - maxLifeSeconds: int (optional) Lifetime in seconds, if not provided, it will use the default value of 3600 seconds (1 hour).
      - projectId: str (optional) Project ID to associate with the sandbox,if not provided, it will use the default project.
-     - specId: str (optional) ID of the sandbox spec to use, if not provided, it will use the default spec.
-     - datacenterId: str (optional) ID of the datacenter to use, if not provided, it will use the default datacenter.
+     - shape: str The shape of the sandbox.
    - return: class dto.GetSandboxResponseDto
 
    ```python
@@ -415,10 +365,10 @@ This interface enables `Planner` to perform actions on the sandbox through Restf
    # Inside your async main function, with the client initialized:
    sandbox = Sandbox(client)
    # Using DTO
-   new_sandbox = await sandbox.create(dto.CreateSandboxDto(name="my-sandbox"))
+   new_sandbox = await sandbox.create(dto.CreateSandboxDto(name="my-sandbox", shape="xxx"))
    print(new_sandbox)
    # Using keyword arguments
-   new_sandbox_2 = await sandbox.create(name="my-sandbox-2")
+   new_sandbox_2 = await sandbox.create(name="my-sandbox-2", shape="xxx")
    print(new_sandbox_2)
    ```
 
@@ -442,7 +392,7 @@ This interface enables `Planner` to perform actions on the sandbox through Restf
    It will out put something like this:
 
    ```
-   sandbox=Sandbox(id='SBX-xxxx', name='xxxx', expiredAt='2025-07-26T08:24:11.198Z', createdAt='2025-07-26T07:24:11.199Z', projectId='PRJ-xxxx'), connectDetails=ConnectDetails(gatewayAddresses=[GatewayAddress(address='1.2.3.4', port=12345, name='0197e397-5394-7880-a314-d8a7e981f9e4', preferredProviders=[1], gatewayType=4)], certificateHashBase64='baes64str==', endUserToken='jwttokenbase64str')
+   sandbox=Sandbox(id='SBX-xxxx', name='xxxx', expiredAt='2025-07-26T08:24:11.198Z', expiresAt='2025-07-26T08:24:11.198Z', createdAt='2025-07-26T07:24:11.199Z', projectId='PRJ-xxxx'), connectDetails=ConnectDetails(gatewayAddresses=[GatewayAddress(address='1.2.3.4', port=12345, name='0197e397-5394-7880-a314-d8a7e981f9e4', preferredProviders=[1], gatewayType=4)], certificateHashBase64='baes64str==', endUserToken='jwttokenbase64str')
    ```
 
 4. Delete a sandbox
@@ -495,3 +445,51 @@ This interface enables `Planner` to perform actions on the sandbox through Restf
     sandbox = Sandbox(client)
     await sandbox.extend_life(sandbox_id="SBX-xxxx", seconds=3600)
     ```
+
+7. Execute a sandbox action
+
+   This interface enables `Planner` to perform actions on the sandbox through Restful calls. It supports both computer use and mobile use actions.
+   
+   method: `execute_sandbox_action(sandbox_id: str, data: dto.ExecuteSandboxActionDto)` or `execute_sandbox_action(sandbox_id: str, **kwargs)`
+   - args:
+     - *sandbox_id: str ID of the sandbox
+     - *data: class dto.ExecuteSandboxActionDto The action to execute
+   - return: class dto.SandboxActionResponseDto
+
+   ```python
+   import asyncio
+   from lybic import dto, Sandbox, ComputerUse, LybicClient, LybicAuth
+   async def main():
+       async with LybicClient(
+         LybicAuth(
+            org_id="ORG-xxxx",
+            api_key="lysk-xxxxxxxxxxx",
+            endpoint="https://api.lybic.cn/",
+       )
+     ) as client:
+           computer_use = ComputerUse(client)
+           parsed_result = await computer_use.parse_llm_output(
+               model_type="ui-tars",
+               llm_output="""Thought: The task requires double-left-clicking the "images" folder. In the File Explorer window, the "images" folder is visible under the Desktop directory. The target element is the folder named "images" with a yellow folder icon. Double-left-clicking this folder will open it.
+     
+           Next action: Left - double - click on the "images" folder icon located in the File Explorer window, under the Desktop directory, with the name "images" and yellow folder icon.
+           Action: left_double(point='<point>213 257</point>')"""
+           )
+           actions = parsed_result.actions
+           if actions:
+               sandbox = Sandbox(client)
+               # Using DTO
+               response = await sandbox.execute_sandbox_action(
+                   sandbox_id="SBX-xxxx",
+                   data=dto.ExecuteSandboxActionDto(action=actions[0])
+               )
+               print(response)
+               # Using keyword arguments
+               response_2 = await sandbox.execute_sandbox_action(
+                   sandbox_id="SBX-xxxx",
+                   action=actions[0]
+               )
+               print(response_2)
+   if __name__ == "__main__":
+       asyncio.run(main())
+   ```
