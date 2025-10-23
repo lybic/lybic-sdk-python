@@ -530,6 +530,7 @@ class SandboxActionResponseDto(BaseModel):
     """
     screenShot: Optional[str]  # is a picture url of the screen eg. https://example.com/screen.webp
     cursorPosition: Optional[CursorPosition]
+    actionResult: Optional[str]
 
 
 @unique
