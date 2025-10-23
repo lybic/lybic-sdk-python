@@ -106,12 +106,27 @@ class ComputerUse:
         self.client.logger.debug(f"Parse model output response: {response.text}")
         return dto.ComputerUseActionResponseDto.model_validate_json(response.text)
 
+    @deprecated(
+        since="0.8.0",
+        removal="1.0.0",
+        message="Use `lybic.sandbox.Sandbox.execute_sandbox_action` instead."
+    )
     @overload
     async def execute_computer_use_action(self, sandbox_id: str,
                                     data: dto.ComputerUseActionDto) -> dto.SandboxActionResponseDto: ...
+    @deprecated(
+        since="0.8.0",
+        removal="1.0.0",
+        message="Use `lybic.sandbox.Sandbox.execute_sandbox_action` instead."
+    )
     @overload
     async def execute_computer_use_action(self, sandbox_id: str, **kwargs) -> dto.SandboxActionResponseDto: ...
 
+    @deprecated(
+        since="0.8.0",
+        removal="1.0.0",
+        message="Use `lybic.sandbox.Sandbox.execute_sandbox_action` instead."
+    )
     async def execute_computer_use_action(self, sandbox_id: str, *args, **kwargs) -> dto.SandboxActionResponseDto:
         """Executes a computer use action in a specific sandbox.
 
