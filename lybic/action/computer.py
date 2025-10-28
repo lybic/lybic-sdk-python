@@ -176,6 +176,15 @@ class KeyboardTypeAction(BaseModel):
     treatNewLineAsEnter: bool = Field(False, description="Whether to treat line breaks as enter. If true, any line breaks(\\n) in content will be treated as enter key press, and content will be split into multiple lines.")
     callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
 
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = json_extra_fields_policy
+        # Allow population of fields with default values
+        validate_assignment = True
+        exclude_none = True
+
 
 class KeyboardHotkeyAction(BaseModel):
     """

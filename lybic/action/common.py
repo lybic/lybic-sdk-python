@@ -42,6 +42,14 @@ class PixelLength(BaseModel):
     type: Literal["px"]
     value: int
 
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = json_extra_fields_policy
+        validate_assignment = True
+        exclude_none = True
+
 
 class FractionalLength(BaseModel):
     """
@@ -50,6 +58,14 @@ class FractionalLength(BaseModel):
     type: Literal["/"]
     numerator: int
     denominator: int
+
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = json_extra_fields_policy
+        validate_assignment = True
+        exclude_none = True
 
 
 Length = Union[PixelLength, FractionalLength]
@@ -100,6 +116,7 @@ class WaitAction(BaseModel):
         """
         Configuration for Pydantic model.
         """
+        extra = json_extra_fields_policy
         # Allow population of fields with default values
         validate_assignment = True
         exclude_none = True
