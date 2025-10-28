@@ -1011,7 +1011,7 @@ MobileUseAction = Union[
 ]
 
 
-Action = Union[ComputerUseAction, MobileUseAction, CommonAction]
+Action = Union[ComputerUseAction, MobileUseAction]
 
 
 class ExecuteSandboxActionDto(BaseModel):
