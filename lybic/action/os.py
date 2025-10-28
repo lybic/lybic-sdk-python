@@ -31,8 +31,6 @@ from pydantic import BaseModel, Field
 
 from .common import json_extra_fields_policy
 
-# pylint: disable=invalid-name
-
 
 class OsStartAppAction(BaseModel):
     """

@@ -31,9 +31,6 @@ from pydantic import BaseModel, Field
 
 from .common import Length, json_extra_fields_policy, ScreenshotAction, WaitAction, FinishedAction, FailedAction, ClientUserTakeoverAction
 
-# pylint: disable=invalid-name
-
-
 class MouseClickAction(BaseModel):
     """
     Represents a mouse click action at a specified location.
