@@ -27,10 +27,12 @@
 """dto.py provides all the data types used in the API."""
 import uuid
 from enum import Enum, unique
-from typing import List, Optional, Union, Literal
+from typing import List, Optional, Literal
 from pydantic import BaseModel, Field, RootModel
 
 from lybic._api import deprecated
+
+# pylint: disable=invalid-name,unused-import
 
 # Import actions from the new action module for backward compatibility
 from lybic.action import (
@@ -44,7 +46,7 @@ from lybic.action import (
     FinishedAction,
     FailedAction,
     CommonAction,
-    
+
     # Computer use actions
     MouseClickAction,
     MouseTripleClickAction,
@@ -57,7 +59,7 @@ from lybic.action import (
     KeyDownAction,
     KeyUpAction,
     ComputerUseAction,
-    
+
     # Mobile actions
     MobileTapAction,
     MobileDoubleTapAction,
@@ -70,28 +72,27 @@ from lybic.action import (
     MobileWaitAction,
     MobileFinishedAction,
     MobileFailedAction,
-    
+
     # Touch actions
     TouchTapAction,
     TouchDragAction,
     TouchSwipeAction,
     TouchLongPressAction,
-    
+
     # Android actions
     AndroidBackAction,
     AndroidHomeAction,
-    
+
     # OS actions
     OsStartAppAction,
     OsStartAppByNameAction,
     OsCloseAppAction,
-    
+
     # Union types
     MobileUseAction,
     Action,
 )
 
-# pylint: disable=invalid-name
 
 # Strategy for handling extra fields in the lybic api response
 # "ignore" means ignore extra fields, which will ensure that your SDK version remains compatible with the Lybic platform,

@@ -140,7 +140,7 @@ __all__ = [
     "FinishedAction",
     "FailedAction",
     "CommonAction",
-    
+
     # Computer use actions
     "MouseClickAction",
     "MouseTripleClickAction",
@@ -153,7 +153,7 @@ __all__ = [
     "KeyDownAction",
     "KeyUpAction",
     "ComputerUseAction",
-    
+
     # Mobile actions
     "MobileTapAction",
     "MobileDoubleTapAction",
@@ -166,22 +166,22 @@ __all__ = [
     "MobileWaitAction",
     "MobileFinishedAction",
     "MobileFailedAction",
-    
+
     # Touch actions
     "TouchTapAction",
     "TouchDragAction",
     "TouchSwipeAction",
     "TouchLongPressAction",
-    
+
     # Android actions
     "AndroidBackAction",
     "AndroidHomeAction",
-    
+
     # OS actions
     "OsStartAppAction",
     "OsStartAppByNameAction",
     "OsCloseAppAction",
-    
+
     # Union types
     "MobileUseAction",
     "Action",

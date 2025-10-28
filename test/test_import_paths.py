@@ -26,7 +26,7 @@ def test_both_import_paths():
         "MobileHotkeyAction should be the same class from both imports"
     assert PixelLengthFromDto is PixelLengthFromAction, \
         "PixelLength should be the same class from both imports"
-    
+
     print("✓ Both import paths (lybic.dto and lybic.action) provide the same classes")
 
 
