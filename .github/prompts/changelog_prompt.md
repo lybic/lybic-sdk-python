@@ -1,4 +1,4 @@
-# Changelog since [<pre_tag>](https://github.com/lybic/lybic-sdk-python/releases/tag/<now_tag>)
+# Changelog for [<now_tag>](https://github.com/lybic/lybic-sdk-python/releases/tag/<now_tag>)
 
 ## New Features 🎉
 - [Feature descriptions should be clear and highlight user benefits]
@@ -24,7 +24,7 @@
 
 
 
-**Full Changelog**: https://github.com/lybic/lybic-sdk-python/compare/v0.80.0...v0.81.0
+**Full Changelog**: https://github.com/lybic/lybic-sdk-python/compare/<pre_tag>...<now_tag>
 
 **GENERATION INSTRUCTIONS:**
 
