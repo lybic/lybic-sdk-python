@@ -222,7 +222,7 @@ class ClientUserTakeoverAction(BaseModel):
     Indicates the human user should take over the control.
     """
     type: Literal["client:user-takeover"]
-    callId: Optional[str] = str(uuid.uuid4())
+    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
     class Config:
         """
         Configuration for Pydantic model.
@@ -263,7 +263,7 @@ class MouseClickAction(BaseModel):
     button: int = Field(..., description="Mouse button flag combination. 1: left, 2: right, 4: middle, 8: back, 16: forward; add them together to press multiple buttons at once.")
     relative: bool = Field(False, description="Whether the coordinates are relative to the current mouse position")
     holdKey: Optional[str] = Field(None, description="Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
-    callId: Optional[str] = str(uuid.uuid4())
+    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
 
     class Config:
         """
@@ -284,7 +284,7 @@ class MouseTripleClickAction(BaseModel):
     button: int = Field(..., description="Mouse button flag combination. 1: left, 2: right, 4: middle, 8: back, 16: forward; add them together to press multiple buttons at once.")
     relative: bool = Field(False, description="Whether the coordinates are relative to the current mouse position.")
     holdKey: Optional[str] = Field(None, description="Key to hold down during triple click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
-    callId: Optional[str] = str(uuid.uuid4())
+    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
 
     class Config:
         """
@@ -305,7 +305,7 @@ class MouseDoubleClickAction(BaseModel):
     button: int = Field(..., description="Mouse button flag combination. 1: left, 2: right, 4: middle, 8: back, 16: forward; add them together to press multiple buttons at once.")
     relative: bool = Field(False, description="Whether the coordinates are relative to the current mouse position")
     holdKey: Optional[str] = Field(None, description="Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
-    callId: Optional[str] = str(uuid.uuid4())
+    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
 
     class Config:
         """
@@ -326,7 +326,7 @@ class MouseMoveAction(BaseModel):
     y: Length
     relative: bool = Field(False, description="Whether the coordinates are relative to the current mouse position")
     holdKey: Optional[str] = Field(None, description="Key to hold down during move, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
-    callId: Optional[str] = str(uuid.uuid4())
+    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
 
     class Config:
         """
@@ -349,7 +349,7 @@ class MouseScrollAction(BaseModel):
     stepHorizontal: int
     relative: bool = Field(False, description="Whether the coordinates are relative to the current mouse position")
     holdKey: Optional[str] = Field(None, description="Key to hold down during scroll, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
-    callId: Optional[str] = str(uuid.uuid4())
+    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
 
     class Config:
         """
@@ -374,7 +374,7 @@ class MouseDragAction(BaseModel):
     endRelative: bool = Field(False, description="Whether the end coordinates are relative to the start coordinates of the drag. If false, they are absolute screen coordinates.")
     button: int = Field(..., description="Mouse button flag combination. 1: left, 2: right, 4: middle, 8: back, 16: forward; add them together to press multiple buttons at once.")
     holdKey: Optional[str] = Field(None, description="Key to hold down during drag, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
-    callId: Optional[str] = str(uuid.uuid4())
+    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
 
     class Config:
         """
@@ -393,7 +393,7 @@ class KeyboardTypeAction(BaseModel):
     type: Literal["keyboard:type"]
     content: str
     treatNewLineAsEnter: bool = Field(False, description="Whether to treat line breaks as enter. If true, any line breaks(\\n) in content will be treated as enter key press, and content will be split into multiple lines.")
-    callId: Optional[str] = str(uuid.uuid4())
+    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
 
 
 class KeyboardHotkeyAction(BaseModel):
@@ -403,7 +403,7 @@ class KeyboardHotkeyAction(BaseModel):
     type: Literal["keyboard:hotkey"]
     keys: str
     duration: Optional[int] = Field(None, description="Duration in milliseconds. If specified, the hotkey will be held for a while and then released.")
-    callId: Optional[str] = str(uuid.uuid4())
+    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
 
     class Config:
         """
@@ -421,7 +421,7 @@ class KeyDownAction(BaseModel):
     """
     type: Literal["key:down"]
     key: str
-    callId: Optional[str] = str(uuid.uuid4())
+    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
 
     class Config:
         """
@@ -438,7 +438,7 @@ class KeyUpAction(BaseModel):
     """
     type: Literal["key:up"]
     key: str
-    callId: Optional[str] = str(uuid.uuid4())
+    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
 
     class Config:
         """
@@ -455,7 +455,7 @@ class ScreenshotAction(BaseModel):
     Represents an action to take a screenshot.
     """
     type: Literal["screenshot"]
-    callId: Optional[str] = str(uuid.uuid4())
+    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
 
     class Config:
         """
@@ -473,7 +473,7 @@ class WaitAction(BaseModel):
     """
     type: Literal["wait"]
     duration: int
-    callId: Optional[str] = str(uuid.uuid4())
+    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
 
     class Config:
         """
@@ -490,7 +490,7 @@ class FinishedAction(BaseModel):
     """
     type: Literal["finished"]
     message: Optional[str] = None
-    callId: Optional[str] = str(uuid.uuid4())
+    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
 
     class Config:
         """
@@ -507,7 +507,7 @@ class FailedAction(BaseModel):
     """
     type: Literal["failed"]
     message: Optional[str] = None
-    callId: Optional[str] = str(uuid.uuid4())
+    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
 
     class Config:
         """
@@ -560,7 +560,7 @@ class ComputerUseActionDto(BaseModel):
     action: ComputerUseAction | dict
     includeScreenShot: bool = True
     includeCursorPosition: bool = True
-    callId: Optional[str] = str(uuid.uuid4())
+    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
 
     class Config:
         """
@@ -654,7 +654,7 @@ class MobileTapAction(BaseModel):
     type: Literal["mobile:tap"]
     x: Length
     y: Length
-    callId: Optional[str] = str(uuid.uuid4())
+    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
     class Config:
         """
         Configuration for Pydantic model.
@@ -671,7 +671,7 @@ class MobileDoubleTapAction(BaseModel):
     type: Literal["mobile:doubleTap"]
     x: Length
     y: Length
-    callId: Optional[str] = str(uuid.uuid4())
+    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
     class Config:
         """
         Configuration for Pydantic model.
@@ -691,7 +691,7 @@ class MobileSwipeAction(BaseModel):
     endX: Length
     endY: Length
     duration: int
-    callId: Optional[str] = str(uuid.uuid4())
+    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
     class Config:
         """
         Configuration for Pydantic model.
@@ -707,7 +707,7 @@ class MobileTypeAction(BaseModel):
     """
     type: Literal["mobile:type"]
     content: str
-    callId: Optional[str] = str(uuid.uuid4())
+    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
     class Config:
         """
         Configuration for Pydantic model.
@@ -723,7 +723,7 @@ class MobileHotkeyAction(BaseModel):
     """
     type: Literal["mobile:hotkey"]
     key: str
-    callId: Optional[str] = str(uuid.uuid4())
+    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
     class Config:
         """
         Configuration for Pydantic model.
@@ -738,7 +738,7 @@ class MobileHomeAction(BaseModel):
     Represents a mobile home action.
     """
     type: Literal["mobile:home"]
-    callId: Optional[str] = str(uuid.uuid4())
+    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
     class Config:
         """
         Configuration for Pydantic model.
@@ -753,7 +753,7 @@ class MobileBackAction(BaseModel):
     Represents a mobile back action.
     """
     type: Literal["mobile:back"]
-    callId: Optional[str] = str(uuid.uuid4())
+    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
     class Config:
         """
         Configuration for Pydantic model.
@@ -768,7 +768,7 @@ class MobileScreenshotAction(BaseModel):
     Represents a mobile screenshot action.
     """
     type: Literal["mobile:screenshot"]
-    callId: Optional[str] = str(uuid.uuid4())
+    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
     class Config:
         """
         Configuration for Pydantic model.
@@ -784,7 +784,7 @@ class MobileWaitAction(BaseModel):
     """
     type: Literal["mobile:wait"]
     duration: int
-    callId: Optional[str] = str(uuid.uuid4())
+    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
     class Config:
         """
         Configuration for Pydantic model.
@@ -800,7 +800,7 @@ class MobileFinishedAction(BaseModel):
     """
     type: Literal["mobile:finished"]
     message: Optional[str] = None
-    callId: Optional[str] = str(uuid.uuid4())
+    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
     class Config:
         """
         Configuration for Pydantic model.
@@ -816,7 +816,7 @@ class MobileFailedAction(BaseModel):
     """
     type: Literal["mobile:failed"]
     message: Optional[str] = None
-    callId: Optional[str] = str(uuid.uuid4())
+    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
     class Config:
         """
         Configuration for Pydantic model.
@@ -834,7 +834,7 @@ class TouchTapAction(BaseModel):
     type: Literal["touch:tap"]
     x: Length
     y: Length
-    callId: Optional[str] = str(uuid.uuid4())
+    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
     class Config:
         """
         Configuration for Pydantic model.
@@ -853,7 +853,7 @@ class TouchDragAction(BaseModel):
     startY: Length
     endX: Length
     endY: Length
-    callId: Optional[str] = str(uuid.uuid4())
+    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
     class Config:
         """
         Configuration for Pydantic model.
@@ -872,7 +872,7 @@ class TouchSwipeAction(BaseModel):
     y: Length
     direction: Literal["up", "down", "left", "right"]
     distance: Length
-    callId: Optional[str] = str(uuid.uuid4())
+    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
     class Config:
         """
         Configuration for Pydantic model.
@@ -890,7 +890,7 @@ class TouchLongPressAction(BaseModel):
     x: Length
     y: Length
     duration: int
-    callId: Optional[str] = str(uuid.uuid4())
+    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
     class Config:
         """
         Configuration for Pydantic model.
@@ -905,7 +905,7 @@ class AndroidBackAction(BaseModel):
     Press the back button on Android device.
     """
     type: Literal["android:back"]
-    callId: Optional[str] = str(uuid.uuid4())
+    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
     class Config:
         """
         Configuration for Pydantic model.
@@ -920,7 +920,7 @@ class AndroidHomeAction(BaseModel):
     Press the home button on Android device.
     """
     type: Literal["android:home"]
-    callId: Optional[str] = str(uuid.uuid4())
+    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
     class Config:
         """
         Configuration for Pydantic model.
@@ -936,7 +936,7 @@ class OsStartAppAction(BaseModel):
     """
     type: Literal["os:startApp"]
     packageName: str
-    callId: Optional[str] = str(uuid.uuid4())
+    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
     class Config:
         """
         Configuration for Pydantic model.
@@ -952,7 +952,7 @@ class OsStartAppByNameAction(BaseModel):
     """
     type: Literal["os:startAppByName"]
     name: str
-    callId: Optional[str] = str(uuid.uuid4())
+    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
     class Config:
         """
         Configuration for Pydantic model.
@@ -967,7 +967,7 @@ class OsCloseAppAction(BaseModel):
     Close the current app.
     """
     type: Literal["os:closeApp"]
-    callId: Optional[str] = str(uuid.uuid4())
+    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
     class Config:
         """
         Configuration for Pydantic model.
@@ -1021,7 +1021,7 @@ class ExecuteSandboxActionDto(BaseModel):
     action: Action | dict
     includeScreenShot: bool = True
     includeCursorPosition: bool = True
-    callId: Optional[str] = str(uuid.uuid4())
+    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
 
 
 # Project Schemas
