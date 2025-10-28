@@ -32,7 +32,9 @@ from pydantic import BaseModel, Field, RootModel
 
 from lybic._api import deprecated
 
-# pylint: disable=invalid-name
+# pylint: disable=invalid-name,too-many-lines,fixme
+# fixme: too-many-lines
+
 
 # Strategy for handling extra fields in the lybic api response
 # "ignore" means ignore extra fields, which will ensure that your SDK version remains compatible with the Lybic platform,
@@ -214,6 +216,21 @@ class GetSandboxResponseDto(BaseModel):
     sandbox: Sandbox
     connectDetails: ConnectDetails
 
+
+class ClientUserTakeoverAction(BaseModel):
+    """
+    Indicates the human user should take over the control.
+    """
+    type: Literal["client:user-takeover"]
+    callId: Optional[str] = str(uuid.uuid4())
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = json_extra_fields_policy
+        # Allow population of fields with default values
+        validate_assignment = True
+        exclude_none = True
 
 # Computer Use Schemas
 class PixelLength(BaseModel):
@@ -398,6 +415,41 @@ class KeyboardHotkeyAction(BaseModel):
         exclude_none = True
 
 
+class KeyDownAction(BaseModel):
+    """
+    Press ONE key down, in xdotool key syntax. Only use this action if hotkey or type cannot satisfy your needs.
+    """
+    type: Literal["key:down"]
+    key: str
+    callId: Optional[str] = str(uuid.uuid4())
+
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = json_extra_fields_policy
+        validate_assignment = True
+        exclude_none = True
+
+
+class KeyUpAction(BaseModel):
+    """
+    Release ONE key, in xdotool key syntax. Only use this action if keydown cannot satisfy your needs and only after a key down.
+    """
+    type: Literal["key:up"]
+    key: str
+    callId: Optional[str] = str(uuid.uuid4())
+
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = json_extra_fields_policy
+        validate_assignment = True
+        exclude_none = True
+
+
+# Common Actions (shared between ComputerUse and MobileUse)
 class ScreenshotAction(BaseModel):
     """
     Represents an action to take a screenshot.
@@ -466,6 +518,15 @@ class FailedAction(BaseModel):
         exclude_none = True
 
 
+CommonAction = Union[
+    ScreenshotAction,
+    WaitAction,
+    FinishedAction,
+    FailedAction,
+    ClientUserTakeoverAction,
+]
+
+
 ComputerUseAction = Union[
     MouseClickAction,
     MouseTripleClickAction,
@@ -473,12 +534,17 @@ ComputerUseAction = Union[
     MouseMoveAction,
     MouseScrollAction,
     MouseDragAction,
+
     KeyboardTypeAction,
     KeyboardHotkeyAction,
+    KeyDownAction,
+    KeyUpAction,
+
     ScreenshotAction,
     WaitAction,
     FinishedAction,
     FailedAction,
+    ClientUserTakeoverAction,
 ]
 
 
@@ -589,7 +655,14 @@ class MobileTapAction(BaseModel):
     x: Length
     y: Length
     callId: Optional[str] = str(uuid.uuid4())
-
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = json_extra_fields_policy
+        # Allow population of fields with default values
+        validate_assignment = True
+        exclude_none = True
 
 class MobileDoubleTapAction(BaseModel):
     """
@@ -599,7 +672,14 @@ class MobileDoubleTapAction(BaseModel):
     x: Length
     y: Length
     callId: Optional[str] = str(uuid.uuid4())
-
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = json_extra_fields_policy
+        # Allow population of fields with default values
+        validate_assignment = True
+        exclude_none = True
 
 class MobileSwipeAction(BaseModel):
     """
@@ -612,7 +692,14 @@ class MobileSwipeAction(BaseModel):
     endY: Length
     duration: int
     callId: Optional[str] = str(uuid.uuid4())
-
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = json_extra_fields_policy
+        # Allow population of fields with default values
+        validate_assignment = True
+        exclude_none = True
 
 class MobileTypeAction(BaseModel):
     """
@@ -621,7 +708,14 @@ class MobileTypeAction(BaseModel):
     type: Literal["mobile:type"]
     content: str
     callId: Optional[str] = str(uuid.uuid4())
-
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = json_extra_fields_policy
+        # Allow population of fields with default values
+        validate_assignment = True
+        exclude_none = True
 
 class MobileHotkeyAction(BaseModel):
     """
@@ -630,7 +724,14 @@ class MobileHotkeyAction(BaseModel):
     type: Literal["mobile:hotkey"]
     key: str
     callId: Optional[str] = str(uuid.uuid4())
-
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = json_extra_fields_policy
+        # Allow population of fields with default values
+        validate_assignment = True
+        exclude_none = True
 
 class MobileHomeAction(BaseModel):
     """
@@ -638,7 +739,14 @@ class MobileHomeAction(BaseModel):
     """
     type: Literal["mobile:home"]
     callId: Optional[str] = str(uuid.uuid4())
-
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = json_extra_fields_policy
+        # Allow population of fields with default values
+        validate_assignment = True
+        exclude_none = True
 
 class MobileBackAction(BaseModel):
     """
@@ -646,7 +754,14 @@ class MobileBackAction(BaseModel):
     """
     type: Literal["mobile:back"]
     callId: Optional[str] = str(uuid.uuid4())
-
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = json_extra_fields_policy
+        # Allow population of fields with default values
+        validate_assignment = True
+        exclude_none = True
 
 class MobileScreenshotAction(BaseModel):
     """
@@ -654,7 +769,14 @@ class MobileScreenshotAction(BaseModel):
     """
     type: Literal["mobile:screenshot"]
     callId: Optional[str] = str(uuid.uuid4())
-
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = json_extra_fields_policy
+        # Allow population of fields with default values
+        validate_assignment = True
+        exclude_none = True
 
 class MobileWaitAction(BaseModel):
     """
@@ -663,7 +785,14 @@ class MobileWaitAction(BaseModel):
     type: Literal["mobile:wait"]
     duration: int
     callId: Optional[str] = str(uuid.uuid4())
-
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = json_extra_fields_policy
+        # Allow population of fields with default values
+        validate_assignment = True
+        exclude_none = True
 
 class MobileFinishedAction(BaseModel):
     """
@@ -672,7 +801,14 @@ class MobileFinishedAction(BaseModel):
     type: Literal["mobile:finished"]
     message: Optional[str] = None
     callId: Optional[str] = str(uuid.uuid4())
-
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = json_extra_fields_policy
+        # Allow population of fields with default values
+        validate_assignment = True
+        exclude_none = True
 
 class MobileFailedAction(BaseModel):
     """
@@ -681,8 +817,167 @@ class MobileFailedAction(BaseModel):
     type: Literal["mobile:failed"]
     message: Optional[str] = None
     callId: Optional[str] = str(uuid.uuid4())
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = json_extra_fields_policy
+        # Allow population of fields with default values
+        validate_assignment = True
+        exclude_none = True
 
 
+class TouchTapAction(BaseModel):
+    """
+    Tap the screen at the specified coordinates.
+    """
+    type: Literal["touch:tap"]
+    x: Length
+    y: Length
+    callId: Optional[str] = str(uuid.uuid4())
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = json_extra_fields_policy
+        # Allow population of fields with default values
+        validate_assignment = True
+        exclude_none = True
+
+class TouchDragAction(BaseModel):
+    """
+    Touch and hold at start coordinates, then move to end coordinates and release.
+    """
+    type: Literal["touch:drag"]
+    startX: Length
+    startY: Length
+    endX: Length
+    endY: Length
+    callId: Optional[str] = str(uuid.uuid4())
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = json_extra_fields_policy
+        # Allow population of fields with default values
+        validate_assignment = True
+        exclude_none = True
+
+class TouchSwipeAction(BaseModel):
+    """
+    Swipe the screen in a specified direction by a specified distance.
+    """
+    type: Literal["touch:swipe"]
+    x: Length
+    y: Length
+    direction: Literal["up", "down", "left", "right"]
+    distance: Length
+    callId: Optional[str] = str(uuid.uuid4())
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = json_extra_fields_policy
+        # Allow population of fields with default values
+        validate_assignment = True
+        exclude_none = True
+
+class TouchLongPressAction(BaseModel):
+    """
+    Long press the screen at the specified coordinates.
+    """
+    type: Literal["touch:longPress"]
+    x: Length
+    y: Length
+    duration: int
+    callId: Optional[str] = str(uuid.uuid4())
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = json_extra_fields_policy
+        # Allow population of fields with default values
+        validate_assignment = True
+        exclude_none = True
+
+class AndroidBackAction(BaseModel):
+    """
+    Press the back button on Android device.
+    """
+    type: Literal["android:back"]
+    callId: Optional[str] = str(uuid.uuid4())
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = json_extra_fields_policy
+        # Allow population of fields with default values
+        validate_assignment = True
+        exclude_none = True
+
+class AndroidHomeAction(BaseModel):
+    """
+    Press the home button on Android device.
+    """
+    type: Literal["android:home"]
+    callId: Optional[str] = str(uuid.uuid4())
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = json_extra_fields_policy
+        # Allow population of fields with default values
+        validate_assignment = True
+        exclude_none = True
+
+class OsStartAppAction(BaseModel):
+    """
+    Start an app by its package name.
+    """
+    type: Literal["os:startApp"]
+    packageName: str
+    callId: Optional[str] = str(uuid.uuid4())
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = json_extra_fields_policy
+        # Allow population of fields with default values
+        validate_assignment = True
+        exclude_none = True
+
+class OsStartAppByNameAction(BaseModel):
+    """
+    Start an app by its name.
+    """
+    type: Literal["os:startAppByName"]
+    name: str
+    callId: Optional[str] = str(uuid.uuid4())
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = json_extra_fields_policy
+        # Allow population of fields with default values
+        validate_assignment = True
+        exclude_none = True
+
+class OsCloseAppAction(BaseModel):
+    """
+    Close the current app.
+    """
+    type: Literal["os:closeApp"]
+    callId: Optional[str] = str(uuid.uuid4())
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = json_extra_fields_policy
+        # Allow population of fields with default values
+        validate_assignment = True
+        exclude_none = True
+
+# Mobile-specific actions remain with "mobile:" prefix for backward compatibility
 MobileUseAction = Union[
     MobileTapAction,
     MobileDoubleTapAction,
@@ -691,10 +986,28 @@ MobileUseAction = Union[
     MobileHotkeyAction,
     MobileHomeAction,
     MobileBackAction,
-    MobileScreenshotAction,
-    MobileWaitAction,
-    MobileFinishedAction,
-    MobileFailedAction,
+    MobileScreenshotAction,  # Kept for backward compatibility with "mobile:screenshot"
+    MobileWaitAction,        # Kept for backward compatibility with "mobile:wait"
+    MobileFinishedAction,    # Kept for backward compatibility with "mobile:finished"
+    MobileFailedAction,      # Kept for backward compatibility with "mobile:failed"
+
+    ScreenshotAction,        # Common action with "screenshot"
+    WaitAction,              # Common action with "wait"
+    FinishedAction,          # Common action with "finished"
+    FailedAction,            # Common action with "failed"
+    ClientUserTakeoverAction, # Common action with "take-over"
+
+    KeyboardTypeAction,
+    KeyboardHotkeyAction,
+    TouchTapAction,
+    TouchDragAction,
+    TouchSwipeAction,
+    TouchLongPressAction,
+    AndroidBackAction,
+    AndroidHomeAction,
+    OsStartAppAction,
+    OsStartAppByNameAction,
+    OsCloseAppAction,
 ]
 
 
