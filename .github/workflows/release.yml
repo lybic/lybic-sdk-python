@@ -13,8 +13,6 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
-    environment:
-      name: pypi
     permissions:
       contents: write
     steps:
@@ -43,7 +41,7 @@ jobs:
         env:
           ARK_MODEL_ENDPOINT: ${{ secrets.ARK_MODEL_ENDPOINT }}
           ARK_API_KEY: ${{ secrets.ARK_API_KEY }}
-          ARK_MODEL_NAME: ${{ env.ARK_MODEL_NAME }}
+          ARK_MODEL_NAME: ${{ secrets.ARK_MODEL_NAME }}
           NEW_TAG: ${{ github.event.inputs.new_tag }}
           PREVIOUS_TAG: ${{ github.event.inputs.previous_tag }}
           RELEASE_BRANCH: ${{ github.ref_name }}
