@@ -32,9 +32,66 @@ from pydantic import BaseModel, Field, RootModel
 
 from lybic._api import deprecated
 
-# pylint: disable=invalid-name,too-many-lines,fixme
-# fixme: too-many-lines
+# Import actions from the new action module for backward compatibility
+from lybic.action import (
+    # Common types
+    PixelLength,
+    FractionalLength,
+    Length,
+    ClientUserTakeoverAction,
+    ScreenshotAction,
+    WaitAction,
+    FinishedAction,
+    FailedAction,
+    CommonAction,
+    
+    # Computer use actions
+    MouseClickAction,
+    MouseTripleClickAction,
+    MouseDoubleClickAction,
+    MouseMoveAction,
+    MouseScrollAction,
+    MouseDragAction,
+    KeyboardTypeAction,
+    KeyboardHotkeyAction,
+    KeyDownAction,
+    KeyUpAction,
+    ComputerUseAction,
+    
+    # Mobile actions
+    MobileTapAction,
+    MobileDoubleTapAction,
+    MobileSwipeAction,
+    MobileTypeAction,
+    MobileHotkeyAction,
+    MobileHomeAction,
+    MobileBackAction,
+    MobileScreenshotAction,
+    MobileWaitAction,
+    MobileFinishedAction,
+    MobileFailedAction,
+    
+    # Touch actions
+    TouchTapAction,
+    TouchDragAction,
+    TouchSwipeAction,
+    TouchLongPressAction,
+    
+    # Android actions
+    AndroidBackAction,
+    AndroidHomeAction,
+    
+    # OS actions
+    OsStartAppAction,
+    OsStartAppByNameAction,
+    OsCloseAppAction,
+    
+    # Union types
+    MobileUseAction,
+    Action,
+)
 
+# pylint: disable=invalid-name
 
 # Strategy for handling extra fields in the lybic api response
 # "ignore" means ignore extra fields, which will ensure that your SDK version remains compatible with the Lybic platform,
@@ -217,335 +274,8 @@ class GetSandboxResponseDto(BaseModel):
     connectDetails: ConnectDetails
 
 
-class ClientUserTakeoverAction(BaseModel):
-    """
-    Indicates the human user should take over the control.
-    """
-    type: Literal["client:user-takeover"]
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True
-
 # Computer Use Schemas
-class PixelLength(BaseModel):
-    """
-    Represents a length in pixels.
-    """
-    type: Literal["px"]
-    value: int
-
-
-class FractionalLength(BaseModel):
-    """
-    Represents a length as a fraction of a total dimension.
-    """
-    type: Literal["/"]
-    numerator: int
-    denominator: int
-
-
-Length = Union[PixelLength, FractionalLength]
-
-
-class MouseClickAction(BaseModel):
-    """
-    Represents a mouse click action at a specified location.
-    """
-    type: Literal["mouse:click"]
-    x: Length
-    y: Length
-    button: int = Field(..., description="Mouse button flag combination. 1: left, 2: right, 4: middle, 8: back, 16: forward; add them together to press multiple buttons at once.")
-    relative: bool = Field(False, description="Whether the coordinates are relative to the current mouse position")
-    holdKey: Optional[str] = Field(None, description="Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
-
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True
-
-class MouseTripleClickAction(BaseModel):
-    """
-    Represents a mouse triple-click action at a specified location.
-    """
-    type: Literal["mouse:tripleClick"]
-    x: Length
-    y: Length
-    button: int = Field(..., description="Mouse button flag combination. 1: left, 2: right, 4: middle, 8: back, 16: forward; add them together to press multiple buttons at once.")
-    relative: bool = Field(False, description="Whether the coordinates are relative to the current mouse position.")
-    holdKey: Optional[str] = Field(None, description="Key to hold down during triple click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
-
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True
-
-class MouseDoubleClickAction(BaseModel):
-    """
-    Represents a mouse double-click action at a specified location.
-    """
-    type: Literal["mouse:doubleClick"]
-    x: Length
-    y: Length
-    button: int = Field(..., description="Mouse button flag combination. 1: left, 2: right, 4: middle, 8: back, 16: forward; add them together to press multiple buttons at once.")
-    relative: bool = Field(False, description="Whether the coordinates are relative to the current mouse position")
-    holdKey: Optional[str] = Field(None, description="Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
-
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True
-
-
-class MouseMoveAction(BaseModel):
-    """
-    Represents a mouse move action to a specified location.
-    """
-    type: Literal["mouse:move"]
-    x: Length
-    y: Length
-    relative: bool = Field(False, description="Whether the coordinates are relative to the current mouse position")
-    holdKey: Optional[str] = Field(None, description="Key to hold down during move, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
-
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True
-
-
-class MouseScrollAction(BaseModel):
-    """
-    Represents a mouse scroll action.
-    """
-    type: Literal["mouse:scroll"]
-    x: Length
-    y: Length
-    stepVertical: int
-    stepHorizontal: int
-    relative: bool = Field(False, description="Whether the coordinates are relative to the current mouse position")
-    holdKey: Optional[str] = Field(None, description="Key to hold down during scroll, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
-
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True
-
-
-class MouseDragAction(BaseModel):
-    """
-    Represents a mouse drag action from a start to an end point.
-    """
-    type: Literal["mouse:drag"]
-    startX: Length
-    startY: Length
-    endX: Length
-    endY: Length
-    startRelative: bool = Field(False, description="Whether the start coordinates are relative to the current mouse position.")
-    endRelative: bool = Field(False, description="Whether the end coordinates are relative to the start coordinates of the drag. If false, they are absolute screen coordinates.")
-    button: int = Field(..., description="Mouse button flag combination. 1: left, 2: right, 4: middle, 8: back, 16: forward; add them together to press multiple buttons at once.")
-    holdKey: Optional[str] = Field(None, description="Key to hold down during drag, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
-
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True
-
-
-class KeyboardTypeAction(BaseModel):
-    """
-    Represents a keyboard typing action.
-    """
-    type: Literal["keyboard:type"]
-    content: str
-    treatNewLineAsEnter: bool = Field(False, description="Whether to treat line breaks as enter. If true, any line breaks(\\n) in content will be treated as enter key press, and content will be split into multiple lines.")
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
-
-
-class KeyboardHotkeyAction(BaseModel):
-    """
-    Represents a keyboard hotkey combination action.
-    """
-    type: Literal["keyboard:hotkey"]
-    keys: str
-    duration: Optional[int] = Field(None, description="Duration in milliseconds. If specified, the hotkey will be held for a while and then released.")
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
-
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True
-
-
-class KeyDownAction(BaseModel):
-    """
-    Press ONE key down, in xdotool key syntax. Only use this action if hotkey or type cannot satisfy your needs.
-    """
-    type: Literal["key:down"]
-    key: str
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
-
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        validate_assignment = True
-        exclude_none = True
-
-
-class KeyUpAction(BaseModel):
-    """
-    Release ONE key, in xdotool key syntax. Only use this action if keydown cannot satisfy your needs and only after a key down.
-    """
-    type: Literal["key:up"]
-    key: str
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
-
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        validate_assignment = True
-        exclude_none = True
-
-
-# Common Actions (shared between ComputerUse and MobileUse)
-class ScreenshotAction(BaseModel):
-    """
-    Represents an action to take a screenshot.
-    """
-    type: Literal["screenshot"]
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
-
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True
-
-
-class WaitAction(BaseModel):
-    """
-    Represents a wait action for a specified duration.
-    """
-    type: Literal["wait"]
-    duration: int
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
-
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True
-
-
-class FinishedAction(BaseModel):
-    """
-    Represents a finished action, signaling successful completion of a task.
-    """
-    type: Literal["finished"]
-    message: Optional[str] = None
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
-
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True
-
-
-class FailedAction(BaseModel):
-    """
-    Represents a failed action, signaling an error or failure in a task.
-    """
-    type: Literal["failed"]
-    message: Optional[str] = None
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
-
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True
-
-
-CommonAction = Union[
-    ScreenshotAction,
-    WaitAction,
-    FinishedAction,
-    FailedAction,
-    ClientUserTakeoverAction,
-]
-
-
-ComputerUseAction = Union[
-    MouseClickAction,
-    MouseTripleClickAction,
-    MouseDoubleClickAction,
-    MouseMoveAction,
-    MouseScrollAction,
-    MouseDragAction,
-
-    KeyboardTypeAction,
-    KeyboardHotkeyAction,
-    KeyDownAction,
-    KeyUpAction,
-
-    ScreenshotAction,
-    WaitAction,
-    FinishedAction,
-    FailedAction,
-    ClientUserTakeoverAction,
-]
+# (Actions moved to lybic.action module for better organization)
 
 
 @deprecated(
@@ -647,371 +377,7 @@ class ComputerUseActionResponseDto(BaseModel):
 
 
 # Mobile Use Schemas
-class MobileTapAction(BaseModel):
-    """
-    Represents a mobile tap action.
-    """
-    type: Literal["mobile:tap"]
-    x: Length
-    y: Length
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True
-
-class MobileDoubleTapAction(BaseModel):
-    """
-    Represents a mobile double tap action.
-    """
-    type: Literal["mobile:doubleTap"]
-    x: Length
-    y: Length
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True
-
-class MobileSwipeAction(BaseModel):
-    """
-    Represents a mobile swipe action.
-    """
-    type: Literal["mobile:swipe"]
-    startX: Length
-    startY: Length
-    endX: Length
-    endY: Length
-    duration: int
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True
-
-class MobileTypeAction(BaseModel):
-    """
-    Represents a mobile type action.
-    """
-    type: Literal["mobile:type"]
-    content: str
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True
-
-class MobileHotkeyAction(BaseModel):
-    """
-    Represents a mobile hotkey action.
-    """
-    type: Literal["mobile:hotkey"]
-    key: str
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True
-
-class MobileHomeAction(BaseModel):
-    """
-    Represents a mobile home action.
-    """
-    type: Literal["mobile:home"]
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True
-
-class MobileBackAction(BaseModel):
-    """
-    Represents a mobile back action.
-    """
-    type: Literal["mobile:back"]
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True
-
-class MobileScreenshotAction(BaseModel):
-    """
-    Represents a mobile screenshot action.
-    """
-    type: Literal["mobile:screenshot"]
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True
-
-class MobileWaitAction(BaseModel):
-    """
-    Represents a mobile wait action.
-    """
-    type: Literal["mobile:wait"]
-    duration: int
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True
-
-class MobileFinishedAction(BaseModel):
-    """
-    Represents a mobile finished action.
-    """
-    type: Literal["mobile:finished"]
-    message: Optional[str] = None
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True
-
-class MobileFailedAction(BaseModel):
-    """
-    Represents a mobile failed action.
-    """
-    type: Literal["mobile:failed"]
-    message: Optional[str] = None
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True
-
-
-class TouchTapAction(BaseModel):
-    """
-    Tap the screen at the specified coordinates.
-    """
-    type: Literal["touch:tap"]
-    x: Length
-    y: Length
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True
-
-class TouchDragAction(BaseModel):
-    """
-    Touch and hold at start coordinates, then move to end coordinates and release.
-    """
-    type: Literal["touch:drag"]
-    startX: Length
-    startY: Length
-    endX: Length
-    endY: Length
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True
-
-class TouchSwipeAction(BaseModel):
-    """
-    Swipe the screen in a specified direction by a specified distance.
-    """
-    type: Literal["touch:swipe"]
-    x: Length
-    y: Length
-    direction: Literal["up", "down", "left", "right"]
-    distance: Length
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True
-
-class TouchLongPressAction(BaseModel):
-    """
-    Long press the screen at the specified coordinates.
-    """
-    type: Literal["touch:longPress"]
-    x: Length
-    y: Length
-    duration: int
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True
-
-class AndroidBackAction(BaseModel):
-    """
-    Press the back button on Android device.
-    """
-    type: Literal["android:back"]
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True
-
-class AndroidHomeAction(BaseModel):
-    """
-    Press the home button on Android device.
-    """
-    type: Literal["android:home"]
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True
-
-class OsStartAppAction(BaseModel):
-    """
-    Start an app by its package name.
-    """
-    type: Literal["os:startApp"]
-    packageName: str
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True
-
-class OsStartAppByNameAction(BaseModel):
-    """
-    Start an app by its name.
-    """
-    type: Literal["os:startAppByName"]
-    name: str
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True
-
-class OsCloseAppAction(BaseModel):
-    """
-    Close the current app.
-    """
-    type: Literal["os:closeApp"]
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True
-
-# Mobile-specific actions remain with "mobile:" prefix for backward compatibility
-MobileUseAction = Union[
-    MobileTapAction,
-    MobileDoubleTapAction,
-    MobileSwipeAction,
-    MobileTypeAction,
-    MobileHotkeyAction,
-    MobileHomeAction,
-    MobileBackAction,
-    MobileScreenshotAction,  # Kept for backward compatibility with "mobile:screenshot"
-    MobileWaitAction,        # Kept for backward compatibility with "mobile:wait"
-    MobileFinishedAction,    # Kept for backward compatibility with "mobile:finished"
-    MobileFailedAction,      # Kept for backward compatibility with "mobile:failed"
-
-    ScreenshotAction,        # Common action with "screenshot"
-    WaitAction,              # Common action with "wait"
-    FinishedAction,          # Common action with "finished"
-    FailedAction,            # Common action with "failed"
-    ClientUserTakeoverAction, # Common action with "take-over"
-
-    KeyboardTypeAction,
-    KeyboardHotkeyAction,
-    TouchTapAction,
-    TouchDragAction,
-    TouchSwipeAction,
-    TouchLongPressAction,
-    AndroidBackAction,
-    AndroidHomeAction,
-    OsStartAppAction,
-    OsStartAppByNameAction,
-    OsCloseAppAction,
-]
-
-
-Action = Union[ComputerUseAction, MobileUseAction]
+# (Actions moved to lybic.action module for better organization)
 
 
 class ExecuteSandboxActionDto(BaseModel):
