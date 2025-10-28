@@ -27,20 +27,28 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
       - name: Generate changelog
         env:
-          GH_TOKEN: ${{ github.token }}
+          ARK_MODEL_ENDPOINT: ${{ secrets.ARK_MODEL_ENDPOINT }}
+          ARK_API_KEY: ${{ secrets.ARK_API_KEY }}
+          ARK_MODEL_NAME: ${{ env.ARK_MODEL_NAME }}
           NEW_TAG: ${{ github.event.inputs.new_tag }}
           PREVIOUS_TAG: ${{ github.event.inputs.previous_tag }}
           RELEASE_BRANCH: ${{ github.ref_name }}
+          GH_TOKEN: ${{ github.token }}
         run: |
-          echo "## Changelog for $NEW_TAG" > changelog.md
-          echo "" >> changelog.md
-          echo "Update from $PREVIOUS_TAG to $NEW_TAG on branch $RELEASE_BRANCH" >> changelog.md
-          echo "" >> changelog.md
-          echo "Release timestamp: $(date +%Y-%m-%d)" >> changelog.md
-          echo "" >> changelog.md
-          gh api repos/${{ github.repository }}/compare/${PREVIOUS_TAG}...${RELEASE_BRANCH} --jq '.commits[] | "- \(.commit.message | split("\n")[0]) (by @\(.author.login // .commit.author.name) in `\(.sha | tostring | .[0:7])`) "' >> changelog.md
+          COMMIT_LOGS=$(gh api repos/${{ github.repository }}/compare/${PREVIOUS_TAG}...${RELEASE_BRANCH} --jq '.commits[] | "- \(.commit.message | split("\n")[0]) (by @\(.author.login // .commit.author.name) in `\(.sha | tostring | .[0:7])`) "')
+          echo "$COMMIT_LOGS" | python scripts/generate_changelog.py $NEW_TAG $PREVIOUS_TAG > changelog.md
           mkdir -p CHANGELOGS
           mv changelog.md CHANGELOGS/${NEW_TAG}-release.md
 
