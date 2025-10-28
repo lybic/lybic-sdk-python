@@ -45,6 +45,7 @@ jobs:
           NEW_TAG: ${{ github.event.inputs.new_tag }}
           PREVIOUS_TAG: ${{ github.event.inputs.previous_tag }}
           RELEASE_BRANCH: ${{ github.ref_name }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           COMMIT_LOGS=$(gh api repos/${{ github.repository }}/compare/${PREVIOUS_TAG}...${RELEASE_BRANCH} --jq '.commits[] | "- \(.commit.message | split("\n")[0]) (by @\(.author.login // .commit.author.name) in `\(.sha | tostring | .[0:7])`) "')
           echo "$COMMIT_LOGS" | python scripts/generate_changelog.py $NEW_TAG $PREVIOUS_TAG > changelog.md
