@@ -87,6 +87,7 @@ from lybic.action import (
     OsStartAppAction,
     OsStartAppByNameAction,
     OsCloseAppAction,
+    OsListAppsAction,
 
     # Union types
     MobileUseAction,

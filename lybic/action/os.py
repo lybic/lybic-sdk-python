@@ -78,3 +78,18 @@ class OsCloseAppAction(BaseModel):
         # Allow population of fields with default values
         validate_assignment = True
         exclude_none = True
+
+class OsListAppsAction(BaseModel):
+    """
+    List installed apps.
+    """
+    type: Literal["os:listApps"]
+
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = json_extra_fields_policy
+        # Allow population of fields with default values
+        validate_assignment = True
+        exclude_none = True

@@ -89,7 +89,7 @@ from .android import (
 from .os import (
     OsStartAppAction,
     OsStartAppByNameAction,
-    OsCloseAppAction,
+    OsCloseAppAction, OsListAppsAction,
 )
 
 # Mobile-specific actions remain with "mobile:" prefix for backward compatibility
@@ -123,6 +123,7 @@ MobileUseAction = Union[
     OsStartAppAction,
     OsStartAppByNameAction,
     OsCloseAppAction,
+    OsListAppsAction,
 ]
 
 
@@ -181,6 +182,7 @@ __all__ = [
     "OsStartAppAction",
     "OsStartAppByNameAction",
     "OsCloseAppAction",
+    "OsListAppsAction",
 
     # Union types
     "MobileUseAction",
