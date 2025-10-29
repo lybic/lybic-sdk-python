@@ -109,6 +109,11 @@ class StatsResponseDto(BaseModel):
     mcpServers: int
     sandboxes: int
     projects: int
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = json_extra_fields_policy
 
 
 class McpServerPolicy(BaseModel):
@@ -312,7 +317,11 @@ class CursorPosition(BaseModel):
     screenWidth: int
     screenHeight: int
     screenIndex: int
-
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = json_extra_fields_policy
 
 class ExtendSandboxDto(BaseModel):
     """
@@ -325,10 +334,14 @@ class SandboxActionResponseDto(BaseModel):
     """
     Computer use action response.
     """
-    screenShot: Optional[str]  # is a picture url of the screen eg. https://example.com/screen.webp
-    cursorPosition: Optional[CursorPosition]
-    actionResult: Optional[str]
-
+    screenShot: Optional[str] = None  # is a picture url of the screen eg. https://example.com/screen.webp
+    cursorPosition: Optional[CursorPosition] = None
+    actionResult: Optional[str] = None
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = json_extra_fields_policy
 
 @unique
 class ModelType(Enum):
@@ -400,7 +413,11 @@ class ProjectResponseDto(BaseModel):
     name: str
     createdAt: str
     defaultProject: bool
-
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = json_extra_fields_policy
 
 class ListProjectsResponseDto(RootModel):
     """
