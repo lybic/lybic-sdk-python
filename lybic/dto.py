@@ -485,3 +485,19 @@ class GetShapesResponseDto(RootModel):
 
     def __getitem__(self, item):
         return self.root[item]
+
+
+class MobileUseActionResponseDto(BaseModel):
+    """
+    Response DTO containing a list of parsed mobile use actions.
+    """
+    unknown: Optional[str] = None
+    thoughts: Optional[str] = None
+    memory: Optional[str] = None
+
+    actions: List[MobileUseAction]
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = json_extra_fields_policy
