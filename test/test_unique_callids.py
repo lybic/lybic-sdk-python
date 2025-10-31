@@ -8,7 +8,6 @@ from lybic.dto import (
     KeyboardHotkeyAction,
     ScreenshotAction,
     WaitAction,
-    MobileTapAction,
     TouchTapAction,
     AndroidBackAction,
     AndroidHomeAction,
@@ -66,24 +65,6 @@ def test_common_actions_unique_callids():
 
     assert action3.callId != action4.callId, "WaitAction instances should have unique callIds"
     print("✓ WaitAction: unique callIds")
-
-
-def test_mobile_actions_unique_callids():
-    """Test that mobile actions generate unique callIds."""
-    action1 = MobileTapAction(
-        type='mobile:tap',
-        x=PixelLength(type='px', value=100),
-        y=PixelLength(type='px', value=200)
-    )
-
-    action2 = MobileTapAction(
-        type='mobile:tap',
-        x=PixelLength(type='px', value=300),
-        y=PixelLength(type='px', value=400)
-    )
-
-    assert action1.callId != action2.callId, "MobileTapAction instances should have unique callIds"
-    print("✓ MobileTapAction: unique callIds")
 
 
 def test_touch_actions_unique_callids():
@@ -149,7 +130,6 @@ def test_all_action_types():
     test_mouse_actions_unique_callids()
     test_keyboard_actions_unique_callids()
     test_common_actions_unique_callids()
-    test_mobile_actions_unique_callids()
     test_touch_actions_unique_callids()
     test_android_actions_unique_callids()
     test_dto_wrappers_unique_callids()

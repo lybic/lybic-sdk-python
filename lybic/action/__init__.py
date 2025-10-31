@@ -56,21 +56,6 @@ from .computer import (
     ComputerUseAction,
 )
 
-# Mobile actions
-from .mobile import (
-    MobileTapAction,
-    MobileDoubleTapAction,
-    MobileSwipeAction,
-    MobileTypeAction,
-    MobileHotkeyAction,
-    MobileHomeAction,
-    MobileBackAction,
-    MobileScreenshotAction,
-    MobileWaitAction,
-    MobileFinishedAction,
-    MobileFailedAction,
-)
-
 # Touch actions
 from .touch import (
     TouchTapAction,
@@ -94,36 +79,26 @@ from .os import (
 
 # Mobile-specific actions remain with "mobile:" prefix for backward compatibility
 MobileUseAction = Union[
-    MobileTapAction,
-    MobileDoubleTapAction,
-    MobileSwipeAction,
-    MobileTypeAction,
-    MobileHotkeyAction,
-    MobileHomeAction,
-    MobileBackAction,
-    MobileScreenshotAction,  # Kept for backward compatibility with "mobile:screenshot"
-    MobileWaitAction,        # Kept for backward compatibility with "mobile:wait"
-    MobileFinishedAction,    # Kept for backward compatibility with "mobile:finished"
-    MobileFailedAction,      # Kept for backward compatibility with "mobile:failed"
+    ScreenshotAction,        # generalActionScreenshotSchema
+    WaitAction,              # generalActionWaitSchema
+    FinishedAction,          # generalActionFinishedSchema
+    FailedAction,            # generalActionFailedSchema
+    ClientUserTakeoverAction, # generalActionUserTakeoverSchema
 
-    ScreenshotAction,        # Common action with "screenshot"
-    WaitAction,              # Common action with "wait"
-    FinishedAction,          # Common action with "finished"
-    FailedAction,            # Common action with "failed"
-    ClientUserTakeoverAction, # Common action with "take-over"
+    KeyboardTypeAction, # generalActionKeyboardTypeSchema
+    KeyboardHotkeyAction, # generalActionKeyboardHotkeySchema
 
-    KeyboardTypeAction,
-    KeyboardHotkeyAction,
-    TouchTapAction,
-    TouchDragAction,
-    TouchSwipeAction,
-    TouchLongPressAction,
-    AndroidBackAction,
-    AndroidHomeAction,
-    OsStartAppAction,
-    OsStartAppByNameAction,
-    OsCloseAppAction,
-    OsListAppsAction,
+    TouchTapAction, # mobileUseActionTapSchema
+    TouchDragAction,  # mobileUseActionDragSchema
+    TouchSwipeAction, # mobileUseActionSwipeSchema
+    TouchLongPressAction, # mobileUseActionLongPressSchema
+    AndroidBackAction, # mobileUseActionPressBackSchema
+    AndroidHomeAction, # mobileUseActionPressHomeSchema
+
+    OsStartAppAction, # mobileUseActionStartAppSchema
+    OsStartAppByNameAction, # mobileUseActionStartAppByNameSchema
+    OsCloseAppAction, # mobileUseActionCloseAppSchema
+    OsListAppsAction, # mobileUseActionListAppsSchema
 ]
 
 
@@ -154,19 +129,6 @@ __all__ = [
     "KeyDownAction",
     "KeyUpAction",
     "ComputerUseAction",
-
-    # Mobile actions
-    "MobileTapAction",
-    "MobileDoubleTapAction",
-    "MobileSwipeAction",
-    "MobileTypeAction",
-    "MobileHotkeyAction",
-    "MobileHomeAction",
-    "MobileBackAction",
-    "MobileScreenshotAction",
-    "MobileWaitAction",
-    "MobileFinishedAction",
-    "MobileFailedAction",
 
     # Touch actions
     "TouchTapAction",

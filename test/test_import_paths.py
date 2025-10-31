@@ -5,14 +5,12 @@
 # Test importing from lybic.dto (backward compatibility)
 from lybic.dto import (
     MouseClickAction as MouseClickActionFromDto,
-    MobileHotkeyAction as MobileHotkeyActionFromDto,
     PixelLength as PixelLengthFromDto,
 )
 
 # Test importing from lybic.action (new path)
 from lybic.action import (
     MouseClickAction as MouseClickActionFromAction,
-    MobileHotkeyAction as MobileHotkeyActionFromAction,
     PixelLength as PixelLengthFromAction,
 )
 
@@ -22,8 +20,6 @@ def test_both_import_paths():
     # Verify that both imports point to the same class
     assert MouseClickActionFromDto is MouseClickActionFromAction, \
         "MouseClickAction should be the same class from both imports"
-    assert MobileHotkeyActionFromDto is MobileHotkeyActionFromAction, \
-        "MobileHotkeyAction should be the same class from both imports"
     assert PixelLengthFromDto is PixelLengthFromAction, \
         "PixelLength should be the same class from both imports"
 
