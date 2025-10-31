@@ -25,7 +25,6 @@
 # THE SOFTWARE.
 
 """Computer use action types."""
-import uuid
 from typing import Literal, Optional, Union
 from pydantic import BaseModel, Field
 

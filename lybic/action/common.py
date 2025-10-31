@@ -25,9 +25,8 @@
 # THE SOFTWARE.
 
 """Common action types and helper types."""
-import uuid
 from typing import Literal, Optional, Union
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 # pylint: disable=invalid-name
 

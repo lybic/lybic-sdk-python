@@ -25,7 +25,6 @@
 # THE SOFTWARE.
 
 """Touch action types."""
-import uuid
 from typing import Literal
 from pydantic import BaseModel
 

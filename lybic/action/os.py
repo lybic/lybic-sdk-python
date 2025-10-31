@@ -25,9 +25,8 @@
 # THE SOFTWARE.
 
 """OS-level action types."""
-import uuid
-from typing import Literal, Optional
-from pydantic import BaseModel, Field
+from typing import Literal
+from pydantic import BaseModel
 
 from .common import json_extra_fields_policy
 
