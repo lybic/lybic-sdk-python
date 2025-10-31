@@ -36,7 +36,7 @@ class TouchTapAction(BaseModel):
     """
     Tap the screen at the specified coordinates.
     """
-    type: Literal["touch:tap"]
+    type: Literal["touch:tap"] = "touch:tap"
     x: Length
     y: Length
 
@@ -53,7 +53,7 @@ class TouchDragAction(BaseModel):
     """
     Touch and hold at start coordinates, then move to end coordinates and release.
     """
-    type: Literal["touch:drag"]
+    type: Literal["touch:drag"] = "touch:drag"
     startX: Length
     startY: Length
     endX: Length
@@ -72,7 +72,7 @@ class TouchSwipeAction(BaseModel):
     """
     Swipe the screen in a specified direction by a specified distance.
     """
-    type: Literal["touch:swipe"]
+    type: Literal["touch:swipe"] = "touch:swipe"
     x: Length
     y: Length
     direction: Literal["up", "down", "left", "right"]
@@ -91,7 +91,7 @@ class TouchLongPressAction(BaseModel):
     """
     Long press the screen at the specified coordinates.
     """
-    type: Literal["touch:longPress"]
+    type: Literal["touch:longPress"] = "touch:longPress"
     x: Length
     y: Length
     duration: int

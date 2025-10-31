@@ -39,7 +39,7 @@ class PixelLength(BaseModel):
     """
     Represents a length in pixels.
     """
-    type: Literal["px"]
+    type: Literal["px"] = "px"
     value: int
 
     class Config:
@@ -55,7 +55,7 @@ class FractionalLength(BaseModel):
     """
     Represents a length as a fraction of a total dimension.
     """
-    type: Literal["/"]
+    type: Literal["/"] = "/"
     numerator: int
     denominator: int
 
@@ -75,7 +75,7 @@ class ClientUserTakeoverAction(BaseModel):
     """
     Indicates the human user should take over the control.
     """
-    type: Literal["client:user-takeover"]
+    type: Literal["client:user-takeover"] = "client:user-takeover"
 
     class Config:
         """
@@ -91,7 +91,7 @@ class ScreenshotAction(BaseModel):
     """
     Represents an action to take a screenshot.
     """
-    type: Literal["screenshot"]
+    type: Literal["screenshot"] = "screenshot"
 
     class Config:
         """
@@ -107,7 +107,7 @@ class WaitAction(BaseModel):
     """
     Represents a wait action for a specified duration.
     """
-    type: Literal["wait"]
+    type: Literal["wait"] = "wait"
     duration: int
 
     class Config:
@@ -124,7 +124,7 @@ class FinishedAction(BaseModel):
     """
     Represents a finished action, signaling successful completion of a task.
     """
-    type: Literal["finished"]
+    type: Literal["finished"] = "finished"
     message: Optional[str] = None
 
     class Config:
@@ -141,7 +141,7 @@ class FailedAction(BaseModel):
     """
     Represents a failed action, signaling an error or failure in a task.
     """
-    type: Literal["failed"]
+    type: Literal["failed"] = "failed"
     message: Optional[str] = None
 
     class Config:

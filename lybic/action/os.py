@@ -36,7 +36,7 @@ class OsStartAppAction(BaseModel):
     """
     Start an app by its package name.
     """
-    type: Literal["os:startApp"]
+    type: Literal["os:startApp"] = "os:startApp"
     packageName: str
 
     class Config:
@@ -52,7 +52,7 @@ class OsStartAppByNameAction(BaseModel):
     """
     Start an app by its name.
     """
-    type: Literal["os:startAppByName"]
+    type: Literal["os:startAppByName"] = "os:startAppByName"
     name: str
 
     class Config:
@@ -68,7 +68,7 @@ class OsCloseAppAction(BaseModel):
     """
     Close the current app.
     """
-    type: Literal["os:closeApp"]
+    type: Literal["os:closeApp"] = "os:closeApp"
 
     class Config:
         """
@@ -83,7 +83,7 @@ class OsListAppsAction(BaseModel):
     """
     List installed apps.
     """
-    type: Literal["os:listApps"]
+    type: Literal["os:listApps"] = "os:listApps"
 
     class Config:
         """

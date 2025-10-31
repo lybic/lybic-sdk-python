@@ -35,7 +35,7 @@ class MouseClickAction(BaseModel):
     """
     Represents a mouse click action at a specified location.
     """
-    type: Literal["mouse:click"]
+    type: Literal["mouse:click"] = "mouse:click"
     x: Length
     y: Length
     button: int = Field(..., description="Mouse button flag combination. 1: left, 2: right, 4: middle, 8: back, 16: forward; add them together to press multiple buttons at once.")
@@ -55,7 +55,7 @@ class MouseTripleClickAction(BaseModel):
     """
     Represents a mouse triple-click action at a specified location.
     """
-    type: Literal["mouse:tripleClick"]
+    type: Literal["mouse:tripleClick"] = "mouse:tripleClick"
     x: Length
     y: Length
     button: int = Field(..., description="Mouse button flag combination. 1: left, 2: right, 4: middle, 8: back, 16: forward; add them together to press multiple buttons at once.")
@@ -75,7 +75,7 @@ class MouseDoubleClickAction(BaseModel):
     """
     Represents a mouse double-click action at a specified location.
     """
-    type: Literal["mouse:doubleClick"]
+    type: Literal["mouse:doubleClick"] = "mouse:doubleClick"
     x: Length
     y: Length
     button: int = Field(..., description="Mouse button flag combination. 1: left, 2: right, 4: middle, 8: back, 16: forward; add them together to press multiple buttons at once.")
@@ -96,7 +96,7 @@ class MouseMoveAction(BaseModel):
     """
     Represents a mouse move action to a specified location.
     """
-    type: Literal["mouse:move"]
+    type: Literal["mouse:move"] = "mouse:move"
     x: Length
     y: Length
     relative: bool = Field(False, description="Whether the coordinates are relative to the current mouse position")
@@ -116,7 +116,7 @@ class MouseScrollAction(BaseModel):
     """
     Represents a mouse scroll action.
     """
-    type: Literal["mouse:scroll"]
+    type: Literal["mouse:scroll"] = "mouse:scroll"
     x: Length
     y: Length
     stepVertical: int
@@ -138,7 +138,7 @@ class MouseDragAction(BaseModel):
     """
     Represents a mouse drag action from a start to an end point.
     """
-    type: Literal["mouse:drag"]
+    type: Literal["mouse:drag"] = "mouse:drag"
     startX: Length
     startY: Length
     endX: Length
@@ -162,7 +162,7 @@ class KeyboardTypeAction(BaseModel):
     """
     Represents a keyboard typing action.
     """
-    type: Literal["keyboard:type"]
+    type: Literal["keyboard:type"] =  "keyboard:type"
     content: str
     treatNewLineAsEnter: bool = Field(False, description="Whether to treat line breaks as enter. If true, any line breaks(\\n) in content will be treated as enter key press, and content will be split into multiple lines.")
 
@@ -180,7 +180,7 @@ class KeyboardHotkeyAction(BaseModel):
     """
     Represents a keyboard hotkey combination action.
     """
-    type: Literal["keyboard:hotkey"]
+    type: Literal["keyboard:hotkey"] =  "keyboard:hotkey"
     keys: str
     duration: Optional[int] = Field(None, description="Duration in milliseconds. If specified, the hotkey will be held for a while and then released.")
 
@@ -198,7 +198,7 @@ class KeyDownAction(BaseModel):
     """
     Press ONE key down, in xdotool key syntax. Only use this action if hotkey or type cannot satisfy your needs.
     """
-    type: Literal["key:down"]
+    type: Literal["key:down"]= "key:down"
     key: str
 
     class Config:
@@ -214,7 +214,7 @@ class KeyUpAction(BaseModel):
     """
     Release ONE key, in xdotool key syntax. Only use this action if keydown cannot satisfy your needs and only after a key down.
     """
-    type: Literal["key:up"]
+    type: Literal["key:up"] = "key:up"
     key: str
 
     class Config:

@@ -35,7 +35,7 @@ class AndroidBackAction(BaseModel):
     """
     Press the back button on Android device.
     """
-    type: Literal["android:back"]
+    type: Literal["android:back"] = "android:back"
 
     class Config:
         """
@@ -50,7 +50,7 @@ class AndroidHomeAction(BaseModel):
     """
     Press the home button on Android device.
     """
-    type: Literal["android:home"]
+    type: Literal["android:home"] = "android:home"
 
     class Config:
         """
