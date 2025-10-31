@@ -76,7 +76,7 @@ class ClientUserTakeoverAction(BaseModel):
     Indicates the human user should take over the control.
     """
     type: Literal["client:user-takeover"]
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
+
     class Config:
         """
         Configuration for Pydantic model.
@@ -92,7 +92,6 @@ class ScreenshotAction(BaseModel):
     Represents an action to take a screenshot.
     """
     type: Literal["screenshot"]
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
 
     class Config:
         """
@@ -110,7 +109,6 @@ class WaitAction(BaseModel):
     """
     type: Literal["wait"]
     duration: int
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
 
     class Config:
         """
@@ -128,7 +126,6 @@ class FinishedAction(BaseModel):
     """
     type: Literal["finished"]
     message: Optional[str] = None
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
 
     class Config:
         """
@@ -146,7 +143,6 @@ class FailedAction(BaseModel):
     """
     type: Literal["failed"]
     message: Optional[str] = None
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
 
     class Config:
         """

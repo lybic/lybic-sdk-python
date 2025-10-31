@@ -41,7 +41,6 @@ class MouseClickAction(BaseModel):
     button: int = Field(..., description="Mouse button flag combination. 1: left, 2: right, 4: middle, 8: back, 16: forward; add them together to press multiple buttons at once.")
     relative: bool = Field(False, description="Whether the coordinates are relative to the current mouse position")
     holdKey: Optional[str] = Field(None, description="Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
 
     class Config:
         """
@@ -62,7 +61,6 @@ class MouseTripleClickAction(BaseModel):
     button: int = Field(..., description="Mouse button flag combination. 1: left, 2: right, 4: middle, 8: back, 16: forward; add them together to press multiple buttons at once.")
     relative: bool = Field(False, description="Whether the coordinates are relative to the current mouse position.")
     holdKey: Optional[str] = Field(None, description="Key to hold down during triple click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
 
     class Config:
         """
@@ -83,7 +81,6 @@ class MouseDoubleClickAction(BaseModel):
     button: int = Field(..., description="Mouse button flag combination. 1: left, 2: right, 4: middle, 8: back, 16: forward; add them together to press multiple buttons at once.")
     relative: bool = Field(False, description="Whether the coordinates are relative to the current mouse position")
     holdKey: Optional[str] = Field(None, description="Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
 
     class Config:
         """
@@ -104,7 +101,6 @@ class MouseMoveAction(BaseModel):
     y: Length
     relative: bool = Field(False, description="Whether the coordinates are relative to the current mouse position")
     holdKey: Optional[str] = Field(None, description="Key to hold down during move, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
 
     class Config:
         """
@@ -127,7 +123,6 @@ class MouseScrollAction(BaseModel):
     stepHorizontal: int
     relative: bool = Field(False, description="Whether the coordinates are relative to the current mouse position")
     holdKey: Optional[str] = Field(None, description="Key to hold down during scroll, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
 
     class Config:
         """
@@ -152,7 +147,6 @@ class MouseDragAction(BaseModel):
     endRelative: bool = Field(False, description="Whether the end coordinates are relative to the start coordinates of the drag. If false, they are absolute screen coordinates.")
     button: int = Field(..., description="Mouse button flag combination. 1: left, 2: right, 4: middle, 8: back, 16: forward; add them together to press multiple buttons at once.")
     holdKey: Optional[str] = Field(None, description="Key to hold down during drag, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
 
     class Config:
         """
@@ -171,7 +165,6 @@ class KeyboardTypeAction(BaseModel):
     type: Literal["keyboard:type"]
     content: str
     treatNewLineAsEnter: bool = Field(False, description="Whether to treat line breaks as enter. If true, any line breaks(\\n) in content will be treated as enter key press, and content will be split into multiple lines.")
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
 
     class Config:
         """
@@ -190,7 +183,6 @@ class KeyboardHotkeyAction(BaseModel):
     type: Literal["keyboard:hotkey"]
     keys: str
     duration: Optional[int] = Field(None, description="Duration in milliseconds. If specified, the hotkey will be held for a while and then released.")
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
 
     class Config:
         """
@@ -208,7 +200,6 @@ class KeyDownAction(BaseModel):
     """
     type: Literal["key:down"]
     key: str
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
 
     class Config:
         """
@@ -225,7 +216,6 @@ class KeyUpAction(BaseModel):
     """
     type: Literal["key:up"]
     key: str
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
 
     class Config:
         """

@@ -38,7 +38,7 @@ class OsStartAppAction(BaseModel):
     """
     type: Literal["os:startApp"]
     packageName: str
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
+
     class Config:
         """
         Configuration for Pydantic model.
@@ -54,7 +54,7 @@ class OsStartAppByNameAction(BaseModel):
     """
     type: Literal["os:startAppByName"]
     name: str
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
+
     class Config:
         """
         Configuration for Pydantic model.
@@ -69,7 +69,7 @@ class OsCloseAppAction(BaseModel):
     Close the current app.
     """
     type: Literal["os:closeApp"]
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
+
     class Config:
         """
         Configuration for Pydantic model.

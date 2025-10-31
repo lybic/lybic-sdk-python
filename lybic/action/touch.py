@@ -26,8 +26,8 @@
 
 """Touch action types."""
 import uuid
-from typing import Literal, Optional
-from pydantic import BaseModel, Field
+from typing import Literal
+from pydantic import BaseModel
 
 from .common import Length, json_extra_fields_policy
 
@@ -39,7 +39,7 @@ class TouchTapAction(BaseModel):
     type: Literal["touch:tap"]
     x: Length
     y: Length
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
+
     class Config:
         """
         Configuration for Pydantic model.
@@ -58,7 +58,7 @@ class TouchDragAction(BaseModel):
     startY: Length
     endX: Length
     endY: Length
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
+
     class Config:
         """
         Configuration for Pydantic model.
@@ -77,7 +77,7 @@ class TouchSwipeAction(BaseModel):
     y: Length
     direction: Literal["up", "down", "left", "right"]
     distance: Length
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
+
     class Config:
         """
         Configuration for Pydantic model.
@@ -95,7 +95,7 @@ class TouchLongPressAction(BaseModel):
     x: Length
     y: Length
     duration: int
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
+
     class Config:
         """
         Configuration for Pydantic model.

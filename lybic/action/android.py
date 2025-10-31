@@ -36,7 +36,7 @@ class AndroidBackAction(BaseModel):
     Press the back button on Android device.
     """
     type: Literal["android:back"]
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
+
     class Config:
         """
         Configuration for Pydantic model.
@@ -51,7 +51,7 @@ class AndroidHomeAction(BaseModel):
     Press the home button on Android device.
     """
     type: Literal["android:home"]
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
+
     class Config:
         """
         Configuration for Pydantic model.
