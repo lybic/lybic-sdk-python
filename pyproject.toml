@@ -9,7 +9,7 @@ authors = [
   { name="Lybic Development Team", email="team@lybic.ai" },
 ]
 dependencies =[
-    "pydantic>=2.10.6",
+    "pydantic>=2.10.6,<3.0.0",
     "pillow>=11.3.0",
     "httpx>=0.28.1"
 ]
