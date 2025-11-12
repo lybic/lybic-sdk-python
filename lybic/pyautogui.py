@@ -230,7 +230,7 @@ class Pyautogui:
             x=PixelLength(type="px", value=x),
             y=PixelLength(type="px", value=y),
         )
-        coro = self.sandbox.execute_computer_use_action(
+        coro = self.sandbox.execute_sandbox_action(
             sandbox_id=self.sandbox_id,
             data=ExecuteSandboxActionDto(action=request, includeScreenShot=False, includeCursorPosition=False)
         )
@@ -286,7 +286,7 @@ class Pyautogui:
                 y=PixelLength(type="px", value=y),
                 button=button_code
             )
-            coro = self.sandbox.execute_computer_use_action(
+            coro = self.sandbox.execute_sandbox_action(
                 sandbox_id=self.sandbox_id,
                 data=ExecuteSandboxActionDto(action=action, includeScreenShot=False,
                                               includeCursorPosition=False)
@@ -301,7 +301,7 @@ class Pyautogui:
                     button=button_code
                 )
 
-                coro = self.sandbox.execute_computer_use_action(
+                coro = self.sandbox.execute_sandbox_action(
                     sandbox_id=self.sandbox_id,
                     data=ExecuteSandboxActionDto(action=action, includeScreenShot=False,
                                                   includeCursorPosition=False)
@@ -392,7 +392,7 @@ class Pyautogui:
             endX=PixelLength(type="px", value=x),
             endY=PixelLength(type="px", value=y)
         )
-        coro = self.sandbox.execute_computer_use_action(
+        coro = self.sandbox.execute_sandbox_action(
             sandbox_id=self.sandbox_id,
             data=ExecuteSandboxActionDto(action=request, includeScreenShot=False, includeCursorPosition=False)
         )
@@ -428,7 +428,7 @@ class Pyautogui:
             stepVertical=clicks,
             stepHorizontal=0
         )
-        coro = self.sandbox.execute_computer_use_action(
+        coro = self.sandbox.execute_sandbox_action(
             sandbox_id=self.sandbox_id,
             data=ExecuteSandboxActionDto(action=request, includeScreenShot=False, includeCursorPosition=False)
         )
@@ -461,7 +461,7 @@ class Pyautogui:
                     content=message,
                     treatNewLineAsEnter=True
                 )
-                coro = self.sandbox.execute_computer_use_action(
+                coro = self.sandbox.execute_sandbox_action(
                     sandbox_id=self.sandbox_id,
                     data=ExecuteSandboxActionDto(action=request, includeScreenShot=False, includeCursorPosition=False)
                 )
@@ -501,7 +501,7 @@ class Pyautogui:
                 type="keyboard:hotkey",
                 keys=key
             )
-            coro = self.sandbox.execute_computer_use_action(
+            coro = self.sandbox.execute_sandbox_action(
                 sandbox_id=self.sandbox_id,
                 data=ExecuteSandboxActionDto(action=request, includeScreenShot=False,
                                               includeCursorPosition=False)
@@ -527,7 +527,7 @@ class Pyautogui:
             type="keyboard:hotkey",
             keys=keys_to_press
         )
-        coro = self.sandbox.execute_computer_use_action(
+        coro = self.sandbox.execute_sandbox_action(
             sandbox_id=self.sandbox_id,
             data=ExecuteSandboxActionDto(action=request, includeScreenShot=False, includeCursorPosition=False)
         )
@@ -544,7 +544,7 @@ class Pyautogui:
             type="key:down",
             key=key
         )
-        coro = self.sandbox.execute_computer_use_action(
+        coro = self.sandbox.execute_sandbox_action(
             sandbox_id=self.sandbox_id,
             data=ExecuteSandboxActionDto(action=request, includeScreenShot=False, includeCursorPosition=False)
         )
@@ -561,7 +561,7 @@ class Pyautogui:
             type="key:up",
             key=key
         )
-        coro = self.sandbox.execute_computer_use_action(
+        coro = self.sandbox.execute_sandbox_action(
             sandbox_id=self.sandbox_id,
             data=ExecuteSandboxActionDto(action=request, includeScreenShot=False, includeCursorPosition=False)
         )
