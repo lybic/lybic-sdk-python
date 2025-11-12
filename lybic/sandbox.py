@@ -277,8 +277,14 @@ class Sandbox:
         """
         if args and isinstance(args[0], dto.SandboxFileUploadRequestDto):
             data = args[0]
-        elif "data" in kwargs and isinstance(kwargs["data"], dto.SandboxFileUploadRequestDto):
-            data = kwargs["data"]
+        elif "data" in kwargs:
+            data_arg = kwargs["data"]
+            if isinstance(data_arg, dto.SandboxFileUploadRequestDto):
+                data = data_arg
+            elif isinstance(data_arg, dict):
+                data = dto.SandboxFileUploadRequestDto(**data_arg)
+            else:
+                raise TypeError(f"The 'data' argument must be of type {dto.SandboxFileUploadRequestDto.__name__} or dict")
         else:
             data = dto.SandboxFileUploadRequestDto(**kwargs)
         self.client.logger.debug(f"Uploading files to sandbox {sandbox_id}")
