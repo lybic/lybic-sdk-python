@@ -210,7 +210,8 @@ class GatewayAddress(BaseModel):
     port: int
     name: str
     preferredProviders: List[Literal["CHINA_MOBILE", "CHINA_UNICOM", "CHINA_TELECOM", "GLOBAL_BGP", 1, 2, 3, 4]]
-    gatewayType: Literal["KCP", "QUIC", "WEB_TRANSPORT", "WEBSOCKET", 4, 5, 6, 7]
+    gatewayType: Literal["KCP", "QUIC", "WEB_TRANSPORT", "WEBSOCKET","WEBSOCKET_SECURE", 4, 5, 6, 7, 8]
+    path: str
 
 
 class ConnectDetails(BaseModel):
