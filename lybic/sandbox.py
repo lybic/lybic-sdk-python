@@ -331,8 +331,14 @@ class Sandbox:
         """
         if args and isinstance(args[0], dto.SandboxProcessRequestDto):
             data = args[0]
-        elif "data" in kwargs and isinstance(kwargs["data"], dto.SandboxProcessRequestDto):
-            data = kwargs["data"]
+        elif "data" in kwargs:
+            data_arg = kwargs["data"]
+            if isinstance(data_arg, dto.SandboxProcessRequestDto):
+                data = data_arg
+            elif isinstance(data_arg, dict):
+                data = dto.SandboxProcessRequestDto(**data_arg)
+            else:
+                raise TypeError(f"The 'data' argument must be of type {dto.SandboxProcessRequestDto.__name__} or dict")
         else:
             data = dto.SandboxProcessRequestDto(**kwargs)
         self.client.logger.debug(f"Executing process in sandbox {sandbox_id}")
