@@ -542,9 +542,9 @@ class FileDownloadItem(BaseModel):
     """
     Single file download item.
     """
-    url: str = Field(..., description="Download URL(Your own, pre-signed object storage URL)")
-    headers: dict = Field(default_factory=dict, description="Your object storage Optional HTTP headers")
-    localPath: str = Field(..., min_length=1, description="Absolute path to save in (lybic)sandbox")
+    url: str = Field(..., description="URL for the sandbox to upload the file to (e.g., a pre-signed S3 PUT URL)")
+    headers: dict = Field(default_factory=dict, description="Optional HTTP headers for the upload from the sandbox")
+    localPath: str = Field(..., min_length=1, description="Absolute path of the file in the sandbox to be downloaded")
 
 
 class SandboxFileDownloadRequestDto(BaseModel):
