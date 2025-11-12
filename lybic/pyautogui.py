@@ -58,9 +58,22 @@ import threading
 import time
 from typing import overload, Optional, Coroutine, List, Union
 
-from lybic import dto
-from lybic.lybic import LybicClient
-from lybic.tools import ComputerUse
+from lybic.lybic import LybicAuth, LybicClient
+from lybic.action import (
+    FinishedAction,
+    MouseMoveAction,
+    PixelLength,
+    MouseDoubleClickAction,
+    MouseClickAction,
+    MouseDragAction,
+    MouseScrollAction,
+    KeyboardTypeAction,
+    KeyboardHotkeyAction,
+    KeyDownAction,
+    KeyUpAction,
+)
+from lybic.dto import ExecuteSandboxActionDto
+from lybic.sandbox import Sandbox
 
 # pylint: disable=unused-argument,invalid-name,logging-fstring-interpolation
 class Pyautogui:
@@ -89,17 +102,19 @@ class Pyautogui:
                 "For better performance, initialize Pyautogui with an inactive LybicClient."
             )
             self.client = LybicClient(
-                org_id=client.org_id,
-                api_key=client._api_key,
-                endpoint=client.endpoint,
+                LybicAuth(
+                    org_id=client.org_id,
+                    api_key=client._api_key,
+                    endpoint=client.endpoint,
+                    extra_headers=client.headers,
+                ),
                 timeout=client.timeout,
-                extra_headers=client.headers,
                 max_retries=client.max_retries,
             )
         else:
             self.client = client
 
-        self.computer_use = ComputerUse(self.client)
+        self.sandbox = Sandbox(self.client)
         self.sandbox_id = sandbox_id
 
         self._loop = asyncio.new_event_loop()
@@ -181,14 +196,14 @@ class Pyautogui:
         Returns:
             tuple[int, int]: The current mouse position as a tuple of (x, y).
         """
-        coro = self.computer_use.execute_computer_use_action(
+        coro = self.sandbox.execute_sandbox_action(
             sandbox_id=self.sandbox_id,
             # An action is required to obtain the mouse cursor and screenshot information.
             #
             # The `FinishedAction` , however, does not involve any action operations, is idempotent,
             # and offers the highest performance.
-            data=dto.ComputerUseActionDto(
-                action=dto.FinishedAction(type="finished"),
+            data=ExecuteSandboxActionDto(
+                action=FinishedAction(type="finished"),
                 includeScreenShot=False,
                 includeCursorPosition=True
             ),
@@ -210,14 +225,14 @@ class Pyautogui:
             logScreenshot (Placeholder):
             _pause (Placeholder):
         """
-        request = dto.MouseMoveAction(
+        request = MouseMoveAction(
             type="mouse:move",
-            x=dto.PixelLength(type="px", value=x),
-            y=dto.PixelLength(type="px", value=y),
+            x=PixelLength(type="px", value=x),
+            y=PixelLength(type="px", value=y),
         )
-        coro = self.computer_use.execute_computer_use_action(
+        coro = self.sandbox.execute_computer_use_action(
             sandbox_id=self.sandbox_id,
-            data=dto.ComputerUseActionDto(action=request, includeScreenShot=False, includeCursorPosition=False)
+            data=ExecuteSandboxActionDto(action=request, includeScreenShot=False, includeCursorPosition=False)
         )
         self._run_sync(coro)
 
@@ -265,30 +280,30 @@ class Pyautogui:
         button_code = button_map.get(button.lower(), 1)
 
         if clicks == 2:
-            action = dto.MouseDoubleClickAction(
+            action = MouseDoubleClickAction(
                 type="mouse:doubleClick",
-                x=dto.PixelLength(type="px", value=x),
-                y=dto.PixelLength(type="px", value=y),
+                x=PixelLength(type="px", value=x),
+                y=PixelLength(type="px", value=y),
                 button=button_code
             )
-            coro = self.computer_use.execute_computer_use_action(
+            coro = self.sandbox.execute_computer_use_action(
                 sandbox_id=self.sandbox_id,
-                data=dto.ComputerUseActionDto(action=action, includeScreenShot=False,
+                data=ExecuteSandboxActionDto(action=action, includeScreenShot=False,
                                               includeCursorPosition=False)
             )
             self._run_sync(coro)
         else:
             for i in range(clicks):
-                action = dto.MouseClickAction(
+                action = MouseClickAction(
                     type="mouse:click",
-                    x=dto.PixelLength(type="px", value=x),
-                    y=dto.PixelLength(type="px", value=y),
+                    x=PixelLength(type="px", value=x),
+                    y=PixelLength(type="px", value=y),
                     button=button_code
                 )
 
-                coro = self.computer_use.execute_computer_use_action(
+                coro = self.sandbox.execute_computer_use_action(
                     sandbox_id=self.sandbox_id,
-                    data=dto.ComputerUseActionDto(action=action, includeScreenShot=False,
+                    data=ExecuteSandboxActionDto(action=action, includeScreenShot=False,
                                                   includeCursorPosition=False)
                 )
                 self._run_sync(coro)
@@ -370,16 +385,16 @@ class Pyautogui:
 
         self.logger.info(f"dragTo(x={x}, y={y}, button='{button}')")
 
-        request = dto.MouseDragAction(
+        request = MouseDragAction(
             type="mouse:drag",
-            startX=dto.PixelLength(type="px", value=start_x),
-            startY=dto.PixelLength(type="px", value=start_y),
-            endX=dto.PixelLength(type="px", value=x),
-            endY=dto.PixelLength(type="px", value=y)
+            startX=PixelLength(type="px", value=start_x),
+            startY=PixelLength(type="px", value=start_y),
+            endX=PixelLength(type="px", value=x),
+            endY=PixelLength(type="px", value=y)
         )
-        coro = self.computer_use.execute_computer_use_action(
+        coro = self.sandbox.execute_computer_use_action(
             sandbox_id=self.sandbox_id,
-            data=dto.ComputerUseActionDto(action=request, includeScreenShot=False, includeCursorPosition=False)
+            data=ExecuteSandboxActionDto(action=request, includeScreenShot=False, includeCursorPosition=False)
         )
         self._run_sync(coro)
 
@@ -405,17 +420,17 @@ class Pyautogui:
         self.logger.info(f"scroll(clicks={clicks}) at ({scroll_x}, {scroll_y})")
 
         # In pyautogui, positive clicks scroll up.
-        # The dto.MouseScrollAction uses stepVertical, assuming positive is up.
-        request = dto.MouseScrollAction(
+        # The MouseScrollAction uses stepVertical, assuming positive is up.
+        request = MouseScrollAction(
             type="mouse:scroll",
-            x=dto.PixelLength(type="px", value=scroll_x),
-            y=dto.PixelLength(type="px", value=scroll_y),
+            x=PixelLength(type="px", value=scroll_x),
+            y=PixelLength(type="px", value=scroll_y),
             stepVertical=clicks,
             stepHorizontal=0
         )
-        coro = self.computer_use.execute_computer_use_action(
+        coro = self.sandbox.execute_computer_use_action(
             sandbox_id=self.sandbox_id,
-            data=dto.ComputerUseActionDto(action=request, includeScreenShot=False, includeCursorPosition=False)
+            data=ExecuteSandboxActionDto(action=request, includeScreenShot=False, includeCursorPosition=False)
         )
         self._run_sync(coro)
 
@@ -441,14 +456,14 @@ class Pyautogui:
         """
         if isinstance(message, str):
             if interval == 0.0:
-                request = dto.KeyboardTypeAction(
+                request = KeyboardTypeAction(
                     type="keyboard:type",
                     content=message,
                     treatNewLineAsEnter=True
                 )
-                coro = self.computer_use.execute_computer_use_action(
+                coro = self.sandbox.execute_computer_use_action(
                     sandbox_id=self.sandbox_id,
-                    data=dto.ComputerUseActionDto(action=request, includeScreenShot=False, includeCursorPosition=False)
+                    data=ExecuteSandboxActionDto(action=request, includeScreenShot=False, includeCursorPosition=False)
                 )
                 self._run_sync(coro)
                 return
@@ -482,13 +497,13 @@ class Pyautogui:
             _keys = keys * presses
 
         for i, key in enumerate(_keys):
-            request = dto.KeyboardHotkeyAction(
+            request = KeyboardHotkeyAction(
                 type="keyboard:hotkey",
                 keys=key
             )
-            coro = self.computer_use.execute_computer_use_action(
+            coro = self.sandbox.execute_computer_use_action(
                 sandbox_id=self.sandbox_id,
-                data=dto.ComputerUseActionDto(action=request, includeScreenShot=False,
+                data=ExecuteSandboxActionDto(action=request, includeScreenShot=False,
                                               includeCursorPosition=False)
             )
             self._run_sync(coro)
@@ -508,13 +523,13 @@ class Pyautogui:
             keys = keys[0]
 
         keys_to_press = '+'.join(keys)
-        request = dto.KeyboardHotkeyAction(
+        request = KeyboardHotkeyAction(
             type="keyboard:hotkey",
             keys=keys_to_press
         )
-        coro = self.computer_use.execute_computer_use_action(
+        coro = self.sandbox.execute_computer_use_action(
             sandbox_id=self.sandbox_id,
-            data=dto.ComputerUseActionDto(action=request, includeScreenShot=False, includeCursorPosition=False)
+            data=ExecuteSandboxActionDto(action=request, includeScreenShot=False, includeCursorPosition=False)
         )
         self._run_sync(coro)
 
@@ -525,13 +540,13 @@ class Pyautogui:
         Args:
             key (str): The key to hold down.
         """
-        request = dto.KeyDownAction(
+        request = KeyDownAction(
             type="key:down",
             key=key
         )
-        coro = self.computer_use.execute_computer_use_action(
+        coro = self.sandbox.execute_computer_use_action(
             sandbox_id=self.sandbox_id,
-            data=dto.ComputerUseActionDto(action=request, includeScreenShot=False, includeCursorPosition=False)
+            data=ExecuteSandboxActionDto(action=request, includeScreenShot=False, includeCursorPosition=False)
         )
         self._run_sync(coro)
 
@@ -542,12 +557,12 @@ class Pyautogui:
         Args:
             key (str): The key to release.
         """
-        request = dto.KeyUpAction(
+        request = KeyUpAction(
             type="key:up",
             key=key
         )
-        coro = self.computer_use.execute_computer_use_action(
+        coro = self.sandbox.execute_computer_use_action(
             sandbox_id=self.sandbox_id,
-            data=dto.ComputerUseActionDto(action=request, includeScreenShot=False, includeCursorPosition=False)
+            data=ExecuteSandboxActionDto(action=request, includeScreenShot=False, includeCursorPosition=False)
         )
         self._run_sync(coro)
