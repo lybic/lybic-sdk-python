@@ -264,3 +264,75 @@ class Sandbox:
                                              json=data.model_dump(exclude_none=True))
         self.client.logger.debug(f"Execute sandbox action response: {response.text}")
         return dto.SandboxActionResponseDto.model_validate_json(response.text)
+
+    @overload
+    async def upload_files(self, sandbox_id: str, data: dto.SandboxFileUploadRequestDto) -> dto.SandboxFileUploadResponseDto: ...
+
+    @overload
+    async def upload_files(self, sandbox_id: str, **kwargs) -> dto.SandboxFileUploadResponseDto: ...
+
+    async def upload_files(self, sandbox_id: str, *args, **kwargs) -> dto.SandboxFileUploadResponseDto:
+        """
+        Upload files to sandbox.
+        """
+        if args and isinstance(args[0], dto.SandboxFileUploadRequestDto):
+            data = args[0]
+        elif "data" in kwargs and isinstance(kwargs["data"], dto.SandboxFileUploadRequestDto):
+            data = kwargs["data"]
+        else:
+            data = dto.SandboxFileUploadRequestDto(**kwargs)
+        self.client.logger.debug(f"Uploading files to sandbox {sandbox_id}")
+        response = await self.client.request(
+            "POST",
+            f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/file/upload",
+            json=data.model_dump(exclude_none=True))
+        self.client.logger.debug(f"Upload files response: {response.text}")
+        return dto.SandboxFileUploadResponseDto.model_validate_json(response.text)
+
+    @overload
+    async def download_files(self, sandbox_id: str, data: dto.SandboxFileDownloadRequestDto) -> dto.SandboxFileDownloadResponseDto: ...
+
+    @overload
+    async def download_files(self, sandbox_id: str, **kwargs) -> dto.SandboxFileDownloadResponseDto: ...
+
+    async def download_files(self, sandbox_id: str, *args, **kwargs) -> dto.SandboxFileDownloadResponseDto:
+        """
+        Download files to sandbox.
+        """
+        if args and isinstance(args[0], dto.SandboxFileDownloadRequestDto):
+            data = args[0]
+        elif "data" in kwargs and isinstance(kwargs["data"], dto.SandboxFileDownloadRequestDto):
+            data = kwargs["data"]
+        else:
+            data = dto.SandboxFileDownloadRequestDto(**kwargs)
+        self.client.logger.debug(f"Downloading files to sandbox {sandbox_id}")
+        response = await self.client.request(
+            "POST",
+            f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/file/download",
+            json=data.model_dump(exclude_none=True))
+        self.client.logger.debug(f"Download files response: {response.text}")
+        return dto.SandboxFileDownloadResponseDto.model_validate_json(response.text)
+
+    @overload
+    async def execute_process(self, sandbox_id: str, data: dto.SandboxProcessRequestDto) -> dto.SandboxProcessResponseDto: ...
+
+    @overload
+    async def execute_process(self, sandbox_id: str, **kwargs) -> dto.SandboxProcessResponseDto: ...
+
+    async def execute_process(self, sandbox_id: str, *args, **kwargs) -> dto.SandboxProcessResponseDto:
+        """
+        Execute a process inside sandbox.
+        """
+        if args and isinstance(args[0], dto.SandboxProcessRequestDto):
+            data = args[0]
+        elif "data" in kwargs and isinstance(kwargs["data"], dto.SandboxProcessRequestDto):
+            data = kwargs["data"]
+        else:
+            data = dto.SandboxProcessRequestDto(**kwargs)
+        self.client.logger.debug(f"Executing process in sandbox {sandbox_id}")
+        response = await self.client.request(
+            "POST",
+            f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/process",
+            json=data.model_dump(exclude_none=True))
+        self.client.logger.debug(f"Execute process response: {response.text}")
+        return dto.SandboxProcessResponseDto.model_validate_json(response.text)

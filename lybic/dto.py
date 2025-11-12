@@ -489,3 +489,103 @@ class MobileUseActionResponseDto(BaseModel):
         Configuration for Pydantic model.
         """
         extra = json_extra_fields_policy
+
+
+# File Transfer Schemas
+class MultipartUploadConfig(BaseModel):
+    """
+    Multipart upload configuration.
+    """
+    url: str = Field(..., description="Multipart upload target URL")
+    formFields: dict = Field(default_factory=dict, description="Extra form fields for multipart upload")
+    fileFieldName: str = Field(default="file", description="File field name in multipart form")
+
+
+class FileUploadItem(BaseModel):
+    """
+    Single file upload item.
+    """
+    localPath: str = Field(..., min_length=1, description="Absolute path in sandbox")
+    putUrl: str = Field(..., description="PUT upload URL")
+    multipartUpload: Optional[MultipartUploadConfig] = Field(None, description="Multipart upload configuration")
+
+
+class SandboxFileUploadRequestDto(BaseModel):
+    """
+    Request DTO for uploading files to sandbox.
+    """
+    files: List[FileUploadItem] = Field(..., min_length=1)
+
+
+class FileOperationResult(BaseModel):
+    """
+    Single file operation result.
+    """
+    localPath: str = Field(..., description="Sandbox local path")
+    success: bool = Field(..., description="Whether the operation succeeded")
+    error: Optional[str] = Field(None, description="Error message if failed")
+
+
+class SandboxFileUploadResponseDto(BaseModel):
+    """
+    Response DTO for file upload operation.
+    """
+    results: List[FileOperationResult]
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = json_extra_fields_policy
+
+
+class FileDownloadItem(BaseModel):
+    """
+    Single file download item.
+    """
+    url: str = Field(..., description="Download URL")
+    headers: dict = Field(default_factory=dict, description="Optional HTTP headers")
+    localPath: str = Field(..., min_length=1, description="Absolute path to save in sandbox")
+
+
+class SandboxFileDownloadRequestDto(BaseModel):
+    """
+    Request DTO for downloading files to sandbox.
+    """
+    files: List[FileDownloadItem] = Field(..., min_length=1)
+
+
+class SandboxFileDownloadResponseDto(BaseModel):
+    """
+    Response DTO for file download operation.
+    """
+    results: List[FileOperationResult]
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = json_extra_fields_policy
+
+
+# Process Execution Schemas
+class SandboxProcessRequestDto(BaseModel):
+    """
+    Request DTO for executing a process in sandbox.
+    """
+    executable: str = Field(..., min_length=1, description="Executable path")
+    args: List[str] = Field(default_factory=list, description="Arguments")
+    workingDirectory: Optional[str] = Field(None, description="Working directory")
+    stdinBase64: Optional[str] = Field(None, description="Optional stdin as base64-encoded bytes")
+
+
+class SandboxProcessResponseDto(BaseModel):
+    """
+    Response DTO for process execution.
+    """
+    stdoutBase64: str = Field(default="", description="stdout as base64-encoded bytes")
+    stderrBase64: str = Field(default="", description="stderr as base64-encoded bytes")
+    exitCode: int = Field(..., description="Exit code")
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        extra = json_extra_fields_policy
