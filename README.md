@@ -320,8 +320,8 @@ The `lybic.Pyautogui` class supports a subset of the most common `pyautogui` mou
 | `typewrite()` | ✅ | Supports both strings and lists of strings. |
 | `press()` | ✅ | Supports single key and list of keys. |
 | `hotkey()` | ✅ | |
-| `keyDown()` | ❌ | Not supported by Lybic API. |
-| `keyUp()` | ❌ | Not supported by Lybic API. |
+| `keyDown()` | ✅ | |
+| `keyUp()` | ✅ | |
 
 ## 📔 Examples:
 

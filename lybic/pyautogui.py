@@ -520,20 +520,34 @@ class Pyautogui:
 
     def keyDown(self, key):
         """
-        Holds down a key. (not implemented)
+        Holds down a key.
 
         Args:
             key (str): The key to hold down.
         """
-        self.logger.warning("keyDown is not implemented in Lybic SDK")
-        raise NotImplementedError("Lybic API does not support holding a key down.")
+        request = dto.KeyDownAction(
+            type="key:down",
+            key=key
+        )
+        coro = self.computer_use.execute_computer_use_action(
+            sandbox_id=self.sandbox_id,
+            data=dto.ComputerUseActionDto(action=request, includeScreenShot=False, includeCursorPosition=False)
+        )
+        self._run_sync(coro)
 
     def keyUp(self, key):
         """
-        Releases a key. (not implemented)
+        Releases a key.
 
         Args:
             key (str): The key to release.
         """
-        self.logger.warning("keyUp is not implemented in Lybic SDK")
-        raise NotImplementedError("Lybic API does not support releasing a key.")
+        request = dto.KeyUpAction(
+            type="key:up",
+            key=key
+        )
+        coro = self.computer_use.execute_computer_use_action(
+            sandbox_id=self.sandbox_id,
+            data=dto.ComputerUseActionDto(action=request, includeScreenShot=False, includeCursorPosition=False)
+        )
+        self._run_sync(coro)
