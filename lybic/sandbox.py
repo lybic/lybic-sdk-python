@@ -274,6 +274,8 @@ class Sandbox:
     async def upload_files(self, sandbox_id: str, *args, **kwargs) -> dto.SandboxFileUploadResponseDto:
         """
         Upload files to sandbox.
+
+        Using the URL you provide, Lybic will download the file from that URL to a specific path within the sandbox.
         """
         if args and isinstance(args[0], dto.SandboxFileUploadRequestDto):
             data = args[0]
@@ -303,7 +305,7 @@ class Sandbox:
 
     async def download_files(self, sandbox_id: str, *args, **kwargs) -> dto.SandboxFileDownloadResponseDto:
         """
-        Download files to sandbox.
+        Download files from the sandbox to the object storage(S3) provided by yourself.
         """
         if args and isinstance(args[0], dto.SandboxFileDownloadRequestDto):
             data = args[0]
