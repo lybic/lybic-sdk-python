@@ -264,3 +264,93 @@ class Sandbox:
                                              json=data.model_dump(exclude_none=True))
         self.client.logger.debug(f"Execute sandbox action response: {response.text}")
         return dto.SandboxActionResponseDto.model_validate_json(response.text)
+
+    @overload
+    async def upload_files(self, sandbox_id: str, data: dto.SandboxFileUploadRequestDto) -> dto.SandboxFileUploadResponseDto: ...
+
+    @overload
+    async def upload_files(self, sandbox_id: str, **kwargs) -> dto.SandboxFileUploadResponseDto: ...
+
+    async def upload_files(self, sandbox_id: str, *args, **kwargs) -> dto.SandboxFileUploadResponseDto:
+        """
+        (Form sandbox) uploading files to S3.
+        """
+        if args and isinstance(args[0], dto.SandboxFileUploadRequestDto):
+            data = args[0]
+        elif "data" in kwargs:
+            data_arg = kwargs["data"]
+            if isinstance(data_arg, dto.SandboxFileUploadRequestDto):
+                data = data_arg
+            elif isinstance(data_arg, dict):
+                data = dto.SandboxFileUploadRequestDto(**data_arg)
+            else:
+                raise TypeError(f"The 'data' argument must be of type {dto.SandboxFileUploadRequestDto.__name__} or dict")
+        else:
+            data = dto.SandboxFileUploadRequestDto(**kwargs)
+        self.client.logger.debug(f"Uploading files form sandbox {sandbox_id} to S3 with data {data.model_dump_json(exclude_none=True)}")
+        response = await self.client.request(
+            "POST",
+            f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/file/upload",
+            json=data.model_dump(exclude_none=True))
+        self.client.logger.debug(f"Upload files response: {response.text}")
+        return dto.SandboxFileUploadResponseDto.model_validate_json(response.text)
+
+    @overload
+    async def download_files(self, sandbox_id: str, data: dto.SandboxFileDownloadRequestDto) -> dto.SandboxFileDownloadResponseDto: ...
+
+    @overload
+    async def download_files(self, sandbox_id: str, **kwargs) -> dto.SandboxFileDownloadResponseDto: ...
+
+    async def download_files(self, sandbox_id: str, *args, **kwargs) -> dto.SandboxFileDownloadResponseDto:
+        """
+        (Sandbox automatically)Download files to the sandbox from your provided URLs.
+        """
+        if args and isinstance(args[0], dto.SandboxFileDownloadRequestDto):
+            data = args[0]
+        elif "data" in kwargs:
+            data_arg = kwargs["data"]
+            if isinstance(data_arg, dto.SandboxFileDownloadRequestDto):
+                data = data_arg
+            elif isinstance(data_arg, dict):
+                data = dto.SandboxFileDownloadRequestDto(**data_arg)
+            else:
+                raise TypeError(f"The 'data' argument must be of type {dto.SandboxFileDownloadRequestDto.__name__} or dict")
+        else:
+            data = dto.SandboxFileDownloadRequestDto(**kwargs)
+        self.client.logger.debug(f"Form URLs downloading files to sandbox {sandbox_id} with data {data.model_dump_json(exclude_none=True)}")
+        response = await self.client.request(
+            "POST",
+            f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/file/download",
+            json=data.model_dump(exclude_none=True))
+        self.client.logger.debug(f"Download files response: {response.text}")
+        return dto.SandboxFileDownloadResponseDto.model_validate_json(response.text)
+
+    @overload
+    async def execute_process(self, sandbox_id: str, data: dto.SandboxProcessRequestDto) -> dto.SandboxProcessResponseDto: ...
+
+    @overload
+    async def execute_process(self, sandbox_id: str, **kwargs) -> dto.SandboxProcessResponseDto: ...
+
+    async def execute_process(self, sandbox_id: str, *args, **kwargs) -> dto.SandboxProcessResponseDto:
+        """
+        Execute a process inside sandbox.
+        """
+        if args and isinstance(args[0], dto.SandboxProcessRequestDto):
+            data = args[0]
+        elif "data" in kwargs:
+            data_arg = kwargs["data"]
+            if isinstance(data_arg, dto.SandboxProcessRequestDto):
+                data = data_arg
+            elif isinstance(data_arg, dict):
+                data = dto.SandboxProcessRequestDto(**data_arg)
+            else:
+                raise TypeError(f"The 'data' argument must be of type {dto.SandboxProcessRequestDto.__name__} or dict")
+        else:
+            data = dto.SandboxProcessRequestDto(**kwargs)
+        self.client.logger.debug(f"Executing process in sandbox {sandbox_id}")
+        response = await self.client.request(
+            "POST",
+            f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/process",
+            json=data.model_dump(exclude_none=True))
+        self.client.logger.debug(f"Execute process response: {response.text}")
+        return dto.SandboxProcessResponseDto.model_validate_json(response.text)
