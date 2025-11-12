@@ -805,7 +805,7 @@ if __name__ == "__main__":
             print(f"Output: {stdout}")
             
             # Example 2: Python script with stdin
-            stdin_data = base64.b64encode(b"print('Hello from stdin')\\n").decode()
+            stdin_data = base64.b64encode(b"print('Hello from stdin')\n").decode()
             proc_req = dto.SandboxProcessRequestDto(
                 executable='/usr/bin/python3',
                 args=['-c', 'import sys; exec(sys.stdin.read())'],
