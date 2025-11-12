@@ -260,6 +260,156 @@
         ]
       }
     },
+    "/api/orgs/{orgId}/sandboxes/{sandboxId}/file/upload": {
+      "post": {
+        "operationId": "uploadFilesToSandbox",
+        "parameters": [
+          {
+            "name": "sandboxId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orgId",
+            "required": true,
+            "in": "path",
+            "description": "The organization ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SandboxFileUploadRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SandboxFileUploadResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Upload files to sandbox",
+        "tags": [
+          "Sandbox"
+        ]
+      }
+    },
+    "/api/orgs/{orgId}/sandboxes/{sandboxId}/file/download": {
+      "post": {
+        "operationId": "downloadFilesFromSandbox",
+        "parameters": [
+          {
+            "name": "sandboxId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orgId",
+            "required": true,
+            "in": "path",
+            "description": "The organization ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SandboxFileDownloadRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SandboxFileDownloadResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Download files from sandbox",
+        "tags": [
+          "Sandbox"
+        ]
+      }
+    },
+    "/api/orgs/{orgId}/sandboxes/{sandboxId}/process": {
+      "post": {
+        "operationId": "execSandboxProcess",
+        "parameters": [
+          {
+            "name": "sandboxId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orgId",
+            "required": true,
+            "in": "path",
+            "description": "The organization ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SandboxProcessRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SandboxProcessResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Execute a process inside sandbox",
+        "tags": [
+          "Sandbox"
+        ]
+      }
+    },
     "/api/orgs/{orgId}/sandboxes/{sandboxId}": {
       "delete": {
         "description": "Deletes a sandbox by its ID.",
@@ -1161,6 +1311,222 @@
           "shapeName"
         ]
       },
+      "SandboxFileUploadRequestDto": {
+        "type": "object",
+        "properties": {
+          "files": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "description": "Single file upload item",
+              "type": "object",
+              "properties": {
+                "localPath": {
+                  "description": "Absolute path in sandbox",
+                  "type": "string",
+                  "minLength": 1
+                },
+                "putUrl": {
+                  "description": "PUT upload URL",
+                  "type": "string",
+                  "format": "uri"
+                },
+                "multipartUpload": {
+                  "description": "Multipart upload configuration",
+                  "type": "object",
+                  "properties": {
+                    "url": {
+                      "description": "Multipart upload target URL",
+                      "type": "string",
+                      "format": "uri"
+                    },
+                    "formFields": {
+                      "description": "Extra form fields for multipart upload",
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "string"
+                      },
+                      "default": {}
+                    },
+                    "fileFieldName": {
+                      "description": "File field name in multipart form",
+                      "type": "string",
+                      "default": "file"
+                    }
+                  },
+                  "required": [
+                    "url"
+                  ]
+                }
+              },
+              "required": [
+                "localPath",
+                "putUrl"
+              ]
+            }
+          }
+        },
+        "required": [
+          "files"
+        ]
+      },
+      "SandboxFileUploadResponseDto": {
+        "type": "object",
+        "properties": {
+          "results": {
+            "type": "array",
+            "items": {
+              "description": "Single file upload result",
+              "type": "object",
+              "properties": {
+                "localPath": {
+                  "description": "Sandbox local path",
+                  "type": "string"
+                },
+                "success": {
+                  "description": "Whether the operation succeeded",
+                  "type": "boolean"
+                },
+                "error": {
+                  "description": "Error message if failed",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "localPath",
+                "success"
+              ]
+            }
+          }
+        },
+        "required": [
+          "results"
+        ]
+      },
+      "SandboxFileDownloadRequestDto": {
+        "type": "object",
+        "properties": {
+          "files": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "description": "Single file download item",
+              "type": "object",
+              "properties": {
+                "url": {
+                  "description": "Download URL",
+                  "type": "string",
+                  "format": "uri"
+                },
+                "headers": {
+                  "description": "Optional HTTP headers",
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "default": {}
+                },
+                "localPath": {
+                  "description": "Absolute path to save in sandbox",
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "url",
+                "localPath"
+              ]
+            }
+          }
+        },
+        "required": [
+          "files"
+        ]
+      },
+      "SandboxFileDownloadResponseDto": {
+        "type": "object",
+        "properties": {
+          "results": {
+            "type": "array",
+            "items": {
+              "description": "Single file download result",
+              "type": "object",
+              "properties": {
+                "localPath": {
+                  "description": "Sandbox local path",
+                  "type": "string"
+                },
+                "success": {
+                  "description": "Whether the operation succeeded",
+                  "type": "boolean"
+                },
+                "error": {
+                  "description": "Error message if failed",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "localPath",
+                "success"
+              ]
+            }
+          }
+        },
+        "required": [
+          "results"
+        ]
+      },
+      "SandboxProcessRequestDto": {
+        "type": "object",
+        "properties": {
+          "executable": {
+            "description": "Executable path",
+            "type": "string",
+            "minLength": 1
+          },
+          "args": {
+            "description": "Arguments",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "default": []
+          },
+          "workingDirectory": {
+            "description": "Working directory",
+            "type": "string"
+          },
+          "stdinBase64": {
+            "description": "Optional stdin as base64-encoded bytes",
+            "type": "string"
+          }
+        },
+        "required": [
+          "executable"
+        ]
+      },
+      "SandboxProcessResponseDto": {
+        "type": "object",
+        "properties": {
+          "stdoutBase64": {
+            "description": "stdout as base64-encoded bytes",
+            "type": "string",
+            "default": ""
+          },
+          "stderrBase64": {
+            "description": "stderr as base64-encoded bytes",
+            "type": "string",
+            "default": ""
+          },
+          "exitCode": {
+            "description": "Exit code",
+            "type": "number"
+          }
+        },
+        "required": [
+          "exitCode"
+        ]
+      },
       "ExtendSandboxDto": {
         "type": "object",
         "properties": {
@@ -1321,21 +1687,28 @@
                         "QUIC",
                         "WEB_TRANSPORT",
                         "WEBSOCKET",
+                        "WEBSOCKET_SECURE",
                         4,
                         5,
                         6,
-                        7
+                        7,
+                        8
                       ],
                       "x-enumNames": [
                         "4",
                         "5",
                         "6",
                         "7",
+                        "8",
                         "KCP",
                         "QUIC",
                         "WEB_TRANSPORT",
-                        "WEBSOCKET"
+                        "WEBSOCKET",
+                        "WEBSOCKET_SECURE"
                       ]
+                    },
+                    "path": {
+                      "type": "string"
                     }
                   },
                   "required": [
