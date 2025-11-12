@@ -313,7 +313,7 @@ class Sandbox:
             data = kwargs["data"]
         else:
             data = dto.SandboxFileDownloadRequestDto(**kwargs)
-        self.client.logger.debug(f"Downloading files to sandbox {sandbox_id}")
+        self.client.logger.debug(f"Downloading files from sandbox {sandbox_id}")
         response = await self.client.request(
             "POST",
             f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/file/download",
