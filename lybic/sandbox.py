@@ -273,9 +273,7 @@ class Sandbox:
 
     async def upload_files(self, sandbox_id: str, *args, **kwargs) -> dto.SandboxFileUploadResponseDto:
         """
-        Upload files to sandbox.
-
-        Using the URL you provide, Lybic will download the file from that URL to a specific path within the sandbox.
+        (Form sandbox) uploading files to S3.
         """
         if args and isinstance(args[0], dto.SandboxFileUploadRequestDto):
             data = args[0]
@@ -289,7 +287,7 @@ class Sandbox:
                 raise TypeError(f"The 'data' argument must be of type {dto.SandboxFileUploadRequestDto.__name__} or dict")
         else:
             data = dto.SandboxFileUploadRequestDto(**kwargs)
-        self.client.logger.debug(f"Uploading files to sandbox {sandbox_id}")
+        self.client.logger.debug(f"Uploading files form sandbox {sandbox_id} to S3 with data {data.model_dump_json(exclude_none=True)}")
         response = await self.client.request(
             "POST",
             f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/file/upload",
@@ -305,7 +303,7 @@ class Sandbox:
 
     async def download_files(self, sandbox_id: str, *args, **kwargs) -> dto.SandboxFileDownloadResponseDto:
         """
-        Download files from the sandbox to the object storage(S3) provided by yourself.
+        (Sandbox automatically)Download files to the sandbox from your provided URLs.
         """
         if args and isinstance(args[0], dto.SandboxFileDownloadRequestDto):
             data = args[0]
@@ -313,7 +311,7 @@ class Sandbox:
             data = kwargs["data"]
         else:
             data = dto.SandboxFileDownloadRequestDto(**kwargs)
-        self.client.logger.debug(f"Downloading files from sandbox {sandbox_id}")
+        self.client.logger.debug(f"Form URLs downloading files to sandbox {sandbox_id} with data {data.model_dump_json(exclude_none=True)}")
         response = await self.client.request(
             "POST",
             f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/file/download",
