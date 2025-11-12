@@ -549,7 +549,7 @@ class FileDownloadItem(BaseModel):
 
 class SandboxFileDownloadRequestDto(BaseModel):
     """
-    Request DTO for downloading files to sandbox.
+    Request DTO for downloading files from sandbox.
     """
     files: List[FileDownloadItem] = Field(..., min_length=1)
 
