@@ -307,8 +307,14 @@ class Sandbox:
         """
         if args and isinstance(args[0], dto.SandboxFileDownloadRequestDto):
             data = args[0]
-        elif "data" in kwargs and isinstance(kwargs["data"], dto.SandboxFileDownloadRequestDto):
-            data = kwargs["data"]
+        elif "data" in kwargs:
+            data_arg = kwargs["data"]
+            if isinstance(data_arg, dto.SandboxFileDownloadRequestDto):
+                data = data_arg
+            elif isinstance(data_arg, dict):
+                data = dto.SandboxFileDownloadRequestDto(**data_arg)
+            else:
+                raise TypeError(f"The 'data' argument must be of type {dto.SandboxFileDownloadRequestDto.__name__} or dict")
         else:
             data = dto.SandboxFileDownloadRequestDto(**kwargs)
         self.client.logger.debug(f"Form URLs downloading files to sandbox {sandbox_id} with data {data.model_dump_json(exclude_none=True)}")
