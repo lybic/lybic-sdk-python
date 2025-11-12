@@ -493,3 +493,330 @@ if __name__ == "__main__":
    if __name__ == "__main__":
        asyncio.run(main())
    ```
+
+8. Upload files to a sandbox (MinIO end-to-end example)
+
+   **Note:** The actual process of "uploading files to the sandbox" is as follows: the user first uploads a local file to an object storage service (like MinIO) to generate an accessible URL. Then, the sandbox downloads the file from this URL and saves it to the specified `localPath`. In other words: **User Uploads → Object Storage → Sandbox Downloads**.
+
+   **Workflow:**
+   ```mermaid
+   sequenceDiagram
+       participant User
+       participant MinIO as Object Storage
+       participant Sandbox
+
+       User->>MinIO: Upload local file
+       MinIO-->>User: Generate presigned URL
+       User->>Sandbox: Call upload_files() with URL
+       Sandbox->>MinIO: Download file from URL
+       MinIO-->>Sandbox: File content
+       Sandbox->>Sandbox: Save file to localPath
+   ```
+
+   **Prerequisites:**
+   - Install minio SDK: `pip install minio`
+   - You already have a MinIO instance and bucket (e.g. `agent-data`)
+
+   **Complete workflow:**
+   1. Upload local file to MinIO using MinIO SDK
+   2. Generate a presigned GET URL for the uploaded object
+   3. Call Lybic `sandbox.upload_files()` with the presigned URL
+   4. Sandbox downloads the file from the URL and saves it to the specified path
+
+   ```python
+   import asyncio
+   from minio import Minio
+   from lybic import Sandbox, LybicClient, LybicAuth
+
+   # MinIO configuration
+   MINIO_ENDPOINT = 'play.min.io'  # Replace with your MinIO endpoint
+   ACCESS_KEY = 'YOUR_MINIO_ACCESS_KEY'
+   SECRET_KEY = 'YOUR_MINIO_SECRET_KEY'
+   USE_SECURE = True
+   BUCKET = 'agent-data'
+
+   # File configuration
+   LOCAL_FILE_PATH = './local_input.txt'  # Local file to upload
+   OBJECT_NAME = 'uploads/input.txt'  # Object key in MinIO
+   SANDBOX_PATH = '/home/agent/data/input.txt'  # Destination path in sandbox
+
+   async def upload_file_to_sandbox():
+       # Step 1: Upload local file to MinIO
+       minio_client = Minio(MINIO_ENDPOINT, ACCESS_KEY, SECRET_KEY, secure=USE_SECURE)
+       
+       # Ensure bucket exists
+       if not minio_client.bucket_exists(BUCKET):
+           minio_client.make_bucket(BUCKET)
+           print(f"Created bucket: {BUCKET}")
+       
+       # Upload file to MinIO
+       minio_client.fput_object(BUCKET, OBJECT_NAME, LOCAL_FILE_PATH)
+       print(f"Uploaded {LOCAL_FILE_PATH} to MinIO as {OBJECT_NAME}")
+       
+       # Step 2: Generate presigned GET URL (valid for 1 hour)
+       presigned_url = minio_client.presigned_get_object(BUCKET, OBJECT_NAME, expires=3600)
+       print(f"Generated presigned URL: {presigned_url}")
+       
+       # Step 3: Use Lybic SDK to transfer file to sandbox
+       async with LybicClient(LybicAuth(org_id='ORG-xxxx', api_key='lysk-xxxxxxxxxxx')) as client:
+           sandbox = Sandbox(client)
+           
+           # Call upload_files - sandbox will download from the presigned URL
+           response = await sandbox.upload_files(
+               'SBX-xxxx',  # Your sandbox ID
+               files=[{
+                   'localPath': SANDBOX_PATH,
+                   'putUrl': presigned_url  # URL for sandbox to download from
+               }]
+           )
+           
+           print("Upload result:", response)
+           for result in response.results:
+               if result.success:
+                   print(f"✓ File successfully transferred to sandbox: {result.localPath}")
+               else:
+                   print(f"✗ Failed to transfer file: {result.error}")
+
+   if __name__ == '__main__':
+       asyncio.run(upload_file_to_sandbox())
+   ```
+
+   **Advanced: Using Multipart Upload Configuration**
+
+   For large files, you can use MinIO's multipart upload with POST policy:
+
+   ```python
+   from minio import Minio, PostPolicy
+   from datetime import datetime, timedelta
+   from lybic import dto
+
+   minio_client = Minio(MINIO_ENDPOINT, ACCESS_KEY, SECRET_KEY, secure=USE_SECURE)
+   
+   # Create POST policy for multipart upload
+   policy = PostPolicy()
+   policy.set_bucket(BUCKET)
+   policy.set_key('uploads/large_file.bin')
+   policy.set_expires(datetime.utcnow() + timedelta(hours=1))
+   
+   form_data = minio_client.presigned_post_policy(policy)
+   
+   # Configure multipart upload
+   multipart_config = dto.MultipartUploadConfig(
+       url=form_data['url'],
+       formFields={k: v for k, v in form_data.items() if k != 'url'},
+       fileFieldName='file'
+   )
+   
+   # Use in FileUploadItem
+   upload_item = dto.FileUploadItem(
+       localPath='/home/agent/data/large_file.bin',
+       putUrl=form_data['url'],
+       multipartUpload=multipart_config
+   )
+   ```
+
+9. Download files from a sandbox (MinIO end-to-end example)
+
+   **Note:** The actual process of "downloading files from the sandbox" is as follows: the user first generates a presigned PUT URL using the MinIO SDK. The sandbox then uploads its local file to this URL. Finally, the user downloads the file from MinIO to their local machine. In other words: **Sandbox Uploads → Object Storage → User Downloads**.
+
+   **Workflow:**
+   ```mermaid
+   sequenceDiagram
+       participant User
+       participant MinIO as Object Storage
+       participant Sandbox
+
+       User->>MinIO: Request presigned PUT URL
+       MinIO-->>User: Generate presigned PUT URL
+       User->>Sandbox: Call download_files() with URL
+       Sandbox->>MinIO: Upload file to presigned URL
+       MinIO-->>Sandbox: Upload success
+       User->>MinIO: Download file
+       MinIO-->>User: File content
+   ```
+
+   **Complete workflow:**
+   1. Generate a presigned PUT URL using MinIO SDK
+   2. Call Lybic `sandbox.download_files()` with the presigned PUT URL
+   3. Sandbox uploads its local file to the presigned URL
+   4. Download the file from MinIO to local machine
+
+   ```python
+   import asyncio
+   from minio import Minio
+   from lybic import Sandbox, LybicClient, LybicAuth
+
+   # MinIO configuration
+   MINIO_ENDPOINT = 'play.min.io'
+   ACCESS_KEY = 'YOUR_MINIO_ACCESS_KEY'
+   SECRET_KEY = 'YOUR_MINIO_SECRET_KEY'
+   USE_SECURE = True
+   BUCKET = 'agent-data'
+
+   # File configuration
+   SANDBOX_FILE_PATH = '/home/agent/data/output.txt'  # File path in sandbox
+   OBJECT_NAME = 'downloads/output.txt'  # Target object key in MinIO
+   LOCAL_DOWNLOAD_PATH = './downloaded_output.txt'  # Local destination
+
+   async def download_file_from_sandbox():
+       minio_client = Minio(MINIO_ENDPOINT, ACCESS_KEY, SECRET_KEY, secure=USE_SECURE)
+       
+       # Ensure bucket exists
+       if not minio_client.bucket_exists(BUCKET):
+           minio_client.make_bucket(BUCKET)
+           print(f"Created bucket: {BUCKET}")
+       
+       # Step 1: Generate presigned PUT URL (valid for 1 hour)
+       presigned_put_url = minio_client.presigned_put_object(BUCKET, OBJECT_NAME, expires=3600)
+       print(f"Generated presigned PUT URL: {presigned_put_url}")
+       
+       # Step 2: Use Lybic SDK to transfer file from sandbox
+       async with LybicClient(LybicAuth(org_id='ORG-xxxx', api_key='lysk-xxxxxxxxxxx')) as client:
+           sandbox = Sandbox(client)
+           
+           # Call download_files - sandbox will upload to the presigned URL
+           response = await sandbox.download_files(
+               'SBX-xxxx',  # Your sandbox ID
+               files=[{
+                   'url': presigned_put_url,  # URL for sandbox to upload to
+                   'localPath': SANDBOX_FILE_PATH
+               }]
+           )
+           
+           print("Download result:", response)
+           for result in response.results:
+               if result.success:
+                   print(f"✓ File successfully transferred from sandbox: {result.localPath}")
+               else:
+                   print(f"✗ Failed to transfer file: {result.error}")
+       
+       # Step 3: Download the file from MinIO to local machine
+       minio_client.fget_object(BUCKET, OBJECT_NAME, LOCAL_DOWNLOAD_PATH)
+       print(f"Downloaded file from MinIO to {LOCAL_DOWNLOAD_PATH}")
+       
+       # Step 4: Verify the file
+       with open(LOCAL_DOWNLOAD_PATH, 'r') as f:
+           content = f.read()
+           print(f"File content preview: {content[:100]}...")
+
+   if __name__ == '__main__':
+       asyncio.run(download_file_from_sandbox())
+   ```
+
+   **Complete example with file verification:**
+
+   ```python
+   import asyncio
+   from minio import Minio
+   from lybic import Sandbox, LybicClient, LybicAuth
+
+   async def download_and_verify():
+       minio_client = Minio('play.min.io', 'YOUR_ACCESS_KEY', 'YOUR_SECRET_KEY', secure=True)
+       
+       # Generate presigned PUT URL
+       put_url = minio_client.presigned_put_object('agent-data', 'results/report.json', expires=3600)
+       
+       # Trigger sandbox to upload file to MinIO
+       async with LybicClient(LybicAuth(org_id='ORG-xxxx', api_key='lysk-xxxxxxxxxxx')) as client:
+           sandbox = Sandbox(client)
+           resp = await sandbox.download_files(
+               'SBX-xxxx',
+               files=[{
+                   'url': put_url,
+                   'localPath': '/home/agent/output/report.json'
+               }]
+           )
+           
+           if resp.results[0].success:
+               print("File uploaded from sandbox to MinIO successfully")
+           else:
+               print(f"Upload failed: {resp.results[0].error}")
+               return
+       
+       # Download from MinIO to local
+       minio_client.fget_object('agent-data', 'results/report.json', './local_report.json')
+       print("File downloaded to local machine")
+       
+       # Verify file size
+       obj_stat = minio_client.stat_object('agent-data', 'results/report.json')
+       print(f"File size: {obj_stat.size} bytes")
+
+   if __name__ == '__main__':
+       asyncio.run(download_and_verify())
+   ```
+
+   **Advanced: Using POST policy for multipart upload from sandbox**
+
+   ```python
+   from minio import Minio, PostPolicy
+   from datetime import datetime, timedelta
+
+   minio_client = Minio(MINIO_ENDPOINT, ACCESS_KEY, SECRET_KEY, secure=USE_SECURE)
+   
+   # Create POST policy
+   policy = PostPolicy()
+   policy.set_bucket(BUCKET)
+   policy.set_key('downloads/large_output.bin')
+   policy.set_expires(datetime.utcnow() + timedelta(minutes=30))
+   
+   form_data = minio_client.presigned_post_policy(policy)
+   
+   # Use with sandbox.download_files
+   # Note: form_data contains both 'url' and additional form fields
+   response = await sandbox.download_files(
+       'SBX-xxxx',
+       files=[{
+           'url': form_data['url'],
+           'localPath': '/home/agent/data/large_output.bin',
+           'headers': {k: v for k, v in form_data.items() if k != 'url'}
+       }]
+   )
+   ```
+
+10. Execute a process inside a sandbox
+
+    Run an executable with arguments; capture stdout/stderr (base64-encoded) and exit code.
+    
+    method: `execute_process(sandbox_id: str, data: dto.SandboxProcessRequestDto)` or `execute_process(sandbox_id: str, executable=..., ...)`
+    - args:
+      - executable: str (absolute or resolvable path in sandbox, e.g. `/usr/bin/python3`)
+      - args: List[str]
+      - workingDirectory: Optional[str]
+      - stdinBase64: Optional[str] (base64-encoded bytes to feed to stdin)
+    - return: dto.SandboxProcessResponseDto { stdoutBase64, stderrBase64, exitCode }
+
+    ```python
+    import asyncio
+    import base64
+    from lybic import dto, Sandbox, LybicClient, LybicAuth
+
+    async def run_process_example():
+        async with LybicClient(LybicAuth(org_id='ORG-xxxx', api_key='lysk-xxxxxxxxxxx')) as client:
+            sandbox = Sandbox(client)
+            
+            # Example 1: Simple command
+            result = await sandbox.execute_process(
+                'SBX-xxxx',
+                executable='/bin/echo',
+                args=['Hello', 'World']
+            )
+            print(f"Exit code: {result.exitCode}")
+            stdout = base64.b64decode(result.stdoutBase64 or '').decode(errors='ignore')
+            print(f"Output: {stdout}")
+            
+            # Example 2: Python script with stdin
+            stdin_data = base64.b64encode(b"print('Hello from stdin')\\n").decode()
+            proc_req = dto.SandboxProcessRequestDto(
+                executable='/usr/bin/python3',
+                args=['-c', 'import sys; exec(sys.stdin.read())'],
+                workingDirectory='/home/agent',
+                stdinBase64=stdin_data
+            )
+            result = await sandbox.execute_process('SBX-xxxx', data=proc_req)
+            print(f"Exit: {result.exitCode}")
+            print(f"STDOUT: {base64.b64decode(result.stdoutBase64 or '').decode(errors='ignore')}")
+            print(f"STDERR: {base64.b64decode(result.stderrBase64 or '').decode(errors='ignore')}")
+
+    if __name__ == '__main__':
+        asyncio.run(run_process_example())
+    ```
