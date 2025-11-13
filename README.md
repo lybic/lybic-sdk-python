@@ -203,8 +203,7 @@ if __name__ == "__main__":
 
 Lybic supports sandbox file transfer and process execution APIs:
 
-- upload_files(sandbox_id, files=[{localPath, putUrl, multipartUpload?}]): Sandbox downloads each provided putUrl (or multipart target) into the given localPath. From the user's perspective this is an upload; from the sandbox perspective it is a download.
-- download_files(sandbox_id, files=[{url, localPath, headers?}]): Sandbox uploads the file at localPath to the provided S3 pre‑signed URL. From the user's perspective this is a download; from the sandbox perspective it is an upload.
+- copy_files(sandbox_id, files=[{localPath, putUrl, multipartUpload?}]):
 - execute_process(sandbox_id, executable, args=[], workingDirectory=None, stdinBase64=None): Runs a process in the sandbox and returns stdoutBase64, stderrBase64, exitCode.
 
 ## 🌒 Adapt LLM output pyautogui format

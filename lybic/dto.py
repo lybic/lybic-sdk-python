@@ -492,45 +492,76 @@ class MobileUseActionResponseDto(BaseModel):
 
 
 # File Transfer Schemas
-class MultipartUploadConfig(BaseModel):
+class SandboxFileLocation(BaseModel):
     """
-    Multipart upload configuration.
+    Sandbox file location.
     """
-    url: str = Field(..., description="Multipart upload target URL")
-    formFields: dict = Field(default_factory=dict, description="Extra form fields for multipart upload")
-    fileFieldName: str = Field(default="file", description="File field name in multipart form")
+    type: Literal["sandboxFileLocation"] = "sandboxFileLocation"
+    path: str = Field(..., min_length=1, description="File path in sandbox")
 
 
-class FileUploadItem(BaseModel):
+class HttpPutLocation(BaseModel):
     """
-    Single file upload item.
+    HTTP PUT location.
     """
-    localPath: str = Field(..., min_length=1, description="Absolute path in sandbox")
-    putUrl: str = Field(..., description="PUT upload URL")
-    multipartUpload: Optional[MultipartUploadConfig] = Field(None, description="Multipart upload configuration")
+    type: Literal["httpPutLocation"] = "httpPutLocation"
+    url: str = Field(..., description="PUT upload URL")
+    headers: Optional[dict] = Field(default=None, description="Optional HTTP headers")
 
 
-class SandboxFileUploadRequestDto(BaseModel):
+class HttpGetLocation(BaseModel):
     """
-    Request DTO for uploading files to sandbox.
+    HTTP GET location.
     """
-    files: List[FileUploadItem] = Field(..., min_length=1)
+    type: Literal["httpGetLocation"] = "httpGetLocation"
+    url: str = Field(..., description="GET download URL")
+    headers: Optional[dict] = Field(default=None, description="Optional HTTP headers")
 
 
-class FileOperationResult(BaseModel):
+class HttpPostFormLocation(BaseModel):
     """
-    Single file operation result.
+    HTTP POST form location.
     """
-    localPath: str = Field(..., description="Sandbox local path")
+    type: Literal["httpPostFormLocation"] = "httpPostFormLocation"
+    url: str = Field(..., description="POST form upload URL")
+    form: dict = Field(..., description="Form fields")
+    fileField: str = Field(default="file", description="File field name in form")
+    headers: Optional[dict] = Field(default=None, description="Optional HTTP headers")
+
+
+# Union type for file locations
+FileLocation = SandboxFileLocation | HttpPutLocation | HttpGetLocation | HttpPostFormLocation
+
+
+class FileCopyItem(BaseModel):
+    """
+    Single file copy item.
+    """
+    id: Optional[str] = Field(None, description="A caller-defined unique identifier for this item. The value is included in the response to associate results with their corresponding requests")
+    src: FileLocation = Field(..., description="Copy file source")
+    dest: FileLocation = Field(..., description="Copy file destination")
+    class Config:
+        """
+        Configuration for Pydantic model.
+        """
+        exclude_none = True
+        extra = json_extra_fields_policy
+
+
+class SandboxFileCopyRequestDto(BaseModel):
+    """
+    Request DTO for copying files with sandbox.
+    """
+    files: List[FileCopyItem] = Field(..., min_length=1)
+
+
+class FileCopyResult(BaseModel):
+    """
+    Single file copy result.
+    """
+    id: Optional[str] = Field(None, description="Unique identifier of the files item from the request")
     success: bool = Field(..., description="Whether the operation succeeded")
     error: Optional[str] = Field(None, description="Error message if failed")
-
-
-class SandboxFileUploadResponseDto(BaseModel):
-    """
-    Response DTO for file upload operation.
-    """
-    results: List[FileOperationResult]
     class Config:
         """
         Configuration for Pydantic model.
@@ -538,27 +569,11 @@ class SandboxFileUploadResponseDto(BaseModel):
         extra = json_extra_fields_policy
 
 
-class FileDownloadItem(BaseModel):
+class SandboxFileCopyResponseDto(BaseModel):
     """
-    Single file download item.
+    Response DTO for file copy operation.
     """
-    url: str = Field(..., description="URL for the sandbox to upload the file to (e.g., a pre-signed S3 PUT URL)")
-    headers: dict = Field(default_factory=dict, description="Optional HTTP headers for the upload from the sandbox")
-    localPath: str = Field(..., min_length=1, description="Absolute path of the file in the sandbox to be downloaded")
-
-
-class SandboxFileDownloadRequestDto(BaseModel):
-    """
-    Request DTO for downloading files from sandbox.
-    """
-    files: List[FileDownloadItem] = Field(..., min_length=1)
-
-
-class SandboxFileDownloadResponseDto(BaseModel):
-    """
-    Response DTO for file download operation.
-    """
-    results: List[FileOperationResult]
+    results: List[FileCopyResult]
     class Config:
         """
         Configuration for Pydantic model.

@@ -494,13 +494,34 @@ if __name__ == "__main__":
        asyncio.run(main())
    ```
 
-8. Form local machine transfer files to Sandbox(MinIO end-to-end example)
+8. Copy files between sandbox and external storage (Unified file transfer method)
 
-   > [!NOTE]
-   > The method `sandbox.download_files` makes the sandbox **download** a file from a given URL. The naming is counter-intuitive.
+   The `copy_files` method provides a unified way to transfer files bidirectionally between the sandbox and external locations (HTTP/S3). It supports multiple file location types and batch operations.
+
+   method: `copy_files(sandbox_id: str, data: dto.SandboxFileCopyRequestDto)` or `copy_files(sandbox_id: str, **kwargs)`
+   - args:
+     - data: dto.SandboxFileCopyRequestDto
+       - files: List[dto.FileCopyItem]
+         - index: int (unique identifier for tracking each file operation)
+         - src: FileLocation (source location)
+         - dest: FileLocation (destination location)
+   - return: dto.SandboxFileCopyResponseDto
+     - results: List[dto.FileCopyResult]
+       - index: int
+       - success: bool
+       - error: Optional[str]
+
+   **Supported File Location Types:**
+   - `SandboxFileLocation`: File path within the sandbox
+   - `HttpPutLocation`: HTTP PUT upload URL (for uploading files)
+   - `HttpGetLocation`: HTTP GET download URL (for downloading files)
+   - `HttpPostFormLocation`: HTTP POST multipart form upload (for services requiring form uploads)
+
+   **8.1 Upload files from local machine to sandbox (MinIO end-to-end example)**
 
    **Workflow:**
-   The overall process is for the user to upload a file to S3, and then instruct the sandbox to download it from S3.
+   The overall process is: upload file to object storage → generate presigned GET URL → sandbox downloads from URL.
+   
    ```mermaid
    sequenceDiagram
        participant User
@@ -508,21 +529,21 @@ if __name__ == "__main__":
        participant Sandbox
 
        User->>MinIO: Upload local file
-       MinIO-->>User: Generate presigned URL
-       User->>Sandbox: Call download_files() with URL
+       MinIO-->>User: Generate presigned GET URL
+       User->>Sandbox: Call copy_files() with HttpGetLocation
        Sandbox->>MinIO: Download file from URL
        MinIO-->>Sandbox: File content
-       Sandbox->>Sandbox: Save file to localPath
+       Sandbox->>Sandbox: Save to destination path
    ```
 
    **Prerequisites:**
    - Install minio SDK: `pip install minio`
-   - You already have a MinIO instance and bucket (e.g. `agent-data`)
+   - You have a MinIO instance and bucket (e.g. `agent-data`)
 
    **Complete workflow:**
    1. Upload local file to MinIO using MinIO SDK
    2. Generate a presigned GET URL for the uploaded object
-   3. Call Lybic `sandbox.download_files()` with the presigned URL
+   3. Call Lybic `sandbox.copy_files()` with HttpGetLocation (source) and SandboxFileLocation (destination)
    4. Sandbox downloads the file from the URL and saves it to the specified path
 
    ```python
@@ -530,21 +551,26 @@ if __name__ == "__main__":
    from datetime import timedelta
    from minio import Minio
    from lybic import Sandbox, LybicClient, LybicAuth
-   from lybic.dto import SandboxFileDownloadRequestDto, FileDownloadItem
+   from lybic.dto import (
+       SandboxFileCopyRequestDto, 
+       FileCopyItem, 
+       SandboxFileLocation, 
+       HttpGetLocation
+   )
 
    # MinIO configuration
    MINIO_ENDPOINT = 'play.min.io'  # Replace with your MinIO endpoint
-   ACCESS_KEY = 'YOUR_MINIO_ACCESS_KEY'
-   SECRET_KEY = 'YOUR_MINIO_SECRET_KEY'
+   ACCESS_KEY = 'Q3AM3UQ867SPQQA43P2F'
+   SECRET_KEY = 'zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG'
    USE_SECURE = True
    BUCKET = 'agent-data'
 
    # File configuration
    LOCAL_FILE_PATH = './local_input.txt'  # Local file to upload
    OBJECT_NAME = 'uploads/input.txt'  # Object key in MinIO
-   SANDBOX_PATH = '/home/agent/data/input.txt'  # Destination path in sandbox
+   SANDBOX_PATH = '/home/agent/input.txt'  # Destination path in sandbox
 
-   async def download_file_to_sandbox():
+   async def upload_file_to_sandbox():
        # Step 1: Upload local file to MinIO
        minio_client = Minio(MINIO_ENDPOINT, ACCESS_KEY, SECRET_KEY, secure=USE_SECURE)
        
@@ -558,37 +584,43 @@ if __name__ == "__main__":
        print(f"Uploaded {LOCAL_FILE_PATH} to MinIO as {OBJECT_NAME}")
        
        # Step 2: Generate presigned GET URL (valid for 1 hour)
-       presigned_url = minio_client.presigned_get_object(BUCKET, OBJECT_NAME, expires=timedelta(minutes=60))
+       presigned_url = minio_client.presigned_get_object(
+           BUCKET, OBJECT_NAME, expires=timedelta(minutes=60)
+       )
        print(f"Generated presigned URL: {presigned_url}")
        
-       # Step 3: Use Lybic SDK to transfer file to sandbox
-       async with LybicClient(LybicAuth(org_id='ORG-xxxx', api_key='lysk-xxxxxxxxxxx')) as client:
+       # Step 3: Use Lybic SDK to copy file from URL to sandbox
+       async with LybicClient(
+           LybicAuth(
+               org_id='ORG-xxxx',
+               api_key='lysk-xxxxxxxxxxx',
+               endpoint='https://api.lybic.cn/'
+           )
+       ) as client:
            sandbox = Sandbox(client)
            
-           # Call download_files - sandbox will download from the presigned URL
-           response = await sandbox.download_files(
-            'BOX-xxxxxxxxxxxxxxxx',  # Your sandbox ID
-             SandboxFileDownloadRequestDto(files=[
-                FileDownloadItem(
-                  localPath=SANDBOX_PATH,
-                  url=presigned_url  # URL for sandbox to download from
-                )
-              ]
-             )
+           response = await sandbox.copy_files(
+               'SBX-xxxx',  # Your sandbox ID
+               SandboxFileCopyRequestDto(files=[
+                   FileCopyItem(
+                       src=HttpGetLocation(url=presigned_url),
+                       dest=SandboxFileLocation(path=SANDBOX_PATH)
+                   )
+               ])
            )
            
-           print("Upload result:", response)
+           print("Copy result:", response)
            for result in response.results:
                if result.success:
-                   print(f"✓ File successfully transferred to sandbox: {result.localPath}")
+                   print(f"✓ File successfully copied to sandbox (index: {result.id})")
                else:
-                   print(f"✗ Failed to transfer file: {result.error}")
+                   print(f"✗ Failed to copy file (index: {result.id}): {result.error}")
 
    if __name__ == '__main__':
-       asyncio.run(download_file_to_sandbox())
+       asyncio.run(upload_file_to_sandbox())
    ```
 
-9. Form sandbox uploading files to S3(MinIO end-to-end example),and download to local machine
+   **8.2 Download files from sandbox to local machine (MinIO end-to-end example)**
 
    **Workflow:**
    ```mermaid
@@ -599,7 +631,7 @@ if __name__ == "__main__":
 
        User->>MinIO: Request presigned PUT URL
        MinIO-->>User: Generate presigned PUT URL
-       User->>Sandbox: Call upload_files() with URL
+       User->>Sandbox: Call copy_files() with HttpPutLocation
        Sandbox->>MinIO: Upload file to presigned URL
        MinIO-->>Sandbox: Upload success
        User->>MinIO: Download file
@@ -608,7 +640,7 @@ if __name__ == "__main__":
 
    **Complete workflow:**
    1. Generate a presigned PUT URL using MinIO SDK
-   2. Call Lybic `sandbox.upload_files()` with the presigned PUT URL
+   2. Call Lybic `sandbox.copy_files()` with SandboxFileLocation (source) and HttpPutLocation (destination)
    3. Sandbox uploads its local file to the presigned URL
    4. Download the file from MinIO to your local machine
 
@@ -617,12 +649,17 @@ if __name__ == "__main__":
    from datetime import timedelta
    from minio import Minio
    from lybic import Sandbox, LybicClient, LybicAuth
-   from lybic.dto import SandboxFileUploadRequestDto, FileUploadItem
+   from lybic.dto import (
+       SandboxFileCopyRequestDto, 
+       FileCopyItem, 
+       SandboxFileLocation, 
+       HttpPutLocation
+   )
 
    # MinIO configuration
    MINIO_ENDPOINT = 'play.min.io'
-   ACCESS_KEY = 'YOUR_MINIO_ACCESS_KEY'
-   SECRET_KEY = 'YOUR_MINIO_SECRET_KEY'
+   ACCESS_KEY = 'Q3AM3UQ867SPQQA43P2F'
+   SECRET_KEY = 'zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG'
    USE_SECURE = True
    BUCKET = 'agent-data'
 
@@ -631,7 +668,7 @@ if __name__ == "__main__":
    OBJECT_NAME = 'downloads/output.txt'  # Target object key in MinIO
    LOCAL_DOWNLOAD_PATH = './downloaded_output.txt'  # Local destination
 
-   async def upload_file_from_sandbox():
+   async def download_file_from_sandbox():
        minio_client = Minio(MINIO_ENDPOINT, ACCESS_KEY, SECRET_KEY, secure=USE_SECURE)
        
        # Ensure bucket exists
@@ -640,31 +677,37 @@ if __name__ == "__main__":
            print(f"Created bucket: {BUCKET}")
        
        # Step 1: Generate presigned PUT URL (valid for 1 hour)
-       presigned_put_url = minio_client.presigned_put_object(BUCKET, OBJECT_NAME, expires=timedelta(minutes=60))
+       presigned_put_url = minio_client.presigned_put_object(
+           BUCKET, OBJECT_NAME, expires=timedelta(minutes=60)
+       )
        print(f"Generated presigned PUT URL: {presigned_put_url}")
        
-       # Step 2: Use Lybic SDK to transfer file from sandbox
-       async with LybicClient(LybicAuth(org_id='ORG-xxxx', api_key='lysk-xxxxxxxxxxx')) as client:
+       # Step 2: Use Lybic SDK to copy file from sandbox to URL
+       async with LybicClient(
+           LybicAuth(
+               org_id='ORG-xxxx',
+               api_key='lysk-xxxxxxxxxxx',
+               endpoint='https://api.lybic.cn/'
+           )
+       ) as client:
            sandbox = Sandbox(client)
            
-           # Call download_files - sandbox will upload to the presigned URL
-        response = await sandbox.upload_files(
-            'BOX-01K9VDYBK7C883D2ATPXYG3DXN',  # Your sandbox ID
-            SandboxFileUploadRequestDto(files=[
-                FileUploadItem(
-                localPath=SANDBOX_PATH,
-                putUrl=presigned_url  # upload to
-        )
-        ]
-        )
-        )
+           response = await sandbox.copy_files(
+               'SBX-xxxx',  # Your sandbox ID
+               SandboxFileCopyRequestDto(files=[
+                   FileCopyItem(
+                       src=SandboxFileLocation(path=SANDBOX_FILE_PATH),
+                       dest=HttpPutLocation(url=presigned_put_url)
+                   )
+               ])
+           )
            
-           print("Upload result:", response)
+           print("Copy result:", response)
            for result in response.results:
                if result.success:
-                   print(f"✓ File successfully transferred from sandbox: {result.localPath}")
+                   print(f"✓ File successfully copied from sandbox (index: {result.id})")
                else:
-                   print(f"✗ Failed to transfer file: {result.error}")
+                   print(f"✗ Failed to copy file (index: {result.id}): {result.error}")
        
        # Step 3: Download the file from MinIO to local machine
        minio_client.fget_object(BUCKET, OBJECT_NAME, LOCAL_DOWNLOAD_PATH)
@@ -676,42 +719,139 @@ if __name__ == "__main__":
            print(f"File content preview: {content[:100]}...")
 
    if __name__ == '__main__':
-       asyncio.run(upload_file_from_sandbox())
+       asyncio.run(download_file_from_sandbox())
    ```
 
-   **Advanced: Using Multipart Upload Configuration**
+   **8.3 Batch copy multiple files**
 
-   For large files, you can use MinIO's multipart upload with POST policy:
+   Copy multiple files in a single request (mixed directions):
+
+   ```python
+   from lybic.dto import (
+       SandboxFileCopyRequestDto, 
+       FileCopyItem, 
+       SandboxFileLocation, 
+       HttpGetLocation,
+       HttpPutLocation
+   )
+
+   # Copy multiple files: some from external to sandbox, some from sandbox to external
+   response = await sandbox.copy_files(
+       'SBX-xxxx',
+       SandboxFileCopyRequestDto(files=[
+           # Download from URL to sandbox
+           FileCopyItem(
+               src=HttpGetLocation(url='https://example.com/file1.txt'),
+               dest=SandboxFileLocation(path='/home/agent/file1.txt')
+           ),
+           # Upload from sandbox to URL
+           FileCopyItem(
+               src=SandboxFileLocation(path='/home/agent/output.log'),
+               dest=HttpPutLocation(url='https://s3.example.com/output.log')
+           ),
+           # Another download
+           FileCopyItem(
+               src=HttpGetLocation(url='https://example.com/file2.txt'),
+               dest=SandboxFileLocation(path='/home/agent/file2.txt')
+           )
+       ])
+   )
+
+   # Check results by index
+   for result in response.results:
+       if result.success:
+           print(f"✓ File {result.id} copied successfully")
+       else:
+           print(f"✗ File {result.id} failed: {result.error}")
+   ```
+
+   **8.4 Using HTTP POST multipart form upload**
+
+   For services that require multipart form uploads (e.g., some AWS S3 presigned POST policies):
 
    ```python
    from minio import Minio, PostPolicy
    from datetime import datetime, timedelta
-   from lybic import dto
+   from lybic.dto import (
+       SandboxFileCopyRequestDto, 
+       FileCopyItem, 
+       SandboxFileLocation, 
+       HttpPostFormLocation
+   )
 
+   # Generate POST policy with MinIO
    minio_client = Minio(MINIO_ENDPOINT, ACCESS_KEY, SECRET_KEY, secure=USE_SECURE)
    
-   # Create POST policy for multipart upload
    policy = PostPolicy()
    policy.set_bucket(BUCKET)
-   policy.set_key('uploads/large_file.bin')
-   policy.set_expires(datetime.utcnow() + timedelta(hours=1))
+   policy.set_key('uploads/report.pdf')
+   policy.set_expires(datetime.now(datetime.UTC) + timedelta(hours=1))
    
    form_data = minio_client.presigned_post_policy(policy)
    
-   # Configure multipart upload
-   multipart_config = dto.MultipartUploadConfig(
-       url=form_data['url'],
-       formFields={k: v for k, v in form_data.items() if k != 'url'},
-       fileFieldName='file'
-   )
-   
-   # Use in FileUploadItem
-   upload_item = dto.FileUploadItem(
-       localPath='/home/agent/data/large_file.bin',
-       putUrl=form_data['url'],
-       multipartUpload=multipart_config
+   # Use POST form for upload
+   response = await sandbox.copy_files(
+       'SBX-xxxx',
+       SandboxFileCopyRequestDto(files=[
+           FileCopyItem(
+               src=SandboxFileLocation(path='/home/agent/report.pdf'),
+               dest=HttpPostFormLocation(
+                   url=form_data['url'],
+                   form={k: v for k, v in form_data.items() if k != 'url'},
+                   fileField='file'  # Form field name for the file
+               )
+           )
+       ])
    )
    ```
+
+   **8.5 With custom headers**
+
+   Add custom headers for authentication or other purposes:
+
+   ```python
+   from lybic.dto import HttpPutLocation, HttpGetLocation
+
+   # GET with custom headers (e.g., authentication)
+   response = await sandbox.copy_files(
+       'SBX-xxxx',
+       SandboxFileCopyRequestDto(files=[
+           FileCopyItem(
+               src=HttpGetLocation(
+                   url='https://api.example.com/files/data.json',
+                   headers={
+                       'Authorization': 'Bearer YOUR_TOKEN',
+                       'X-Custom-Header': 'value'
+                   }
+               ),
+               dest=SandboxFileLocation(path='/home/agent/data.json')
+           )
+       ])
+   )
+
+   # PUT with custom headers
+   response = await sandbox.copy_files(
+       'SBX-xxxx',
+       SandboxFileCopyRequestDto(files=[
+           FileCopyItem(
+               src=SandboxFileLocation(path='/home/agent/result.json'),
+               dest=HttpPutLocation(
+                   url='https://storage.example.com/uploads/result.json',
+                   headers={
+                       'Content-Type': 'application/json',
+                       'X-Upload-Id': 'unique-id'
+                   }
+               )
+           )
+       ])
+   )
+   ```
+
+9. Legacy file transfer methods (Deprecated)
+
+   > [!WARNING]
+   > The `upload_files` and `download_files` methods have been removed in favor of the unified `copy_files` method.
+   > Please migrate your code to use `copy_files` as shown in section 8 above.
 
 10. Execute a process inside a sandbox
 

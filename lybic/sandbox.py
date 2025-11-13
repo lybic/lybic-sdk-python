@@ -266,64 +266,34 @@ class Sandbox:
         return dto.SandboxActionResponseDto.model_validate_json(response.text)
 
     @overload
-    async def upload_files(self, sandbox_id: str, data: dto.SandboxFileUploadRequestDto) -> dto.SandboxFileUploadResponseDto: ...
+    async def copy_files(self, sandbox_id: str, data: dto.SandboxFileCopyRequestDto) -> dto.SandboxFileCopyResponseDto: ...
 
     @overload
-    async def upload_files(self, sandbox_id: str, **kwargs) -> dto.SandboxFileUploadResponseDto: ...
+    async def copy_files(self, sandbox_id: str, **kwargs) -> dto.SandboxFileCopyResponseDto: ...
 
-    async def upload_files(self, sandbox_id: str, *args, **kwargs) -> dto.SandboxFileUploadResponseDto:
+    async def copy_files(self, sandbox_id: str, *args, **kwargs) -> dto.SandboxFileCopyResponseDto:
         """
-        (Form sandbox) uploading files to S3.
+        Copy files between sandbox and external locations (HTTP/S3).
         """
-        if args and isinstance(args[0], dto.SandboxFileUploadRequestDto):
+        if args and isinstance(args[0], dto.SandboxFileCopyRequestDto):
             data = args[0]
         elif "data" in kwargs:
             data_arg = kwargs["data"]
-            if isinstance(data_arg, dto.SandboxFileUploadRequestDto):
+            if isinstance(data_arg, dto.SandboxFileCopyRequestDto):
                 data = data_arg
             elif isinstance(data_arg, dict):
-                data = dto.SandboxFileUploadRequestDto(**data_arg)
+                data = dto.SandboxFileCopyRequestDto(**data_arg)
             else:
-                raise TypeError(f"The 'data' argument must be of type {dto.SandboxFileUploadRequestDto.__name__} or dict")
+                raise TypeError(f"The 'data' argument must be of type {dto.SandboxFileCopyRequestDto.__name__} or dict")
         else:
-            data = dto.SandboxFileUploadRequestDto(**kwargs)
-        self.client.logger.debug(f"Uploading files form sandbox {sandbox_id} to S3 with data {data.model_dump_json(exclude_none=True)}")
+            data = dto.SandboxFileCopyRequestDto(**kwargs)
+        self.client.logger.debug(f"Copying files for sandbox {sandbox_id} with data {data.model_dump_json(exclude_none=True)}")
         response = await self.client.request(
             "POST",
-            f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/file/upload",
+            f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/file/copy",
             json=data.model_dump(exclude_none=True))
-        self.client.logger.debug(f"Upload files response: {response.text}")
-        return dto.SandboxFileUploadResponseDto.model_validate_json(response.text)
-
-    @overload
-    async def download_files(self, sandbox_id: str, data: dto.SandboxFileDownloadRequestDto) -> dto.SandboxFileDownloadResponseDto: ...
-
-    @overload
-    async def download_files(self, sandbox_id: str, **kwargs) -> dto.SandboxFileDownloadResponseDto: ...
-
-    async def download_files(self, sandbox_id: str, *args, **kwargs) -> dto.SandboxFileDownloadResponseDto:
-        """
-        (Sandbox automatically)Download files to the sandbox from your provided URLs.
-        """
-        if args and isinstance(args[0], dto.SandboxFileDownloadRequestDto):
-            data = args[0]
-        elif "data" in kwargs:
-            data_arg = kwargs["data"]
-            if isinstance(data_arg, dto.SandboxFileDownloadRequestDto):
-                data = data_arg
-            elif isinstance(data_arg, dict):
-                data = dto.SandboxFileDownloadRequestDto(**data_arg)
-            else:
-                raise TypeError(f"The 'data' argument must be of type {dto.SandboxFileDownloadRequestDto.__name__} or dict")
-        else:
-            data = dto.SandboxFileDownloadRequestDto(**kwargs)
-        self.client.logger.debug(f"Form URLs downloading files to sandbox {sandbox_id} with data {data.model_dump_json(exclude_none=True)}")
-        response = await self.client.request(
-            "POST",
-            f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/file/download",
-            json=data.model_dump(exclude_none=True))
-        self.client.logger.debug(f"Download files response: {response.text}")
-        return dto.SandboxFileDownloadResponseDto.model_validate_json(response.text)
+        self.client.logger.debug(f"Copy files response: {response.text}")
+        return dto.SandboxFileCopyResponseDto.model_validate_json(response.text)
 
     @overload
     async def execute_process(self, sandbox_id: str, data: dto.SandboxProcessRequestDto) -> dto.SandboxProcessResponseDto: ...
