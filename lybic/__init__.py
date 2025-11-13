@@ -26,7 +26,7 @@
 
 """ Lybic SDK import header"""
 
-__version__ = "0.9.0"
+__version__ = "0.10.0"
 
 # Lybic Client
 from .authentication import LybicAuth
