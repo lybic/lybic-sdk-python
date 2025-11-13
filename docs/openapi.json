@@ -1271,9 +1271,9 @@
               "description": "Single file copy item",
               "type": "object",
               "properties": {
-                "index": {
-                  "description": "Index of the file copy item",
-                  "type": "number"
+                "id": {
+                  "description": "A caller-defined unique identifier for this item. The value is included in the response to associate results with their corresponding requests",
+                  "type": "string"
                 },
                 "src": {
                   "description": "Copy file source",
@@ -1515,7 +1515,6 @@
                 }
               },
               "required": [
-                "index",
                 "src",
                 "dest"
               ]
@@ -1535,9 +1534,9 @@
               "description": "Single file copy result",
               "type": "object",
               "properties": {
-                "index": {
-                  "description": "Index of the file copy item from the request",
-                  "type": "number"
+                "id": {
+                  "description": "unique identifier of the files item from the request",
+                  "type": "string"
                 },
                 "success": {
                   "description": "Whether the operation succeeded",
@@ -1549,7 +1548,6 @@
                 }
               },
               "required": [
-                "index",
                 "success"
               ]
             }
