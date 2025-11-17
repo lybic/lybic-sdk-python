@@ -28,12 +28,6 @@
 from typing import Literal, Optional, Union
 from pydantic import BaseModel
 
-# pylint: disable=invalid-name
-
-# Strategy for handling extra fields in the lybic api response
-json_extra_fields_policy = "ignore"
-
-
 class PixelLength(BaseModel):
     """
     Represents a length in pixels.

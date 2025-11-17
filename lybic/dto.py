@@ -28,7 +28,7 @@
 import uuid
 from enum import Enum, unique
 from typing import List, Optional, Literal
-from pydantic import BaseModel, Field, RootModel
+from pydantic import BaseModel, Field, RootModel, ConfigDict
 
 from lybic._api import deprecated
 
@@ -80,8 +80,8 @@ from lybic.action import (
     MobileUseAction,
     Action,
 )
-
-from lybic.action.common import json_extra_fields_policy
+# Strategy for handling extra fields in the lybic api response
+json_extra_fields_policy="ignore"
 
 class StatsResponseDto(BaseModel):
     """
@@ -117,7 +117,6 @@ class McpServerResponseDto(BaseModel):
     projectId: str = Field(..., description="Project ID to which the MCP server belongs.")
     policy: McpServerPolicy
     currentSandboxId: Optional[str] = Field(None, description="ID of the currently connected sandbox.")
-
 
 class ListMcpServerResponse(RootModel):
     """
