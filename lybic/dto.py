@@ -81,14 +81,7 @@ from lybic.action import (
     Action,
 )
 
-
-# Strategy for handling extra fields in the lybic api response
-# "ignore" means ignore extra fields, which will ensure that your SDK version remains compatible with the Lybic platform,
-# but it may cause compatibility issues with future versions of the SDK.
-# "forbid" means that the SDK will throw an error if it encounters extra fields in the response, which will force you to
-# update your SDK when the Lybic platform is updated, and may have a certain impact on your online environment.
-json_extra_fields_policy = "ignore"
-
+from lybic.action.common import json_extra_fields_policy
 
 class StatsResponseDto(BaseModel):
     """
@@ -97,11 +90,6 @@ class StatsResponseDto(BaseModel):
     mcpServers: int
     sandboxes: int
     projects: int
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
 
 
 class McpServerPolicy(BaseModel):
@@ -161,14 +149,6 @@ class CreateMcpServerDto(McpServerPolicy):
     sandboxExposeRestartTool: Optional[bool] = Field(False, description="Whether to expose restart tool to LLMs.")
     sandboxExposeDeleteTool: Optional[bool] = Field(False, description="Whether to expose delete tool to LLMs.")
 
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-
 class Shape(BaseModel):
     """
     Represents a shape of a sandbox.
@@ -195,11 +175,6 @@ class Sandbox(BaseModel):
     projectId: str = Field(..., description="Project ID to which the sandbox belongs.")
     shapeName: Optional[str] = Field(None, description="Specs and datacenter of the sandbox.") # This field does not exist in GetSandboxResponseDto (that is, this field is optional)
     shape: Optional[Shape] = None # This field does not exist in SandboxListResponseDto (that is, this field is optional)
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
 
 
 class GatewayAddress(BaseModel):
@@ -254,12 +229,6 @@ class CreateSandboxDto(BaseModel):
     projectId: Optional[str] = Field(None, description="The project id to use for the sandbox. Use default if not provided.")
     shape: str = Field(..., description="Specs and datacenter of the sandbox.")
 
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        exclude_none = True
-
 
 class GetSandboxResponseDto(BaseModel):
     """
@@ -287,15 +256,6 @@ class ComputerUseActionDto(BaseModel):
     includeCursorPosition: bool = True
     callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
 
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True
-
 
 class CursorPosition(BaseModel):
     """
@@ -306,11 +266,6 @@ class CursorPosition(BaseModel):
     screenWidth: int
     screenHeight: int
     screenIndex: int
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
 
 class ExtendSandboxDto(BaseModel):
     """
@@ -326,11 +281,6 @@ class SandboxActionResponseDto(BaseModel):
     screenShot: Optional[str] = None  # is a picture url of the screen eg. https://example.com/screen.webp
     cursorPosition: Optional[CursorPosition] = None
     actionResult: Optional[str] = None
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
 
 @unique
 class ModelType(Enum):
@@ -402,11 +352,7 @@ class ProjectResponseDto(BaseModel):
     name: str
     createdAt: str
     defaultProject: bool
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
+
 
 class ListProjectsResponseDto(RootModel):
     """
@@ -453,14 +399,7 @@ class Shapes(BaseModel):
     os: str
     virtualization:  str
     architecture:  str
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True
+
 
 class GetShapesResponseDto(RootModel):
     """
@@ -482,13 +421,8 @@ class MobileUseActionResponseDto(BaseModel):
     unknown: Optional[str] = None
     thoughts: Optional[str] = None
     memory: Optional[str] = None
-
     actions: List[MobileUseAction]
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
+
 
 
 # File Transfer Schemas
@@ -540,13 +474,6 @@ class FileCopyItem(BaseModel):
     id: Optional[str] = Field(None, description="A caller-defined unique identifier for this item. The value is included in the response to associate results with their corresponding requests")
     src: FileLocation = Field(..., description="Copy file source")
     dest: FileLocation = Field(..., description="Copy file destination")
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        exclude_none = True
-        extra = json_extra_fields_policy
-
 
 class SandboxFileCopyRequestDto(BaseModel):
     """
@@ -562,11 +489,6 @@ class FileCopyResult(BaseModel):
     id: Optional[str] = Field(None, description="Unique identifier of the files item from the request")
     success: bool = Field(..., description="Whether the operation succeeded")
     error: Optional[str] = Field(None, description="Error message if failed")
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
 
 
 class SandboxFileCopyResponseDto(BaseModel):
@@ -574,12 +496,6 @@ class SandboxFileCopyResponseDto(BaseModel):
     Response DTO for file copy operation.
     """
     results: List[FileCopyResult]
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-
 
 # Process Execution Schemas
 class SandboxProcessRequestDto(BaseModel):
@@ -599,8 +515,3 @@ class SandboxProcessResponseDto(BaseModel):
     stdoutBase64: str = Field(default="", description="stdout as base64-encoded bytes")
     stderrBase64: str = Field(default="", description="stderr as base64-encoded bytes")
     exitCode: int = Field(..., description="Exit code")
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy

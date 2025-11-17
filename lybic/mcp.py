@@ -33,6 +33,7 @@ import httpx
 from lybic import dto
 from lybic._api import deprecated
 from lybic.lybic import LybicClient
+from lybic.dto import json_extra_fields_policy
 
 # pylint: disable=invalid-name
 try:
@@ -67,7 +68,7 @@ class Mcp:
             "GET",
             f"/api/orgs/{self.client.org_id}/mcp-servers")
         self.client.logger.debug(f"List MCP servers response: {response.text}")
-        return dto.ListMcpServerResponse.model_validate_json(response.text)
+        return dto.ListMcpServerResponse.model_validate_json(response.text,strict=json_extra_fields_policy=='forbid')
 
     @overload
     async def create(self, data: dto.CreateMcpServerDto) -> dto.McpServerResponseDto: ...
@@ -88,13 +89,13 @@ class Mcp:
             data = kwargs["data"]
         else:
             data = dto.CreateMcpServerDto(**kwargs)
-        self.client.logger.debug(f"Create MCP server request: {data.model_dump_json()}")
+        self.client.logger.debug(f"Create MCP server request: {data.model_dump_json(exclude_none=True)}")
         response = await self.client.request(
             "POST",
             f"/api/orgs/{self.client.org_id}/mcp-servers",
-            json=data.model_dump())
+            json=data.model_dump(exclude_none=True))
         self.client.logger.debug(f"Create MCP server response: {response.text}")
-        return dto.McpServerResponseDto.model_validate_json(response.text)
+        return dto.McpServerResponseDto.model_validate_json(response.text,strict=json_extra_fields_policy=='forbid')
 
     async def get_default(self) -> dto.McpServerResponseDto:
         """
@@ -107,7 +108,7 @@ class Mcp:
             "GET",
             f"/api/orgs/{self.client.org_id}/mcp-servers/default")
         self.client.logger.debug(f"Get default MCP server response: {response.text}")
-        return dto.McpServerResponseDto.model_validate_json(response.text)
+        return dto.McpServerResponseDto.model_validate_json(response.text,strict=json_extra_fields_policy=='forbid')
 
     async def delete(self, mcp_server_id: str) -> None:
         """
@@ -128,11 +129,11 @@ class Mcp:
         :return: None
         """
         data = dto.SetMcpServerToSandboxResponseDto(sandboxId=sandbox_id)
-        self.client.logger.debug(f"Set MCP server to sandbox request: {data.model_dump_json()}")
+        self.client.logger.debug(f"Set MCP server to sandbox request: {data.model_dump_json(exclude_none=True)}")
         await self.client.request(
             "POST",
             f"/api/orgs/{self.client.org_id}/mcp-servers/{mcp_server_id}/sandbox",
-            json=data.model_dump())
+            json=data.model_dump(exclude_none=True))
 
     async def call_tool_async(self,
                               mcp_server_id: str,
@@ -182,7 +183,7 @@ class Mcp:
 @deprecated(
     since="0.8.0",
     removal="1.0.0",
-    message="Use Mcp instead"
+    message="renamed: Use Mcp instead"
 )
 class MCP(Mcp):
     """

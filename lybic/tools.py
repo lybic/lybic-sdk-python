@@ -37,7 +37,9 @@ from lybic.dto import (
     ModelType,
     ComputerUseActionDto,
     SandboxActionResponseDto,
-    MobileUseActionResponseDto
+    MobileUseActionResponseDto,
+
+    json_extra_fields_policy
 )
 from lybic.lybic import LybicClient
 from lybic._api import deprecated
@@ -78,13 +80,13 @@ class ComputerUse:
             data = kwargs["data"]
         else:
             data = ComputerUseParseRequestDto(**kwargs)
-        self.client.logger.debug(f"Parse model output request: {data.model_dump_json()}")
+        self.client.logger.debug(f"Parse model output request: {data.model_dump_json(exclude_none=True)}")
         response = await self.client.request(
             "POST",
             "/api/computer-use/parse",
             json=data.model_dump(exclude_none=True))
         self.client.logger.debug(f"Parse model output response: {response.text}")
-        return ComputerUseActionResponseDto.model_validate_json(response.text)
+        return ComputerUseActionResponseDto.model_validate_json(response.text,strict=json_extra_fields_policy=='forbid')
     async def parse_llm_output(
         self, model_type: ModelType | str, llm_output: str
     ) -> ComputerUseActionResponseDto:
@@ -110,10 +112,10 @@ class ComputerUse:
         response = await self.client.request(
             "POST",
             f"/api/computer-use/parse/{model}",
-            json=ParseTextRequestDto(textContent=llm_output).model_dump(),
+            json=ParseTextRequestDto(textContent=llm_output).model_dump(exclude_none=True),
         )
         self.client.logger.debug(f"Parse model output response: {response.text}")
-        return ComputerUseActionResponseDto.model_validate_json(response.text)
+        return ComputerUseActionResponseDto.model_validate_json(response.text,strict=json_extra_fields_policy=='forbid')
 
     @deprecated(
         since="0.8.0",
@@ -166,12 +168,12 @@ class ComputerUse:
                 raise TypeError(f"The 'data' argument must be of type {ComputerUseActionDto.__name__} or dict")
         else:
             data = ComputerUseActionDto(**kwargs)
-        self.client.logger.debug(f"Execute computer use action request: {data.model_dump_json()}")
+        self.client.logger.debug(f"Execute computer use action request: {data.model_dump_json(exclude_none=True)}")
         response = await self.client.request("POST",
                                        f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/actions/computer-use",
                                        json=data.model_dump(exclude_none=True))
         self.client.logger.debug(f"Execute computer use action response: {response.text}")
-        return SandboxActionResponseDto.model_validate_json(response.text)
+        return SandboxActionResponseDto.model_validate_json(response.text,strict=json_extra_fields_policy=='forbid')
 
 class MobileUse:
     """MobileUse is an async client for lybic MobileUse API(MCP and Restful)."""
@@ -203,7 +205,7 @@ class MobileUse:
         response = await self.client.request(
             "POST",
             f"/api/mobile-use/parse/{model}",
-            json=ParseTextRequestDto(textContent=llm_output).model_dump(),
+            json=ParseTextRequestDto(textContent=llm_output).model_dump(exclude_none=True),
         )
         self.client.logger.debug(f"Parse model output response: {response.text}")
-        return MobileUseActionResponseDto.model_validate_json(response.text)
+        return MobileUseActionResponseDto.model_validate_json(response.text,strict=json_extra_fields_policy=='forbid')

@@ -39,6 +39,7 @@ from PIL.WebPImagePlugin import WebPImageFile
 from lybic import dto
 from lybic._api import deprecated
 from lybic.lybic import LybicClient
+from lybic.dto import json_extra_fields_policy
 
 class Sandbox:
     """
@@ -54,7 +55,7 @@ class Sandbox:
         self.client.logger.debug("Listing sandboxes requests")
         response = await self.client.request("GET", f"/api/orgs/{self.client.org_id}/sandboxes")
         self.client.logger.debug(f"Listing sandboxes response: {response.text}")
-        return dto.SandboxListResponseDto.model_validate_json(response.text)
+        return dto.SandboxListResponseDto.model_validate_json(response.text,strict=json_extra_fields_policy=='forbid')
 
     @overload
     async def create(self, data: dto.CreateSandboxDto) -> dto.Sandbox: ...
@@ -77,7 +78,7 @@ class Sandbox:
             "POST",
             f"/api/orgs/{self.client.org_id}/sandboxes", json=data.model_dump(exclude_none=True))
         self.client.logger.debug(f"Create sandbox response: {response.text}")
-        return dto.Sandbox.model_validate_json(response.text)
+        return dto.Sandbox.model_validate_json(response.text,strict=json_extra_fields_policy=='forbid')
 
     async def get(self, sandbox_id: str) -> dto.GetSandboxResponseDto:
         """
@@ -88,7 +89,7 @@ class Sandbox:
             "GET",
             f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}")
         self.client.logger.debug(f"Get sandbox response: {response.text}")
-        return dto.GetSandboxResponseDto.model_validate_json(response.text)
+        return dto.GetSandboxResponseDto.model_validate_json(response.text,strict=json_extra_fields_policy=='forbid')
 
     async def delete(self, sandbox_id: str) -> None:
         """
@@ -144,12 +145,12 @@ class Sandbox:
                 raise TypeError(f"The 'data' argument must be of type {dto.ComputerUseActionDto.__name__} or dict")
         else:
             data = dto.ComputerUseActionDto(**kwargs)
-        self.client.logger.debug(f"Execute computer use action request: {data.model_dump_json()}")
+        self.client.logger.debug(f"Execute computer use action request: {data.model_dump_json(exclude_none=True)}")
         response = await self.client.request("POST",
                                        f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/actions/computer-use",
                                        json=data.model_dump(exclude_none=True))
         self.client.logger.debug(f"Execute computer use action response: {response.text}")
-        return dto.SandboxActionResponseDto.model_validate_json(response.text)
+        return dto.SandboxActionResponseDto.model_validate_json(response.text,strict=json_extra_fields_policy=='forbid')
 
     async def preview(self, sandbox_id: str) -> dto.SandboxActionResponseDto:
         """
@@ -160,7 +161,7 @@ class Sandbox:
             "POST",
             f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/preview")
         self.client.logger.debug(f"Previewed sandbox {sandbox_id}")
-        return dto.SandboxActionResponseDto.model_validate_json(response.text)
+        return dto.SandboxActionResponseDto.model_validate_json(response.text,strict=json_extra_fields_policy=='forbid')
 
     async def extend_life(self, sandbox_id: str, seconds: int = 3600) -> None:
         """Extend the life of a sandbox.
@@ -178,11 +179,11 @@ class Sandbox:
         await self.client.request(
             "POST",
             f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/extend",
-            json=data.model_dump())
+            json=data.model_dump(exclude_none=True))
 
     async def get_connection_details(self, sandbox_id: str)-> dto.ConnectDetails:
         """
-        Get connection details for a sandbox
+        Get stream connection details for a sandbox
         """
         sandbox = await self.get(sandbox_id)
         return sandbox.connectDetails
@@ -233,7 +234,7 @@ class Sandbox:
             f"/api/orgs/{self.client.org_id}/shapes"
         )
         self.client.logger.debug(f"Get shapes response: {response.text}")
-        return dto.GetShapesResponseDto.model_validate_json(response.text)
+        return dto.GetShapesResponseDto.model_validate_json(response.text,strict=json_extra_fields_policy=='forbid')
 
     @overload
     async def execute_sandbox_action(self, sandbox_id: str, data: dto.ExecuteSandboxActionDto) -> dto.SandboxActionResponseDto: ...
@@ -263,7 +264,7 @@ class Sandbox:
                                              f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/actions/execute",
                                              json=data.model_dump(exclude_none=True))
         self.client.logger.debug(f"Execute sandbox action response: {response.text}")
-        return dto.SandboxActionResponseDto.model_validate_json(response.text)
+        return dto.SandboxActionResponseDto.model_validate_json(response.text,strict=json_extra_fields_policy=='forbid')
 
     @overload
     async def copy_files(self, sandbox_id: str, data: dto.SandboxFileCopyRequestDto) -> dto.SandboxFileCopyResponseDto: ...
@@ -293,7 +294,7 @@ class Sandbox:
             f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/file/copy",
             json=data.model_dump(exclude_none=True))
         self.client.logger.debug(f"Copy files response: {response.text}")
-        return dto.SandboxFileCopyResponseDto.model_validate_json(response.text)
+        return dto.SandboxFileCopyResponseDto.model_validate_json(response.text,strict=json_extra_fields_policy=='forbid')
 
     @overload
     async def execute_process(self, sandbox_id: str, data: dto.SandboxProcessRequestDto) -> dto.SandboxProcessResponseDto: ...
@@ -323,4 +324,4 @@ class Sandbox:
             f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/process",
             json=data.model_dump(exclude_none=True))
         self.client.logger.debug(f"Execute process response: {response.text}")
-        return dto.SandboxProcessResponseDto.model_validate_json(response.text)
+        return dto.SandboxProcessResponseDto.model_validate_json(response.text,strict=json_extra_fields_policy=='forbid')

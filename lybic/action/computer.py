@@ -28,7 +28,7 @@
 from typing import Literal, Optional, Union
 from pydantic import BaseModel, Field
 
-from .common import Length, json_extra_fields_policy, ScreenshotAction, WaitAction, FinishedAction, FailedAction, ClientUserTakeoverAction
+from .common import Length, ScreenshotAction, WaitAction, FinishedAction, FailedAction, ClientUserTakeoverAction
 
 class MouseClickAction(BaseModel):
     """
@@ -41,14 +41,6 @@ class MouseClickAction(BaseModel):
     relative: bool = Field(False, description="Whether the coordinates are relative to the current mouse position")
     holdKey: Optional[str] = Field(None, description="Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
 
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True
 
 class MouseTripleClickAction(BaseModel):
     """
@@ -61,14 +53,6 @@ class MouseTripleClickAction(BaseModel):
     relative: bool = Field(False, description="Whether the coordinates are relative to the current mouse position.")
     holdKey: Optional[str] = Field(None, description="Key to hold down during triple click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
 
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True
 
 class MouseDoubleClickAction(BaseModel):
     """
@@ -81,14 +65,6 @@ class MouseDoubleClickAction(BaseModel):
     relative: bool = Field(False, description="Whether the coordinates are relative to the current mouse position")
     holdKey: Optional[str] = Field(None, description="Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
 
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True
 
 
 class MouseMoveAction(BaseModel):
@@ -100,15 +76,6 @@ class MouseMoveAction(BaseModel):
     y: Length
     relative: bool = Field(False, description="Whether the coordinates are relative to the current mouse position")
     holdKey: Optional[str] = Field(None, description="Key to hold down during move, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
-
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True
 
 
 class MouseScrollAction(BaseModel):
@@ -122,15 +89,6 @@ class MouseScrollAction(BaseModel):
     stepHorizontal: int
     relative: bool = Field(False, description="Whether the coordinates are relative to the current mouse position")
     holdKey: Optional[str] = Field(None, description="Key to hold down during scroll, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
-
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True
 
 
 class MouseDragAction(BaseModel):
@@ -147,15 +105,6 @@ class MouseDragAction(BaseModel):
     button: int = Field(..., description="Mouse button flag combination. 1: left, 2: right, 4: middle, 8: back, 16: forward; add them together to press multiple buttons at once.")
     holdKey: Optional[str] = Field(None, description="Key to hold down during drag, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\"")
 
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True
-
 
 class KeyboardTypeAction(BaseModel):
     """
@@ -164,15 +113,6 @@ class KeyboardTypeAction(BaseModel):
     type: Literal["keyboard:type"] =  "keyboard:type"
     content: str
     treatNewLineAsEnter: bool = Field(False, description="Whether to treat line breaks as enter. If true, any line breaks(\\n) in content will be treated as enter key press, and content will be split into multiple lines.")
-
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True
 
 
 class KeyboardHotkeyAction(BaseModel):
@@ -183,30 +123,12 @@ class KeyboardHotkeyAction(BaseModel):
     keys: str
     duration: Optional[int] = Field(None, description="Duration in milliseconds. If specified, the hotkey will be held for a while and then released.")
 
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True
-
-
 class KeyDownAction(BaseModel):
     """
     Press ONE key down, in xdotool key syntax. Only use this action if hotkey or type cannot satisfy your needs.
     """
     type: Literal["key:down"]= "key:down"
     key: str
-
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        validate_assignment = True
-        exclude_none = True
 
 
 class KeyUpAction(BaseModel):
@@ -215,15 +137,6 @@ class KeyUpAction(BaseModel):
     """
     type: Literal["key:up"] = "key:up"
     key: str
-
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        validate_assignment = True
-        exclude_none = True
-
 
 ComputerUseAction = Union[
     MouseClickAction,
