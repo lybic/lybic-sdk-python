@@ -88,11 +88,11 @@ class Mcp:
             data = kwargs["data"]
         else:
             data = dto.CreateMcpServerDto(**kwargs)
-        self.client.logger.debug(f"Create MCP server request: {data.model_dump_json()}")
+        self.client.logger.debug(f"Create MCP server request: {data.model_dump_json(exclude_none=True)}")
         response = await self.client.request(
             "POST",
             f"/api/orgs/{self.client.org_id}/mcp-servers",
-            json=data.model_dump())
+            json=data.model_dump(exclude_none=True))
         self.client.logger.debug(f"Create MCP server response: {response.text}")
         return dto.McpServerResponseDto.model_validate_json(response.text)
 
@@ -128,11 +128,11 @@ class Mcp:
         :return: None
         """
         data = dto.SetMcpServerToSandboxResponseDto(sandboxId=sandbox_id)
-        self.client.logger.debug(f"Set MCP server to sandbox request: {data.model_dump_json()}")
+        self.client.logger.debug(f"Set MCP server to sandbox request: {data.model_dump_json(exclude_none=True)}")
         await self.client.request(
             "POST",
             f"/api/orgs/{self.client.org_id}/mcp-servers/{mcp_server_id}/sandbox",
-            json=data.model_dump())
+            json=data.model_dump(exclude_none=True))
 
     async def call_tool_async(self,
                               mcp_server_id: str,
@@ -182,7 +182,7 @@ class Mcp:
 @deprecated(
     since="0.8.0",
     removal="1.0.0",
-    message="Use Mcp instead"
+    message="renamed: Use Mcp instead"
 )
 class MCP(Mcp):
     """

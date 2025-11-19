@@ -28,6 +28,13 @@
 
 __version__ = "0.10.0"
 
+# Strategy for handling extra fields in the lybic api response
+# "ignore" means ignore extra fields, which will ensure that your SDK version remains compatible with the Lybic platform,
+# but it may cause compatibility issues with future versions of the SDK.
+# "forbid" means that the SDK will throw an error if it encounters extra fields in the response, which will force you to
+# update your SDK when the Lybic platform is updated, and may have a certain impact on your online environment.
+from .dto import json_extra_fields_policy
+
 # Lybic Client
 from .authentication import LybicAuth
 from .lybic import LybicClient
@@ -68,6 +75,8 @@ __all__ = [
     "Pyautogui",
     "Sandbox",
     "Stats",
+
+    "json_extra_fields_policy",
 ]
 
 def __dir__() -> list[str]:

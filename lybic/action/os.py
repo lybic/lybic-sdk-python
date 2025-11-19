@@ -28,24 +28,12 @@
 from typing import Literal
 from pydantic import BaseModel
 
-from .common import json_extra_fields_policy
-
-
 class OsStartAppAction(BaseModel):
     """
     Start an app by its package name.
     """
     type: Literal["os:startApp"] = "os:startApp"
     packageName: str
-
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True
 
 class OsStartAppByNameAction(BaseModel):
     """
@@ -54,41 +42,14 @@ class OsStartAppByNameAction(BaseModel):
     type: Literal["os:startAppByName"] = "os:startAppByName"
     name: str
 
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True
-
 class OsCloseAppAction(BaseModel):
     """
     Close the current app.
     """
     type: Literal["os:closeApp"] = "os:closeApp"
 
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True
-
 class OsListAppsAction(BaseModel):
     """
     List installed apps.
     """
     type: Literal["os:listApps"] = "os:listApps"
-
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True

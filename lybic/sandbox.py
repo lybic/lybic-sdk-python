@@ -144,7 +144,7 @@ class Sandbox:
                 raise TypeError(f"The 'data' argument must be of type {dto.ComputerUseActionDto.__name__} or dict")
         else:
             data = dto.ComputerUseActionDto(**kwargs)
-        self.client.logger.debug(f"Execute computer use action request: {data.model_dump_json()}")
+        self.client.logger.debug(f"Execute computer use action request: {data.model_dump_json(exclude_none=True)}")
         response = await self.client.request("POST",
                                        f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/actions/computer-use",
                                        json=data.model_dump(exclude_none=True))
@@ -178,11 +178,11 @@ class Sandbox:
         await self.client.request(
             "POST",
             f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/extend",
-            json=data.model_dump())
+            json=data.model_dump(exclude_none=True))
 
     async def get_connection_details(self, sandbox_id: str)-> dto.ConnectDetails:
         """
-        Get connection details for a sandbox
+        Get stream connection details for a sandbox
         """
         sandbox = await self.get(sandbox_id)
         return sandbox.connectDetails

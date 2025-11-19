@@ -63,7 +63,7 @@ class Project:
         self.client.logger.debug("Creating project request with data: %s", data)
         response = await self.client.request(
             "POST",
-            f"/api/orgs/{self.client.org_id}/projects", json=data.model_dump())
+            f"/api/orgs/{self.client.org_id}/projects", json=data.model_dump(exclude_none=True))
         self.client.logger.debug("Create project response: %s", response.text)
         return dto.SingleProjectResponseDto.model_validate_json(response.text)
 

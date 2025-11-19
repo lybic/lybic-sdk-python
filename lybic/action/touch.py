@@ -28,7 +28,7 @@
 from typing import Literal
 from pydantic import BaseModel
 
-from .common import Length, json_extra_fields_policy
+from .common import Length
 
 
 class TouchTapAction(BaseModel):
@@ -39,14 +39,6 @@ class TouchTapAction(BaseModel):
     x: Length
     y: Length
 
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True
 
 class TouchDragAction(BaseModel):
     """
@@ -58,14 +50,6 @@ class TouchDragAction(BaseModel):
     endX: Length
     endY: Length
 
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True
 
 class TouchSwipeAction(BaseModel):
     """
@@ -77,15 +61,6 @@ class TouchSwipeAction(BaseModel):
     direction: Literal["up", "down", "left", "right"]
     distance: Length
 
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True
-
 class TouchLongPressAction(BaseModel):
     """
     Long press the screen at the specified coordinates.
@@ -94,12 +69,3 @@ class TouchLongPressAction(BaseModel):
     x: Length
     y: Length
     duration: int
-
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True

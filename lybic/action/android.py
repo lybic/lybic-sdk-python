@@ -28,34 +28,14 @@
 from typing import Literal
 from pydantic import BaseModel
 
-from .common import json_extra_fields_policy
-
 class AndroidBackAction(BaseModel):
     """
     Press the back button on Android device.
     """
     type: Literal["android:back"] = "android:back"
 
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True
-
 class AndroidHomeAction(BaseModel):
     """
     Press the home button on Android device.
     """
     type: Literal["android:home"] = "android:home"
-
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True

@@ -28,26 +28,12 @@
 from typing import Literal, Optional, Union
 from pydantic import BaseModel
 
-# pylint: disable=invalid-name
-
-# Strategy for handling extra fields in the lybic api response
-json_extra_fields_policy = "ignore"
-
-
 class PixelLength(BaseModel):
     """
     Represents a length in pixels.
     """
     type: Literal["px"] = "px"
     value: int
-
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        validate_assignment = True
-        exclude_none = True
 
 
 class FractionalLength(BaseModel):
@@ -58,15 +44,6 @@ class FractionalLength(BaseModel):
     numerator: int
     denominator: int
 
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        validate_assignment = True
-        exclude_none = True
-
-
 Length = Union[PixelLength, FractionalLength]
 
 
@@ -76,30 +53,12 @@ class ClientUserTakeoverAction(BaseModel):
     """
     type: Literal["client:user-takeover"] = "client:user-takeover"
 
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True
-
 
 class ScreenshotAction(BaseModel):
     """
     Represents an action to take a screenshot.
     """
     type: Literal["screenshot"] = "screenshot"
-
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True
 
 
 class WaitAction(BaseModel):
@@ -109,15 +68,6 @@ class WaitAction(BaseModel):
     type: Literal["wait"] = "wait"
     duration: int
 
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True
-
 
 class FinishedAction(BaseModel):
     """
@@ -126,15 +76,6 @@ class FinishedAction(BaseModel):
     type: Literal["finished"] = "finished"
     message: Optional[str] = None
 
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True
-
 
 class FailedAction(BaseModel):
     """
@@ -142,15 +83,6 @@ class FailedAction(BaseModel):
     """
     type: Literal["failed"] = "failed"
     message: Optional[str] = None
-
-    class Config:
-        """
-        Configuration for Pydantic model.
-        """
-        extra = json_extra_fields_policy
-        # Allow population of fields with default values
-        validate_assignment = True
-        exclude_none = True
 
 
 CommonAction = Union[
