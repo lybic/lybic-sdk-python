@@ -2,9 +2,6 @@
 #
 # Copyright (c) 2019-2025   Beijing Tingyu Technology Co., Ltd.
 # Copyright (c) 2025        Lybic Development Team <team@lybic.ai, lybic@tingyutech.com>
-# Copyright (c) 2025        Lu Yicheng <luyicheng@tingyutech.com>
-#
-# Author: AEnjoy <aenjoyable@163.com>
 #
 # These Terms of Service ("Terms") set forth the rules governing your access to and use of the website lybic.ai
 # ("Website"), our web applications, and other services (collectively, the "Services") provided by Beijing Tingyu
@@ -26,7 +23,7 @@
 
 """ Lybic SDK import header"""
 
-__version__ = "0.10.0"
+__version__ = "0.11.0" # SDK Api Leval
 
 # Strategy for handling extra fields in the lybic api response
 # "ignore" means ignore extra fields, which will ensure that your SDK version remains compatible with the Lybic platform,
