@@ -82,7 +82,7 @@ from lybic.action import (
     Action,
 )
 # Strategy for handling extra fields in the lybic api response
-json_extra_fields_policy:ExtraValues="ignore"
+json_extra_fields_policy: ExtraValues = "ignore"
 
 class StatsResponseDto(BaseModel):
     """
