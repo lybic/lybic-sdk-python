@@ -39,7 +39,6 @@ from PIL.WebPImagePlugin import WebPImageFile
 from lybic import dto
 from lybic._api import deprecated
 from lybic.lybic import LybicClient
-from lybic.dto import json_extra_fields_policy
 
 class Sandbox:
     """
@@ -55,7 +54,7 @@ class Sandbox:
         self.client.logger.debug("Listing sandboxes requests")
         response = await self.client.request("GET", f"/api/orgs/{self.client.org_id}/sandboxes")
         self.client.logger.debug(f"Listing sandboxes response: {response.text}")
-        return dto.SandboxListResponseDto.model_validate_json(response.text,strict=json_extra_fields_policy=='forbid')
+        return dto.SandboxListResponseDto.model_validate_json(response.text)
 
     @overload
     async def create(self, data: dto.CreateSandboxDto) -> dto.Sandbox: ...
@@ -78,7 +77,7 @@ class Sandbox:
             "POST",
             f"/api/orgs/{self.client.org_id}/sandboxes", json=data.model_dump(exclude_none=True))
         self.client.logger.debug(f"Create sandbox response: {response.text}")
-        return dto.Sandbox.model_validate_json(response.text,strict=json_extra_fields_policy=='forbid')
+        return dto.Sandbox.model_validate_json(response.text)
 
     async def get(self, sandbox_id: str) -> dto.GetSandboxResponseDto:
         """
@@ -89,7 +88,7 @@ class Sandbox:
             "GET",
             f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}")
         self.client.logger.debug(f"Get sandbox response: {response.text}")
-        return dto.GetSandboxResponseDto.model_validate_json(response.text,strict=json_extra_fields_policy=='forbid')
+        return dto.GetSandboxResponseDto.model_validate_json(response.text)
 
     async def delete(self, sandbox_id: str) -> None:
         """
@@ -150,7 +149,7 @@ class Sandbox:
                                        f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/actions/computer-use",
                                        json=data.model_dump(exclude_none=True))
         self.client.logger.debug(f"Execute computer use action response: {response.text}")
-        return dto.SandboxActionResponseDto.model_validate_json(response.text,strict=json_extra_fields_policy=='forbid')
+        return dto.SandboxActionResponseDto.model_validate_json(response.text)
 
     async def preview(self, sandbox_id: str) -> dto.SandboxActionResponseDto:
         """
@@ -161,7 +160,7 @@ class Sandbox:
             "POST",
             f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/preview")
         self.client.logger.debug(f"Previewed sandbox {sandbox_id}")
-        return dto.SandboxActionResponseDto.model_validate_json(response.text,strict=json_extra_fields_policy=='forbid')
+        return dto.SandboxActionResponseDto.model_validate_json(response.text)
 
     async def extend_life(self, sandbox_id: str, seconds: int = 3600) -> None:
         """Extend the life of a sandbox.
@@ -234,7 +233,7 @@ class Sandbox:
             f"/api/orgs/{self.client.org_id}/shapes"
         )
         self.client.logger.debug(f"Get shapes response: {response.text}")
-        return dto.GetShapesResponseDto.model_validate_json(response.text,strict=json_extra_fields_policy=='forbid')
+        return dto.GetShapesResponseDto.model_validate_json(response.text)
 
     @overload
     async def execute_sandbox_action(self, sandbox_id: str, data: dto.ExecuteSandboxActionDto) -> dto.SandboxActionResponseDto: ...
@@ -264,7 +263,7 @@ class Sandbox:
                                              f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/actions/execute",
                                              json=data.model_dump(exclude_none=True))
         self.client.logger.debug(f"Execute sandbox action response: {response.text}")
-        return dto.SandboxActionResponseDto.model_validate_json(response.text,strict=json_extra_fields_policy=='forbid')
+        return dto.SandboxActionResponseDto.model_validate_json(response.text)
 
     @overload
     async def copy_files(self, sandbox_id: str, data: dto.SandboxFileCopyRequestDto) -> dto.SandboxFileCopyResponseDto: ...
@@ -294,7 +293,7 @@ class Sandbox:
             f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/file/copy",
             json=data.model_dump(exclude_none=True))
         self.client.logger.debug(f"Copy files response: {response.text}")
-        return dto.SandboxFileCopyResponseDto.model_validate_json(response.text,strict=json_extra_fields_policy=='forbid')
+        return dto.SandboxFileCopyResponseDto.model_validate_json(response.text)
 
     @overload
     async def execute_process(self, sandbox_id: str, data: dto.SandboxProcessRequestDto) -> dto.SandboxProcessResponseDto: ...
@@ -324,4 +323,4 @@ class Sandbox:
             f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/process",
             json=data.model_dump(exclude_none=True))
         self.client.logger.debug(f"Execute process response: {response.text}")
-        return dto.SandboxProcessResponseDto.model_validate_json(response.text,strict=json_extra_fields_policy=='forbid')
+        return dto.SandboxProcessResponseDto.model_validate_json(response.text)

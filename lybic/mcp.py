@@ -33,7 +33,6 @@ import httpx
 from lybic import dto
 from lybic._api import deprecated
 from lybic.lybic import LybicClient
-from lybic.dto import json_extra_fields_policy
 
 # pylint: disable=invalid-name
 try:
@@ -68,7 +67,7 @@ class Mcp:
             "GET",
             f"/api/orgs/{self.client.org_id}/mcp-servers")
         self.client.logger.debug(f"List MCP servers response: {response.text}")
-        return dto.ListMcpServerResponse.model_validate_json(response.text,strict=json_extra_fields_policy=='forbid')
+        return dto.ListMcpServerResponse.model_validate_json(response.text)
 
     @overload
     async def create(self, data: dto.CreateMcpServerDto) -> dto.McpServerResponseDto: ...
@@ -95,7 +94,7 @@ class Mcp:
             f"/api/orgs/{self.client.org_id}/mcp-servers",
             json=data.model_dump(exclude_none=True))
         self.client.logger.debug(f"Create MCP server response: {response.text}")
-        return dto.McpServerResponseDto.model_validate_json(response.text,strict=json_extra_fields_policy=='forbid')
+        return dto.McpServerResponseDto.model_validate_json(response.text)
 
     async def get_default(self) -> dto.McpServerResponseDto:
         """
@@ -108,7 +107,7 @@ class Mcp:
             "GET",
             f"/api/orgs/{self.client.org_id}/mcp-servers/default")
         self.client.logger.debug(f"Get default MCP server response: {response.text}")
-        return dto.McpServerResponseDto.model_validate_json(response.text,strict=json_extra_fields_policy=='forbid')
+        return dto.McpServerResponseDto.model_validate_json(response.text)
 
     async def delete(self, mcp_server_id: str) -> None:
         """

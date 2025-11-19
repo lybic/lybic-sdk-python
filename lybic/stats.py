@@ -27,7 +27,6 @@
 """Provides the Stats class for accessing organization statistics."""
 from lybic import dto
 from lybic.lybic import LybicClient
-from lybic.dto import json_extra_fields_policy
 
 class Stats:
     """Provides methods to retrieve statistics for an organization."""
@@ -41,4 +40,4 @@ class Stats:
         self.client.logger.debug("Get stats requests")
         response = await self.client.request("GET", f"/api/orgs/{self.client.org_id}/stats")
         self.client.logger.debug("Get stats response: %s", response.text)
-        return dto.StatsResponseDto.model_validate_json(response.text,strict=json_extra_fields_policy=='forbid')
+        return dto.StatsResponseDto.model_validate_json(response.text)

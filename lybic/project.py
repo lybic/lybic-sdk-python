@@ -29,7 +29,6 @@ from typing import overload
 
 from lybic import dto
 from lybic.lybic import LybicClient
-from lybic.dto import json_extra_fields_policy
 
 class Project:
     """
@@ -45,7 +44,7 @@ class Project:
         self.client.logger.debug("Listing projects request")
         response = await self.client.request("GET", f"/api/orgs/{self.client.org_id}/projects")
         self.client.logger.debug("Listing projects response: %s", response.text)
-        return dto.ListProjectsResponseDto.model_validate_json(response.text,strict=json_extra_fields_policy=='forbid')
+        return dto.ListProjectsResponseDto.model_validate_json(response.text)
 
     @overload
     async def create(self, data: dto.CreateProjectDto) -> dto.SingleProjectResponseDto: ...
@@ -66,7 +65,7 @@ class Project:
             "POST",
             f"/api/orgs/{self.client.org_id}/projects", json=data.model_dump(exclude_none=True))
         self.client.logger.debug("Create project response: %s", response.text)
-        return dto.SingleProjectResponseDto.model_validate_json(response.text,strict=json_extra_fields_policy=='forbid')
+        return dto.SingleProjectResponseDto.model_validate_json(response.text)
 
     async def delete(self, project_id: str) -> None:
         """

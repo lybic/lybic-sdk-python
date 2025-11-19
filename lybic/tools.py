@@ -38,8 +38,6 @@ from lybic.dto import (
     ComputerUseActionDto,
     SandboxActionResponseDto,
     MobileUseActionResponseDto,
-
-    json_extra_fields_policy
 )
 from lybic.lybic import LybicClient
 from lybic._api import deprecated
@@ -86,7 +84,7 @@ class ComputerUse:
             "/api/computer-use/parse",
             json=data.model_dump(exclude_none=True))
         self.client.logger.debug(f"Parse model output response: {response.text}")
-        return ComputerUseActionResponseDto.model_validate_json(response.text,strict=json_extra_fields_policy=='forbid')
+        return ComputerUseActionResponseDto.model_validate_json(response.text)
     async def parse_llm_output(
         self, model_type: ModelType | str, llm_output: str
     ) -> ComputerUseActionResponseDto:
@@ -115,7 +113,7 @@ class ComputerUse:
             json=ParseTextRequestDto(textContent=llm_output).model_dump(exclude_none=True),
         )
         self.client.logger.debug(f"Parse model output response: {response.text}")
-        return ComputerUseActionResponseDto.model_validate_json(response.text,strict=json_extra_fields_policy=='forbid')
+        return ComputerUseActionResponseDto.model_validate_json(response.text)
 
     @deprecated(
         since="0.8.0",
@@ -173,7 +171,7 @@ class ComputerUse:
                                        f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/actions/computer-use",
                                        json=data.model_dump(exclude_none=True))
         self.client.logger.debug(f"Execute computer use action response: {response.text}")
-        return SandboxActionResponseDto.model_validate_json(response.text,strict=json_extra_fields_policy=='forbid')
+        return SandboxActionResponseDto.model_validate_json(response.text)
 
 class MobileUse:
     """MobileUse is an async client for lybic MobileUse API(MCP and Restful)."""
@@ -208,4 +206,4 @@ class MobileUse:
             json=ParseTextRequestDto(textContent=llm_output).model_dump(exclude_none=True),
         )
         self.client.logger.debug(f"Parse model output response: {response.text}")
-        return MobileUseActionResponseDto.model_validate_json(response.text,strict=json_extra_fields_policy=='forbid')
+        return MobileUseActionResponseDto.model_validate_json(response.text)
