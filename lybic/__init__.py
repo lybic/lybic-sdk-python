@@ -32,6 +32,9 @@ __version__ = "0.10.0"
 from .authentication import LybicAuth
 from .lybic import LybicClient
 
+# Exceptions
+from .exceptions import LybicError, LybicAPIError, LybicInternalError
+
 # MCP Operations
 from .mcp import MCP, Mcp
 
@@ -54,6 +57,10 @@ __all__ = [
     "__version__",
     "LybicAuth",
     "LybicClient",
+
+    "LybicError",
+    "LybicAPIError",
+    "LybicInternalError",
 
     "MCP",
     "ComputerUse",

@@ -26,11 +26,13 @@
 
 """lybic.py is the main entry point for Lybic API."""
 import asyncio
+import json
 from typing import Optional
 import httpx
 
 from lybic.authentication import LybicAuth
 from lybic.base import _LybicBaseClient, _sentinel
+from lybic.exceptions import LybicAPIError, LybicInternalError
 
 
 class LybicClient(_LybicBaseClient):
@@ -97,6 +99,9 @@ class LybicClient(_LybicBaseClient):
         :param path:
         :param kwargs:
         :return:
+        :raises LybicAPIError: When API returns structured error response
+        :raises LybicInternalError: When 5xx error occurs from reverse proxy
+        :raises httpx.RequestError: When network-level error occurs
         """
         self._ensure_client_is_open()
 
@@ -111,7 +116,52 @@ class LybicClient(_LybicBaseClient):
                 response = await self.client.request(method, url, headers=headers, **kwargs)
                 response.raise_for_status()
                 return response
-            except (httpx.RequestError, httpx.HTTPStatusError) as e:
+            except httpx.HTTPStatusError as e:
+                # Check if this is the last attempt
+                if attempt < self.max_retries:
+                    self.logger.debug(f"Request failed (attempt {attempt + 1}/{self.max_retries + 1}): {e}")
+                    last_exception = e
+                    await asyncio.sleep(2 ** attempt)
+                    continue
+                
+                # Last attempt, convert to custom exception
+                self.logger.error("Request failed after %d attempts", self.max_retries + 1)
+                
+                # Check if it's a 5xx error from reverse proxy
+                if e.response.status_code >= 500:
+                    # Try to parse JSON response
+                    try:
+                        error_data = e.response.json()
+                        if isinstance(error_data, dict) and "message" in error_data:
+                            # Structured API error response
+                            raise LybicAPIError(
+                                message=error_data.get("message", "Unknown error"),
+                                code=error_data.get("code"),
+                                status_code=e.response.status_code,
+                            ) from e
+                    except (json.JSONDecodeError, ValueError):
+                        # Not a JSON response, likely HTML from reverse proxy
+                        pass
+                    
+                    # If we got here, it's a reverse proxy error
+                    raise LybicInternalError(status_code=e.response.status_code) from e
+                
+                # For 4xx errors, try to parse structured error response
+                try:
+                    error_data = e.response.json()
+                    if isinstance(error_data, dict) and "message" in error_data:
+                        raise LybicAPIError(
+                            message=error_data.get("message", "Unknown error"),
+                            code=error_data.get("code"),
+                            status_code=e.response.status_code,
+                        ) from e
+                except (json.JSONDecodeError, ValueError):
+                    # Not a JSON response, re-raise original exception
+                    pass
+                
+                # If we couldn't parse it as a structured error, re-raise original
+                raise
+            except httpx.RequestError as e:
                 last_exception = e
                 if attempt < self.max_retries:
                     self.logger.debug(f"Request failed (attempt {attempt + 1}/{self.max_retries + 1}): {e}")
