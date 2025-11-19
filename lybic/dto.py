@@ -128,8 +128,6 @@ class ListMcpServerResponse(RootModel):
     """
     A list of MCP server responses.
     """
-    model_config = ConfigDict(extra=json_extra_fields_policy)
-
     root: List[McpServerResponseDto]
 
     def __iter__(self):
@@ -224,8 +222,6 @@ class SandboxListResponseDto(RootModel):
     """
     A response DTO containing a list of sandboxes.
     """
-    model_config = ConfigDict(extra=json_extra_fields_policy)
-
     root: List[SandboxListItem]
 
     def __iter__(self):
@@ -441,8 +437,6 @@ class GetShapesResponseDto(RootModel):
     """
     Response DTO for getting shapers.
     """
-    model_config = ConfigDict(extra=json_extra_fields_policy)
-
     root: List[Shapes]
 
     def __iter__(self):
