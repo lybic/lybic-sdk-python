@@ -900,3 +900,101 @@ if __name__ == "__main__":
     if __name__ == '__main__':
         asyncio.run(run_process_example())
     ```
+
+### Error Handling
+
+The SDK provides user-friendly exceptions for API errors instead of raw HTTP errors.
+
+#### Exception Classes
+
+- `LybicError`: Base exception class for all Lybic SDK errors
+- `LybicAPIError`: For API errors with structured responses (containing 'code' and 'message' fields)
+- `LybicInternalError`: For 5xx reverse proxy errors that return HTML pages
+
+#### Basic Error Handling
+
+```python
+from lybic import LybicClient, LybicAPIError, LybicInternalError
+
+async with LybicClient() as client:
+    try:
+        # Example API call that might fail
+        result = await client.request("GET", "/api/orgs/test/sandboxes/invalid-id")
+    except LybicAPIError as e:
+        # Handle structured API errors (4xx/5xx with JSON response)
+        print(f"❌ API Error: {e.message}")
+        if e.code:
+            print(f"   Error Code: {e.code}")
+        print(f"   HTTP Status: {e.status_code}")
+    except LybicInternalError as e:
+        # Handle reverse proxy 5xx errors (HTML response)
+        print(f"❌ {e.message}")
+        print(f"   HTTP Status: {e.status_code}")
+    except Exception as e:
+        # Handle other errors (network issues, timeouts, etc.)
+        print(f"❌ Unexpected error: {e}")
+```
+
+#### Structured API Errors
+
+When the API returns a structured error like:
+```json
+{"code": "nomos.partner.NO_ROOMS_AVAILABLE", "message": "No rooms available"}
+```
+
+The SDK will raise `LybicAPIError` with:
+- `message`: "No rooms available"
+- `code`: "nomos.partner.NO_ROOMS_AVAILABLE"
+- `status_code`: HTTP status code (e.g., 400, 404, 500)
+
+Example:
+```python
+from lybic import LybicClient, LybicAPIError
+
+async with LybicClient() as client:
+    try:
+        result = await client.request("POST", "/api/some-endpoint")
+    except LybicAPIError as e:
+        # You can access individual error properties
+        print(f"Error message: {e.message}")
+        print(f"Error code: {e.code}")
+        print(f"Status code: {e.status_code}")
+        
+        # The string representation includes both message and code
+        print(f"Full error: {e}")
+        # Output: "No rooms available (code: nomos.partner.NO_ROOMS_AVAILABLE)"
+```
+
+#### Internal Server Errors
+
+When a 5xx error occurs at the reverse proxy level and returns HTML instead of JSON, the SDK will raise `LybicInternalError` with:
+- `message`: "internal error occur"
+- `status_code`: HTTP status code (e.g., 500, 502, 503)
+
+Example:
+```python
+from lybic import LybicClient, LybicInternalError
+
+async with LybicClient() as client:
+    try:
+        result = await client.request("GET", "/api/endpoint")
+    except LybicInternalError as e:
+        print(f"Internal error: {e.message}")  # "internal error occur"
+        print(f"Status code: {e.status_code}")
+```
+
+#### Catching All Lybic Errors
+
+You can catch `LybicError` to handle all SDK-specific errors, or catch specific exceptions for more granular handling:
+
+```python
+from lybic import LybicClient, LybicError
+
+async with LybicClient() as client:
+    try:
+        result = await client.request("GET", "/api/endpoint")
+    except LybicError as e:
+        # This catches both LybicAPIError and LybicInternalError
+        print(f"Lybic SDK error: {e.message}")
+        print(f"Status code: {e.status_code}")
+```
