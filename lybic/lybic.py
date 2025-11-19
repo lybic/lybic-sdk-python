@@ -123,10 +123,10 @@ class LybicClient(_LybicBaseClient):
                     last_exception = e
                     await asyncio.sleep(2 ** attempt)
                     continue
-                
+
                 # Last attempt, convert to custom exception
                 self.logger.error("Request failed after %d attempts", self.max_retries + 1)
-                
+
                 # Check if it's a 5xx error from reverse proxy
                 if e.response.status_code >= 500:
                     # Try to parse JSON response
@@ -142,10 +142,10 @@ class LybicClient(_LybicBaseClient):
                     except (json.JSONDecodeError, ValueError):
                         # Not a JSON response, likely HTML from reverse proxy
                         pass
-                    
+
                     # If we got here, it's a reverse proxy error
                     raise LybicInternalError(status_code=e.response.status_code) from e
-                
+
                 # For 4xx errors, try to parse structured error response
                 try:
                     error_data = e.response.json()
@@ -158,7 +158,7 @@ class LybicClient(_LybicBaseClient):
                 except (json.JSONDecodeError, ValueError):
                     # Not a JSON response, re-raise original exception
                     pass
-                
+
                 # If we couldn't parse it as a structured error, re-raise original
                 raise
             except httpx.RequestError as e:
