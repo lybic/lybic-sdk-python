@@ -28,7 +28,7 @@
 import uuid
 from enum import Enum, unique
 from typing import List, Optional, Literal
-from pydantic import BaseModel, Field, RootModel, ConfigDict
+from pydantic import BaseModel, Field, RootModel
 
 from lybic._api import deprecated
 
