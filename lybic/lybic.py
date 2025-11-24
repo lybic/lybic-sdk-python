@@ -30,9 +30,14 @@ import json
 from typing import Optional
 import httpx
 
-from lybic.authentication import LybicAuth
-from lybic.base import _LybicBaseClient, _sentinel
-from lybic.exceptions import LybicAPIError, LybicInternalError
+from .mcp import Mcp
+from .stats import Stats
+from .project import Project
+from .sandbox import Sandbox
+from .authentication import LybicAuth
+from .base import _LybicBaseClient, _sentinel
+from .exceptions import LybicAPIError, LybicInternalError
+from .tools import Tools
 
 
 class LybicClient(_LybicBaseClient):
@@ -63,6 +68,12 @@ class LybicClient(_LybicBaseClient):
 
         self.client: httpx.AsyncClient | None = None
         self._in_context = False
+
+        self.sandbox = Sandbox(self)
+        self.project = Project(self)
+        self.mcp = Mcp(self)
+        self.stats = Stats(self)
+        self.tools = Tools(self)
 
     def _ensure_client_is_open(self):
         if self.client is None:

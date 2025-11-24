@@ -25,6 +25,8 @@
 
 __version__ = "0.11.0" # SDK Api Leval
 
+version = __version__  # SDK Api Leval
+
 # Strategy for handling extra fields in the lybic api response
 # "ignore" means ignore extra fields, which will ensure that your SDK version remains compatible with the Lybic platform,
 # but it may cause compatibility issues with future versions of the SDK.
@@ -43,7 +45,7 @@ from .exceptions import LybicError, LybicAPIError, LybicInternalError
 from .mcp import MCP, Mcp
 
 #  Tools
-from .tools import ComputerUse
+from .tools import ComputerUse,MobileUse,Tools
 
 # Project
 from .project import Project

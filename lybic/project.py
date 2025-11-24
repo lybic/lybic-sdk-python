@@ -25,16 +25,18 @@
 # THE SOFTWARE.
 
 """project.py provides the Project manager ability to use"""
-from typing import overload
+from typing import overload, TYPE_CHECKING
 
 from lybic import dto
-from lybic.lybic import LybicClient
+
+if TYPE_CHECKING:
+    from lybic.lybic import LybicClient
 
 class Project:
     """
     Projects class are used to organize Projects.
     """
-    def __init__(self, client: LybicClient):
+    def __init__(self, client: "LybicClient"):
         self.client = client
 
     async def list(self) -> dto.ListProjectsResponseDto:

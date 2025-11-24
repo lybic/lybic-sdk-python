@@ -29,7 +29,7 @@
 """sandbox.py provides the Sandbox API"""
 import base64
 from io import BytesIO
-from typing import Tuple, overload
+from typing import Tuple, overload, TYPE_CHECKING
 
 import httpx
 
@@ -38,13 +38,15 @@ from PIL.WebPImagePlugin import WebPImageFile
 
 from lybic import dto
 from lybic._api import deprecated
-from lybic.lybic import LybicClient
+
+if TYPE_CHECKING:
+    from lybic.lybic import LybicClient
 
 class Sandbox:
     """
     Sandbox API
     """
-    def __init__(self, client: LybicClient):
+    def __init__(self, client: "LybicClient"):
         self.client = client
 
     async def list(self) -> dto.SandboxListResponseDto:
