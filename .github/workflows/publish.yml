@@ -17,7 +17,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
       # This will check out the code at the specific tag that triggered the workflow
 
     - name: Set up Python

@@ -17,7 +17,7 @@ jobs:
       contents: write
     steps:
       - name: Checkout code from selected branch
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           token: ${{ secrets.GH_PAT }}
           fetch-depth: 0 # Required for changelog generation from git history
