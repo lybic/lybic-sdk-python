@@ -213,6 +213,5 @@ class MobileUse:
 class Tools:
     """Tools is a container for various tool clients."""
     def __init__(self, client: "LybicClient"):
-        self.client = client
         self.computer_use = ComputerUse(client)
         self.mobile_use = MobileUse(client)
