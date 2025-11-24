@@ -80,4 +80,4 @@ def __dir__() -> list[str]:
     return list(__all__)
 
 # pylint: disable=invalid-name
-version = __version__  # SDK Api Leval
+version = __version__  # SDK Api Level
