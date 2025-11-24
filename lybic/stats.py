@@ -25,12 +25,15 @@
 # THE SOFTWARE.
 
 """Provides the Stats class for accessing organization statistics."""
+from typing import TYPE_CHECKING
 from lybic import dto
-from lybic.lybic import LybicClient
+
+if TYPE_CHECKING:
+    from lybic.lybic import LybicClient
 
 class Stats:
     """Provides methods to retrieve statistics for an organization."""
-    def __init__(self, client: LybicClient):
+    def __init__(self, client: "LybicClient"):
         self.client = client
 
     async def get(self) -> dto.StatsResponseDto:

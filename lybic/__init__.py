@@ -43,7 +43,7 @@ from .exceptions import LybicError, LybicAPIError, LybicInternalError
 from .mcp import MCP, Mcp
 
 #  Tools
-from .tools import ComputerUse
+from .tools import ComputerUse, MobileUse, Tools
 
 # Project
 from .project import Project
@@ -78,3 +78,6 @@ __all__ = [
 
 def __dir__() -> list[str]:
     return list(__all__)
+
+# pylint: disable=invalid-name
+version = __version__  # SDK Api Level

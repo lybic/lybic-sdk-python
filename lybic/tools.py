@@ -28,7 +28,7 @@ lybic.tools:
 ComputerUse tools
 MobileUse tools
 """
-from typing import overload
+from typing import overload, TYPE_CHECKING
 
 from lybic.dto import (
     ParseTextRequestDto,
@@ -39,12 +39,14 @@ from lybic.dto import (
     SandboxActionResponseDto,
     MobileUseActionResponseDto,
 )
-from lybic.lybic import LybicClient
 from lybic._api import deprecated
+
+if TYPE_CHECKING:
+    from lybic.lybic import LybicClient
 
 class ComputerUse:
     """ComputerUse is an async client for lybic ComputerUse API(MCP and Restful)."""
-    def __init__(self, client: LybicClient):
+    def __init__(self, client: "LybicClient"):
         self.client = client
     @deprecated(
         since="0.7.0",
@@ -175,7 +177,7 @@ class ComputerUse:
 
 class MobileUse:
     """MobileUse is an async client for lybic MobileUse API(MCP and Restful)."""
-    def __init__(self, client: LybicClient):
+    def __init__(self, client: "LybicClient"):
         self.client = client
 
     async def parse_llm_output(
@@ -207,3 +209,9 @@ class MobileUse:
         )
         self.client.logger.debug(f"Parse model output response: {response.text}")
         return MobileUseActionResponseDto.model_validate_json(response.text)
+
+class Tools:
+    """Tools is a container for various tool clients."""
+    def __init__(self, client: "LybicClient"):
+        self.computer_use = ComputerUse(client)
+        self.mobile_use = MobileUse(client)

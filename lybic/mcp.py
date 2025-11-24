@@ -26,13 +26,15 @@
 
 """mcp.py: MCP client for lybic MCP(Model Context Protocol) and Restful Interface API."""
 import asyncio
-from typing import overload
+from typing import overload, TYPE_CHECKING
 
 import httpx
 
 from lybic import dto
 from lybic._api import deprecated
-from lybic.lybic import LybicClient
+
+if TYPE_CHECKING:
+    from lybic.lybic import LybicClient
 
 # pylint: disable=invalid-name
 try:
@@ -48,7 +50,7 @@ except ImportError:
 
 class Mcp:
     """Mcp is an async client for lybic MCP(Model Context Protocol) and Restful Interface API."""
-    def __init__(self, client: LybicClient):
+    def __init__(self, client: "LybicClient"):
         """
         Init MCP client with lybic client
 
@@ -190,7 +192,7 @@ class MCP(Mcp):
 
     According to the python naming convention, please use Class Mcp
     """
-    def __init__(self, client: LybicClient):
+    def __init__(self, client: "LybicClient"):
         """
         Initialize MCP client
 
