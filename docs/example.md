@@ -335,13 +335,13 @@ if __name__ == "__main__":
    - return: class dto.SandboxListResponseDto
 
    ```python
-   from lybic import Sandbox
-
+   from lybic import LybicClient
    # Inside your async main function, with the client initialized:
-   sandbox = Sandbox(client)
-   sandboxes = await sandbox.list()
-   for s in sandboxes:
-       print(s)
+   async def list():
+     client = LybicClient()  # Initialize your client here
+     sandboxes = await client.sandbox.list()
+     for s in sandboxes:
+         print(s)
    ```
    It will out put something like this:
    ```
@@ -360,16 +360,16 @@ if __name__ == "__main__":
    - return: class dto.GetSandboxResponseDto
 
    ```python
-   from lybic import dto, Sandbox
-
-   # Inside your async main function, with the client initialized:
-   sandbox = Sandbox(client)
-   # Using DTO
-   new_sandbox = await sandbox.create(dto.CreateSandboxDto(name="my-sandbox", shape="xxx"))
-   print(new_sandbox)
-   # Using keyword arguments
-   new_sandbox_2 = await sandbox.create(name="my-sandbox-2", shape="xxx")
-   print(new_sandbox_2)
+   from lybic import dto, LybicClient
+   async def main():
+      # Inside your async main function, with the client initialized:
+      client = LybicClient()
+      # Using DTO
+      new_sandbox = await client.sandbox.create(dto.CreateSandboxDto(name="my-sandbox", shape="xxx"))
+      print(new_sandbox)
+      # Using keyword arguments
+      new_sandbox_2 = await client.sandbox.create(name="my-sandbox-2", shape="xxx")
+      print(new_sandbox_2)
    ```
 
 3. Get a specific sandbox
@@ -380,19 +380,17 @@ if __name__ == "__main__":
    - return: class dto.GetSandboxResponseDto
 
    ```python
-   import asyncio
-   from lybic import Sandbox
-
-   # Inside your async main function, with the client initialized:
-   sandbox = Sandbox(client)
-   details = await sandbox.get(sandbox_id="SBX-xxxx")
-   print(details)
-   ```
-
-   It will out put something like this:
-
-   ```
-   sandbox=Sandbox(id='SBX-xxxx', name='xxxx', expiredAt='2025-07-26T08:24:11.198Z', expiresAt='2025-07-26T08:24:11.198Z', createdAt='2025-07-26T07:24:11.199Z', projectId='PRJ-xxxx'), connectDetails=ConnectDetails(gatewayAddresses=[GatewayAddress(address='1.2.3.4', port=12345, name='0197e397-5394-7880-a314-d8a7e981f9e4', preferredProviders=[1], gatewayType=4)], certificateHashBase64='baes64str==', endUserToken='jwttokenbase64str')
+   from lybic import dto, LybicClient
+   async def main():
+       async with LybicClient(
+           dto.LybicAuth(
+               org_id="ORG-xxxx",
+               api_key="lysk-xxxxxxxxxxx",
+               endpoint="https://api.lybic.cn/",
+           )
+       ) as client:
+           details = await client.sandbox.get(sandbox_id="SBX-xxxx")
+           print(details)
    ```
 
 4. Delete a sandbox
@@ -404,11 +402,16 @@ if __name__ == "__main__":
 
    ```python
    import asyncio
-   from lybic import Sandbox
-
-   # Inside your async main function, with the client initialized:
-   sandbox = Sandbox(client)
-   await sandbox.delete(sandbox_id="SBX-xxxx")
+   from lybic import LybicClient,LybicAuth
+   async def main():
+        async with LybicClient(
+            LybicAuth(
+                org_id="ORG-xxxx",
+                api_key="lysk-xxxxxxxxxxx",
+                endpoint="https://api.lybic.cn/",
+            )
+        ) as client:
+            await client.sandbox.delete(sandbox_id="SBX-xxxx")
    ```
 
 5. Get a sandbox screenshot
@@ -420,13 +423,19 @@ if __name__ == "__main__":
 
    ```python
    import asyncio
-   from lybic import Sandbox
-
-   # Inside your async main function, with the client initialized:
-   sandbox = Sandbox(client)
-   url, image, b64_str = await sandbox.get_screenshot(sandbox_id="SBX-xxxx")
-   print(f"Screenshot URL: {url}")
-   image.show()
+   from lybic import LybicClient,LybicAuth
+   async def main():
+         async with LybicClient(
+             LybicAuth(
+                 org_id="ORG-xxxx",
+                 api_key="lysk-xxxxxxxxxxx",
+                 endpoint="https://api.lybic.cn/",
+             )
+         ) as client:
+             screenshot_url, image, webp_base64 = await client.sandbox.get_screenshot(sandbox_id="SBX-xxxx")
+             print("Screenshot URL:", screenshot_url)
+             image.show()  # Display the image using PIL
+             print("WebP Base64 String:", webp_base64)
    ```
 
 6. Extend a sandbox's lifetime
@@ -439,11 +448,16 @@ if __name__ == "__main__":
 
     ```python
     import asyncio
-    from lybic import Sandbox
-   
-    # Inside your async main function, with the client initialized:
-    sandbox = Sandbox(client)
-    await sandbox.extend_life(sandbox_id="SBX-xxxx", seconds=3600)
+    from lybic import LybicClient,LybicAuth
+    async def main():
+         async with LybicClient(
+             LybicAuth(
+                 org_id="ORG-xxxx",
+                 api_key="lysk-xxxxxxxxxxx",
+                 endpoint="https://api.lybic.cn/",
+             )
+         ) as client:
+             await client.sandbox.extend_life(sandbox_id="SBX-xxxx", seconds=7200)  # Extend by 2 hours
     ```
 
 7. Execute a sandbox action
@@ -458,7 +472,7 @@ if __name__ == "__main__":
 
    ```python
    import asyncio
-   from lybic import dto, Sandbox, ComputerUse, LybicClient, LybicAuth
+   from lybic import dto, Sandbox, LybicClient, LybicAuth
    async def main():
        async with LybicClient(
          LybicAuth(
@@ -467,8 +481,7 @@ if __name__ == "__main__":
             endpoint="https://api.lybic.cn/",
        )
      ) as client:
-           computer_use = ComputerUse(client)
-           parsed_result = await computer_use.parse_llm_output(
+           parsed_result = await client.computer_use.parse_llm_output(
                model_type="ui-tars",
                llm_output="""Thought: The task requires double-left-clicking the "images" folder. In the File Explorer window, the "images" folder is visible under the Desktop directory. The target element is the folder named "images" with a yellow folder icon. Double-left-clicking this folder will open it.
      
@@ -477,15 +490,14 @@ if __name__ == "__main__":
            )
            actions = parsed_result.actions
            if actions:
-               sandbox = Sandbox(client)
                # Using DTO
-               response = await sandbox.execute_sandbox_action(
+               response = await client.sandbox.execute_sandbox_action(
                    sandbox_id="SBX-xxxx",
                    data=dto.ExecuteSandboxActionDto(action=actions[0])
                )
                print(response)
                # Using keyword arguments
-               response_2 = await sandbox.execute_sandbox_action(
+               response_2 = await client.sandbox.execute_sandbox_action(
                    sandbox_id="SBX-xxxx",
                    action=actions[0]
                )
@@ -550,7 +562,7 @@ if __name__ == "__main__":
    import asyncio
    from datetime import timedelta
    from minio import Minio
-   from lybic import Sandbox, LybicClient, LybicAuth
+   from lybic import LybicClient, LybicAuth
    from lybic.dto import (
        SandboxFileCopyRequestDto, 
        FileCopyItem, 
@@ -597,9 +609,7 @@ if __name__ == "__main__":
                endpoint='https://api.lybic.cn/'
            )
        ) as client:
-           sandbox = Sandbox(client)
-           
-           response = await sandbox.copy_files(
+           response = await client.sandbox.copy_files(
                'SBX-xxxx',  # Your sandbox ID
                SandboxFileCopyRequestDto(files=[
                    FileCopyItem(
@@ -648,7 +658,7 @@ if __name__ == "__main__":
    import asyncio
    from datetime import timedelta
    from minio import Minio
-   from lybic import Sandbox, LybicClient, LybicAuth
+   from lybic import LybicClient, LybicAuth
    from lybic.dto import (
        SandboxFileCopyRequestDto, 
        FileCopyItem, 
@@ -690,9 +700,7 @@ if __name__ == "__main__":
                endpoint='https://api.lybic.cn/'
            )
        ) as client:
-           sandbox = Sandbox(client)
-           
-           response = await sandbox.copy_files(
+           response = await client.sandbox.copy_files(
                'SBX-xxxx',  # Your sandbox ID
                SandboxFileCopyRequestDto(files=[
                    FileCopyItem(
@@ -736,7 +744,7 @@ if __name__ == "__main__":
    )
 
    # Copy multiple files: some from external to sandbox, some from sandbox to external
-   response = await sandbox.copy_files(
+   response = await client.sandbox.copy_files(
        'SBX-xxxx',
        SandboxFileCopyRequestDto(files=[
            # Download from URL to sandbox
@@ -868,14 +876,12 @@ if __name__ == "__main__":
     ```python
     import asyncio
     import base64
-    from lybic import dto, Sandbox, LybicClient, LybicAuth
+    from lybic import dto, LybicClient, LybicAuth
 
     async def run_process_example():
         async with LybicClient(LybicAuth(org_id='ORG-xxxx', api_key='lysk-xxxxxxxxxxx')) as client:
-            sandbox = Sandbox(client)
-            
             # Example 1: Simple command
-            result = await sandbox.execute_process(
+            result = await client.sandbox.execute_process(
                 'SBX-xxxx',
                 executable='/bin/echo',
                 args=['Hello', 'World']
@@ -892,7 +898,7 @@ if __name__ == "__main__":
                 workingDirectory='/home/agent',
                 stdinBase64=stdin_data
             )
-            result = await sandbox.execute_process('SBX-xxxx', data=proc_req)
+            result = await client.sandbox.execute_process('SBX-xxxx', data=proc_req)
             print(f"Exit: {result.exitCode}")
             print(f"STDOUT: {base64.b64decode(result.stdoutBase64 or '').decode(errors='ignore')}")
             print(f"STDERR: {base64.b64decode(result.stderrBase64 or '').decode(errors='ignore')}")

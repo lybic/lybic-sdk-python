@@ -120,13 +120,12 @@ Then, you can start using the `client`.
 
 ```python
 import asyncio
-from lybic import LybicClient, Sandbox
+from lybic import LybicClient
 
 async def main():
     async with LybicClient() as client:
-        sandbox = Sandbox(client)
         # The create method returns a GetSandboxResponseDto object
-        new_sandbox_response = await sandbox.create(name="my-sandbox", shape="xxx")
+        new_sandbox_response = await client.sandbox.create(name="my-sandbox", shape="xxx")
         print(new_sandbox_response.sandbox)
 
 if __name__ == '__main__':
@@ -181,15 +180,14 @@ you can catch exceptions in the `try` block
 
 ```python
 import asyncio
-from lybic import LybicClient, Sandbox
+from lybic import LybicClient
 
 async def main():
     # Use async with to ensure the client is properly managed.
     async with LybicClient() as client:
-        sandbox = Sandbox(client)
         try:
             # `await` the asynchronous method call inside the async function.
-            preview_result = await sandbox.preview('sandbox_id')
+            preview_result = await client.sandbox.preview('sandbox_id')
             print(preview_result)
         except Exception as e:
             # Handle potential exceptions from the API call.
