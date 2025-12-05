@@ -304,7 +304,7 @@
             }
           }
         },
-        "summary": "copy files with sandbox",
+        "summary": "Copy Sandbox Files",
         "tags": [
           "Sandbox"
         ]
@@ -354,7 +354,7 @@
             }
           }
         },
-        "summary": "Execute a process inside sandbox",
+        "summary": "Execute Command in Sandbox",
         "tags": [
           "Sandbox"
         ]
@@ -893,20 +893,6 @@
         "summary": "Get Organization Stats",
         "tags": [
           "Dashboard"
-        ]
-      }
-    },
-    "/api/v1/chat/completions": {
-      "post": {
-        "operationId": "LlmGatewayController_proxyRequest",
-        "parameters": [],
-        "responses": {
-          "201": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "LlmGateway"
         ]
       }
     }
