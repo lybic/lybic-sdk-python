@@ -107,7 +107,7 @@ class PyautoguiSync:
         Returns:
             str: A string containing the extracted pyautogui commands, each on a new line.
         """
-        pattern = r"pyautogui\[a-zA-Z_]\w*\(.*\)"
+        pattern = r"pyautogui\.[a-zA-Z_]\w*\(.*\)"
         matches = re.findall(pattern, content)
         return "\n".join(matches)
 

@@ -230,7 +230,7 @@ class SandboxSync:
         """
         Get shapes of a sandbox
         :return:
-        GetShapersResponseDto
+        GetShapesResponseDto
         """
         self.client.logger.debug("Getting shapes")
         response = self.client.request(
