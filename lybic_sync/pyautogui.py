@@ -25,19 +25,12 @@
 # THE SOFTWARE.
 
 """
-pyautogui.py implements a calling interface compatible with pyautogui.py through lybic
+pyautogui.py implements a synchronous calling interface compatible with pyautogui.py through lybic
 
-from lybic import LybicClient, Pyautogui
+from lybic_sync import LybicSyncClient, PyautoguiSync
 
-# You can use either async or sync client
-# With async client (uses synchronous client internally):
-client = LybicClient()
-pyautogui = Pyautogui(client, 'your-sandbox-id')
-
-# Or with sync client directly:
-from lybic_sync import LybicSyncClient
-sync_client = LybicSyncClient()
-pyautogui = Pyautogui(sync_client, 'your-sandbox-id')
+client = LybicSyncClient()
+pyautogui = PyautoguiSync(client, 'your-sandbox-id')
 
 pyautogui.position()
 pyautogui.moveTo(1443,343)
@@ -61,9 +54,10 @@ pyautogui.dragTo(500, 500)
 import logging
 import re
 import time
-from typing import overload, Optional, List, Union, TYPE_CHECKING
+from typing import overload, Optional, List, Union
 
-from lybic.authentication import LybicAuth
+from lybic_sync.lybic_sync import LybicSyncClient
+from lybic_sync.sandbox import SandboxSync
 from lybic.action import (
     FinishedAction,
     MouseMoveAction,
@@ -79,65 +73,28 @@ from lybic.action import (
 )
 from lybic.dto import ExecuteSandboxActionDto
 
-if TYPE_CHECKING:
-    from lybic.lybic import LybicClient
-
 # pylint: disable=unused-argument,invalid-name,logging-fstring-interpolation
-class Pyautogui:
+class PyautoguiSync:
     """
-    Pyautogui implements a calling interface compatible with pyautogui.py through lybic
+    PyautoguiSync implements a synchronous calling interface compatible with pyautogui.py through lybic
 
     Examples:
 
     LLM_OUTPUT = 'pyautogui.click(x=1443, y=343)'
 
-    from lybic import LybicClient, Pyautogui
+    from lybic_sync import LybicSyncClient, PyautoguiSync
 
-    client = LybicClient()
+    client = LybicSyncClient()
 
-    pyautogui = Pyautogui(client,sandbox_id)
+    pyautogui = PyautoguiSync(client,sandbox_id)
 
     eval(LLM_OUTPUT)
     """
-    def __init__(self, client: "LybicClient", sandbox_id: str):
+    def __init__(self, client: LybicSyncClient, sandbox_id: str):
+        self.client = client
         self.logger = logging.getLogger(__name__)
-
-        # Check if client is a sync client
-        # pylint: disable=import-outside-toplevel
-        from lybic_sync.lybic_sync import LybicSyncClient
-        from lybic_sync.sandbox import SandboxSync
-        from lybic.lybic import LybicClient
-
-        if isinstance(client, LybicSyncClient):
-            # Use sync client directly
-            self.client = client
-            self.sandbox = SandboxSync(self.client)
-            self._is_sync = True
-        elif isinstance(client, LybicClient):
-            # Convert async client to sync client
-            self.logger.info("Converting async LybicClient to synchronous client for Pyautogui")
-            self.client = LybicSyncClient(
-                auth=LybicAuth(
-                    org_id=client.org_id,
-                    api_key=client._api_key,
-                    endpoint=client.endpoint,
-                    extra_headers=client.headers,
-                ),
-                timeout=client.timeout,
-                max_retries=client.max_retries,
-            )
-            self.sandbox = SandboxSync(self.client)
-            self._is_sync = True
-        else:
-            raise TypeError("client must be either LybicClient or LybicSyncClient")
-
+        self.sandbox = SandboxSync(self.client)
         self.sandbox_id = sandbox_id
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        pass
 
     @staticmethod
     def parse(content: str) -> str:
@@ -155,24 +112,24 @@ class Pyautogui:
         return "\n".join(matches)
 
     @overload
-    def clone(self, sandbox_id: str) -> "Pyautogui": ...
+    def clone(self, sandbox_id: str) -> "PyautoguiSync": ...
 
     @overload
-    def clone(self) -> "Pyautogui": ...
+    def clone(self) -> "PyautoguiSync": ...
 
-    def clone(self, sandbox_id: str = None) -> "Pyautogui":
+    def clone(self, sandbox_id: str = None) -> "PyautoguiSync":
         """
-        Clones the Pyautogui object with a new sandbox ID.
+        Clones the PyautoguiSync object with a new sandbox ID.
 
         Args:
             sandbox_id (str, optional): The sandbox ID to clone the object with. If not provided, the original sandbox ID will be used.
 
         Returns:
-            Pyautogui: A new Pyautogui object with the specified sandbox ID.
+            PyautoguiSync: A new PyautoguiSync object with the specified sandbox ID.
         """
         if sandbox_id is not None:
-            return Pyautogui(self.client, sandbox_id)
-        return Pyautogui(self.client, self.sandbox_id)
+            return PyautoguiSync(self.client, sandbox_id)
+        return PyautoguiSync(self.client, self.sandbox_id)
 
     def position(self) -> tuple[int, int]:
         """
@@ -549,7 +506,3 @@ class Pyautogui:
             sandbox_id=self.sandbox_id,
             data=ExecuteSandboxActionDto(action=request, includeScreenShot=False, includeCursorPosition=False)
         )
-
-    # pylint: disable=missing-function-docstring
-    def close(self):
-        pass
