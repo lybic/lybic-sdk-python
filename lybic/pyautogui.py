@@ -549,3 +549,7 @@ class Pyautogui:
             sandbox_id=self.sandbox_id,
             data=ExecuteSandboxActionDto(action=request, includeScreenShot=False, includeCursorPosition=False)
         )
+
+    # pylint: disable=missing-function-docstring
+    def close(self):
+        pass

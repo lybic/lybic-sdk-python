@@ -26,7 +26,7 @@ Example: Using synchronous Lybic client
 
 This example demonstrates how to use the synchronous Lybic SDK client.
 """
-
+# pylint: disable=wrong-import-position,reimported,invalid-name,f-string-without-interpolation
 # Example 1: Basic synchronous client usage
 from lybic_sync import LybicSyncClient
 
@@ -47,11 +47,11 @@ with LybicSyncClient(auth=auth) as client:
     # List sandboxes
     sandboxes = client.sandbox.list()
     print(f"Found {len(sandboxes)} sandboxes")
-    
+
     # Get organization stats
     stats = client.stats.get()
     print(f"Organization has {stats.sandboxes} sandboxes")
-    
+
     # List projects
     projects = client.project.list()
     print(f"Found {len(projects)} projects")
@@ -96,18 +96,18 @@ with LybicSyncClient(auth=auth) as client:
         maxLifeSeconds=3600
     )
     print(f"Created sandbox: {sandbox.id}")
-    
+
     # Execute an action
     from lybic.action import MouseClickAction, PixelLength
     from lybic.dto import ExecuteSandboxActionDto
-    
+
     action = MouseClickAction(
         type="mouse:click",
         x=PixelLength(type="px", value=100),
         y=PixelLength(type="px", value=100),
         button=1
     )
-    
+
     result = client.sandbox.execute_sandbox_action(
         sandbox_id=sandbox.id,
         data=ExecuteSandboxActionDto(
@@ -117,7 +117,7 @@ with LybicSyncClient(auth=auth) as client:
         )
     )
     print(f"Action executed, screenshot available at: {result.screenShot}")
-    
+
     # Delete the sandbox
     client.sandbox.delete(sandbox.id)
     print(f"Sandbox deleted")
@@ -127,11 +127,11 @@ with LybicSyncClient(auth=auth) as client:
 with LybicSyncClient(auth=auth) as client:
     # Parse LLM output
     from lybic.dto import ModelType
-    
+
     llm_output = """
     I will click at position (100, 200) and then type "Hello"
     """
-    
+
     actions = client.tools.computer_use.parse_llm_output(
         model_type=ModelType.PYAUTOGUI,
         llm_output=llm_output
