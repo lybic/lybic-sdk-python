@@ -23,7 +23,7 @@
 
 """ Lybic SDK import header"""
 
-__version__ = "0.12.0" # SDK Api Leval
+__version__ = "1.0" # SDK Api Leval
 
 # Strategy for handling extra fields in the lybic api response
 # "ignore" means ignore extra fields, which will ensure that your SDK version remains compatible with the Lybic platform,
