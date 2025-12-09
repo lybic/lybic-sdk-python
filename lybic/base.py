@@ -26,25 +26,17 @@
 
 """base.py holds the base client for Lybic API."""
 import logging
-import os
-import warnings
 from sys import stderr
 from typing import Optional
 
 from lybic.authentication import LybicAuth
-
-_sentinel = object()
 
 class _LybicBaseClient:
     """_LybicBaseClient is a base client for all Lybic API."""
 
     def __init__(self,
                  auth: Optional[LybicAuth] = None,
-                 org_id: str = _sentinel,
-                 api_key: str = _sentinel,
-                 endpoint: str = _sentinel,
                  timeout: int = 10,
-                 extra_headers: dict = _sentinel,
                  max_retries: int = 3,
                  ):
         """
@@ -55,37 +47,7 @@ class _LybicBaseClient:
         :param api_key:
         :param endpoint:
         """
-        if auth:
-            self.auth = auth
-        else:
-            user_provided_auth_params = any(
-                val is not _sentinel for val in (org_id, api_key, endpoint, extra_headers)
-            )
-            if user_provided_auth_params:
-                warnings.warn(
-                    "Passing `org_id`, `api_key`, `endpoint`, or `extra_headers` to the client constructor is deprecated "
-                    "and will be removed in v1.0.0. Please use `LybicClient(auth=LybicAuth(...))` instead.",
-                    stacklevel=3
-                )
-
-            if org_id is _sentinel:
-                org_id = os.getenv("LYBIC_ORG_ID")
-            if api_key is _sentinel:
-                api_key = os.getenv("LYBIC_API_KEY")
-            if endpoint is _sentinel:
-                endpoint = os.getenv("LYBIC_API_ENDPOINT", "https://api.lybic.cn")
-            if extra_headers is _sentinel:
-                extra_headers = None
-            assert org_id, "LYBIC_ORG_ID is required"
-            assert endpoint, "LYBIC_API_ENDPOINT is required"
-
-            self.auth = LybicAuth(
-                org_id=org_id,
-                api_key=api_key,
-                endpoint=endpoint,
-                extra_headers=extra_headers
-            )
-
+        self.auth = auth
         if timeout < 0:
             print("Warning: Timeout cannot be negative, set to 10", file=stderr)
             timeout = 10

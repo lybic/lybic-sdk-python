@@ -8,13 +8,14 @@ from unittest.mock import AsyncMock, Mock, patch
 import httpx
 import pytest
 
-from lybic import LybicClient, LybicAPIError, LybicInternalError, LybicError
+from lybic import LybicClient, LybicAPIError, LybicInternalError, LybicError, LybicAuth
+
 
 @pytest.mark.asyncio
 async def test_api_error_with_structured_response():
     """Test that structured API error responses are converted to LybicAPIError."""
     # Initialize with dummy credentials
-    async with LybicClient(org_id="test_org", api_key="test_key") as client:
+    async with LybicClient(LybicAuth(org_id="test_org", api_key="test_key")) as client:
         # Mock response with structured error
         mock_response = Mock(spec=httpx.Response)
         mock_response.status_code = 400
@@ -48,7 +49,7 @@ async def test_api_error_with_structured_response():
 @pytest.mark.asyncio
 async def test_internal_error_from_reverse_proxy():
     """Test that 5xx errors without JSON response are converted to LybicInternalError."""
-    async with LybicClient(org_id="test_org", api_key="test_key") as client:
+    async with LybicClient(LybicAuth(org_id="test_org", api_key="test_key")) as client:
         # Mock response with HTML error page (from reverse proxy)
         mock_response = Mock(spec=httpx.Response)
         mock_response.status_code = 502
@@ -77,7 +78,7 @@ async def test_internal_error_from_reverse_proxy():
 @pytest.mark.asyncio
 async def test_5xx_error_with_structured_response():
     """Test that 5xx errors with structured JSON response are converted to LybicAPIError."""
-    async with LybicClient(org_id="test_org", api_key="test_key") as client:
+    async with LybicClient(LybicAuth(org_id="test_org", api_key="test_key")) as client:
         # Mock response with structured error
         mock_response = Mock(spec=httpx.Response)
         mock_response.status_code = 500
@@ -109,7 +110,7 @@ async def test_5xx_error_with_structured_response():
 @pytest.mark.asyncio
 async def test_exception_without_code():
     """Test that API errors without code field still work."""
-    async with LybicClient(org_id="test_org", api_key="test_key") as client:
+    async with LybicClient(LybicAuth(org_id="test_org", api_key="test_key")) as client:
         # Mock response with message but no code
         mock_response = Mock(spec=httpx.Response)
         mock_response.status_code = 400
@@ -141,7 +142,7 @@ async def test_exception_without_code():
 @pytest.mark.asyncio
 async def test_network_error_passthrough():
     """Test that network errors are passed through as-is."""
-    async with LybicClient(org_id="test_org", api_key="test_key") as client:
+    async with LybicClient(LybicAuth(org_id="test_org", api_key="test_key")) as client:
         # Create a network error
         error = httpx.RequestError("Connection failed")
 

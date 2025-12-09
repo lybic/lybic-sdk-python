@@ -40,7 +40,7 @@ from .lybic import LybicClient
 from .exceptions import LybicError, LybicAPIError, LybicInternalError
 
 # MCP Operations
-from .mcp import MCP, Mcp
+from .mcp import Mcp
 
 #  Tools
 from .tools import ComputerUse, MobileUse, Tools
@@ -66,7 +66,6 @@ __all__ = [
     "LybicAPIError",
     "LybicInternalError",
 
-    "MCP",
     "ComputerUse",
     "Project",
     "Pyautogui",

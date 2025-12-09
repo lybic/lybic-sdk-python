@@ -11,7 +11,6 @@ from lybic.dto import (
     TouchTapAction,
     AndroidBackAction,
     AndroidHomeAction,
-    ComputerUseActionDto,
     ExecuteSandboxActionDto,
     PixelLength,
 )
@@ -101,17 +100,6 @@ def test_android_actions_unique_callids():
 
 def test_dto_wrappers_unique_callids():
     """Test that DTO wrappers generate unique callIds."""
-    dto1 = ComputerUseActionDto(
-        action=ScreenshotAction(type='screenshot')
-    )
-
-    dto2 = ComputerUseActionDto(
-        action=ScreenshotAction(type='screenshot')
-    )
-
-    assert dto1.callId != dto2.callId, "ComputerUseActionDto instances should have unique callIds"
-    print("✓ ComputerUseActionDto: unique callIds")
-
     dto3 = ExecuteSandboxActionDto(
         action=ScreenshotAction(type='screenshot')
     )
