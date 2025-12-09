@@ -55,6 +55,7 @@ class _LybicSyncBaseClient:
         :param max_retries:
         """
         # Reuse the base client initialization from lybic.base
+        # pylint: disable=import-outside-toplevel
         from lybic.base import _LybicBaseClient
         base_client = _LybicBaseClient(
             auth=auth,
@@ -65,7 +66,7 @@ class _LybicSyncBaseClient:
             extra_headers=extra_headers,
             max_retries=max_retries
         )
-        
+
         self.auth = base_client.auth
         self.timeout = base_client.timeout
         self.max_retries = base_client.max_retries

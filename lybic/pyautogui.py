@@ -101,13 +101,13 @@ class Pyautogui:
     """
     def __init__(self, client: "LybicClient", sandbox_id: str):
         self.logger = logging.getLogger(__name__)
-        
+
         # Check if client is a sync client
+        # pylint: disable=import-outside-toplevel
         from lybic_sync.lybic_sync import LybicSyncClient
         from lybic_sync.sandbox import SandboxSync
         from lybic.lybic import LybicClient
-        from lybic.sandbox import Sandbox
-        
+
         if isinstance(client, LybicSyncClient):
             # Use sync client directly
             self.client = client
@@ -130,7 +130,7 @@ class Pyautogui:
             self._is_sync = True
         else:
             raise TypeError("client must be either LybicClient or LybicSyncClient")
-        
+
         self.sandbox_id = sandbox_id
 
     def __enter__(self):

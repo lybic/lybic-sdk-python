@@ -44,7 +44,7 @@ class ComputerUseSync:
     """ComputerUseSync is a synchronous client for lybic ComputerUse API(MCP and Restful)."""
     def __init__(self, client: "LybicSyncClient"):
         self.client = client
-    
+
     def parse_llm_output(
         self, model_type: ModelType | str, llm_output: str
     ) -> ComputerUseActionResponseDto:
