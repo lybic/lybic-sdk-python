@@ -51,9 +51,9 @@ class LybicAuth:
         :param extra_headers: A dictionary of extra headers to include in requests.
         """
         if not org_id:
-            raise ValueError("LYBIC_ORG_ID is required")
+            raise ValueError("org_id is required")
         if not endpoint:
-            raise ValueError("LYBIC_API_ENDPOINT is required")
+            raise ValueError("endpoint is required")
 
         self.headers = {}
         if extra_headers:
