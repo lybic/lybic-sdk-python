@@ -47,6 +47,8 @@ class _LybicBaseClient:
         :param api_key:
         :param endpoint:
         """
+        if auth is None:
+            auth = LybicAuth()
         self.auth = auth
         if timeout < 0:
             print("Warning: Timeout cannot be negative, set to 10", file=stderr)

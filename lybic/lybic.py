@@ -58,7 +58,7 @@ class LybicClient(_LybicBaseClient):
         :param max_retries: maximum number of retries for failed requests
         """
         super().__init__(
-            auth=auth,timeout=timeout,max_retries=max_retries
+            auth=auth, timeout=timeout, max_retries=max_retries
         )
 
         self.client: httpx.AsyncClient | None = None
