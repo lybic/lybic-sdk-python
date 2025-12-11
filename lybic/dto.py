@@ -182,6 +182,7 @@ class Sandbox(BaseModel):
     projectId: str = Field(..., description="Project ID to which the sandbox belongs.")
     shapeName: Optional[str] = Field(None, description="Specs and datacenter of the sandbox.") # This field does not exist in GetSandboxResponseDto (that is, this field is optional)
     shape: Optional[Shape] = None # This field does not exist in SandboxListResponseDto (that is, this field is optional)
+    status: Optional[Literal["PENDING", "RUNNING", "STOPPED", "ERROR"]] = Field(None, description="Current sandbox status")
 
 
 class GatewayAddress(BaseModel):
@@ -241,6 +242,7 @@ class CreateSandboxDto(BaseModel):
                                 ge=1, le=86400)
     projectId: Optional[str] = Field(None, description="The project id to use for the sandbox. Use default if not provided.")
     shape: str = Field(..., description="Specs and datacenter of the sandbox.")
+    status: Optional[Literal["PENDING", "RUNNING", "STOPPED", "ERROR"]] = Field(None, description="Current sandbox status")
 
 
 class GetSandboxResponseDto(BaseModel):
@@ -251,6 +253,28 @@ class GetSandboxResponseDto(BaseModel):
 
     sandbox: Sandbox
     connectDetails: ConnectDetails
+
+
+class CreateSandboxFromImageDto(BaseModel):
+    """
+    Create sandbox from machine image request.
+    """
+    model_config = ConfigDict(extra=json_extra_fields_policy)
+
+    imageId: str = Field(..., description="The machine image ID to create sandbox from.")
+    name: str = Field(..., description="The name of the sandbox.", min_length=1, max_length=100)
+    maxLifeSeconds: int = Field(..., description="The maximum life time of the sandbox in seconds.", ge=300, le=604800)
+    projectId: Optional[str] = Field(None, description="The project id to use for the sandbox. Use default if not provided.")
+
+
+class CreateSandboxFromImageResponseDto(BaseModel):
+    """
+    Response DTO for creating sandbox from machine image.
+    """
+    model_config = ConfigDict(extra=json_extra_fields_policy)
+
+    sandbox: Sandbox
+    bookId: str
 
 
 # Computer Use Schemas
@@ -516,3 +540,49 @@ class SandboxProcessResponseDto(BaseModel):
     stdoutBase64: str = Field(default="", description="stdout as base64-encoded bytes")
     stderrBase64: str = Field(default="", description="stderr as base64-encoded bytes")
     exitCode: int = Field(..., description="Exit code")
+
+
+# Machine Image Schemas
+class CreateMachineImageDto(BaseModel):
+    """
+    Create machine image request.
+    """
+    model_config = ConfigDict(extra=json_extra_fields_policy)
+
+    sandboxId: str = Field(..., description="The sandbox ID to create image from.")
+    name: str = Field(..., description="The name of the machine image.", min_length=1, max_length=100)
+    description: Optional[str] = Field(None, description="Optional description of the machine image.", max_length=500)
+
+
+class MachineImageResponseDto(BaseModel):
+    """
+    Machine image response.
+    """
+    model_config = ConfigDict(extra=json_extra_fields_policy)
+
+    id: str
+    name: str
+    description: Optional[str]
+    createdAt: str
+    shapeName: str
+    status: Literal["CREATING", "READY", "ERROR"]
+
+
+class MachineImageQuota(BaseModel):
+    """
+    Machine image quota.
+    """
+    model_config = ConfigDict(extra=json_extra_fields_policy)
+
+    used: int
+    limit: int
+
+
+class MachineImagesResponseDto(BaseModel):
+    """
+    List machine images response.
+    """
+    model_config = ConfigDict(extra=json_extra_fields_policy)
+
+    images: List[MachineImageResponseDto]
+    quota: MachineImageQuota

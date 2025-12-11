@@ -271,3 +271,82 @@ class Sandbox:
             json=data.model_dump(exclude_none=True))
         self.client.logger.debug(f"Execute process response: {response.text}")
         return dto.SandboxProcessResponseDto.model_validate_json(response.text)
+
+    @overload
+    async def create_from_image(self, data: dto.CreateSandboxFromImageDto) -> dto.CreateSandboxFromImageResponseDto: ...
+
+    @overload
+    async def create_from_image(self, **kwargs) -> dto.CreateSandboxFromImageResponseDto: ...
+
+    async def create_from_image(self, *args, **kwargs) -> dto.CreateSandboxFromImageResponseDto:
+        """
+        Create a new sandbox from a machine image
+        """
+        if args and isinstance(args[0], dto.CreateSandboxFromImageDto):
+            data = args[0]
+        elif "data" in kwargs and isinstance(kwargs["data"], dto.CreateSandboxFromImageDto):
+            data = kwargs["data"]
+        else:
+            data = dto.CreateSandboxFromImageDto(**kwargs)
+        self.client.logger.debug(f"Creating sandbox from image with data: {data}")
+        response = await self.client.request(
+            "POST",
+            f"/api/orgs/{self.client.org_id}/sandboxes/from-image",
+            json=data.model_dump(exclude_none=True))
+        self.client.logger.debug(f"Create sandbox from image response: {response.text}")
+        return dto.CreateSandboxFromImageResponseDto.model_validate_json(response.text)
+
+    async def get_status(self, sandbox_id: str) -> str:
+        """
+        Get the status of a sandbox (PENDING/RUNNING/STOPPED/ERROR)
+        """
+        self.client.logger.debug(f"Getting status for sandbox {sandbox_id}")
+        response = await self.client.request(
+            "GET",
+            f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/status")
+        self.client.logger.debug(f"Get sandbox status response: {response.text}")
+        return response.text
+
+    @overload
+    async def create_machine_image(self, data: dto.CreateMachineImageDto) -> dto.MachineImageResponseDto: ...
+
+    @overload
+    async def create_machine_image(self, **kwargs) -> dto.MachineImageResponseDto: ...
+
+    async def create_machine_image(self, *args, **kwargs) -> dto.MachineImageResponseDto:
+        """
+        Create a machine image from a sandbox
+        """
+        if args and isinstance(args[0], dto.CreateMachineImageDto):
+            data = args[0]
+        elif "data" in kwargs and isinstance(kwargs["data"], dto.CreateMachineImageDto):
+            data = kwargs["data"]
+        else:
+            data = dto.CreateMachineImageDto(**kwargs)
+        self.client.logger.debug(f"Creating machine image with data: {data}")
+        response = await self.client.request(
+            "POST",
+            f"/api/orgs/{self.client.org_id}/machine-images",
+            json=data.model_dump(exclude_none=True))
+        self.client.logger.debug(f"Create machine image response: {response.text}")
+        return dto.MachineImageResponseDto.model_validate_json(response.text)
+
+    async def list_machine_images(self) -> dto.MachineImagesResponseDto:
+        """
+        List all machine images
+        """
+        self.client.logger.debug("Listing machine images")
+        response = await self.client.request(
+            "GET",
+            f"/api/orgs/{self.client.org_id}/machine-images")
+        self.client.logger.debug(f"List machine images response: {response.text}")
+        return dto.MachineImagesResponseDto.model_validate_json(response.text)
+
+    async def delete_machine_image(self, image_id: str) -> None:
+        """
+        Delete a machine image
+        """
+        self.client.logger.debug(f"Deleting machine image {image_id}")
+        await self.client.request(
+            "DELETE",
+            f"/api/orgs/{self.client.org_id}/machine-images/{image_id}")
