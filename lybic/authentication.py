@@ -50,6 +50,11 @@ class LybicAuth:
         :param endpoint: The API endpoint. Defaults to the `LYBIC_API_ENDPOINT` environment variable or "https://api.lybic.cn". Required.
         :param extra_headers: A dictionary of extra headers to include in requests.
         """
+        if not org_id:
+            raise ValueError("org_id is required")
+        if not endpoint:
+            raise ValueError("endpoint is required")
+
         self.headers = {}
         if extra_headers:
             self.headers.update(extra_headers)

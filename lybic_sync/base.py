@@ -29,18 +29,13 @@ import logging
 from typing import Optional
 
 from lybic.authentication import LybicAuth
-from lybic.base import _sentinel
 
 class _LybicSyncBaseClient:
     """_LybicSyncBaseClient is a base client for synchronous Lybic API."""
 
     def __init__(self,
                  auth: Optional[LybicAuth] = None,
-                 org_id: str = _sentinel,
-                 api_key: str = _sentinel,
-                 endpoint: str = _sentinel,
                  timeout: int = 10,
-                 extra_headers: dict = _sentinel,
                  max_retries: int = 3,
                  ):
         """
@@ -59,11 +54,7 @@ class _LybicSyncBaseClient:
         from lybic.base import _LybicBaseClient
         base_client = _LybicBaseClient(
             auth=auth,
-            org_id=org_id,
-            api_key=api_key,
-            endpoint=endpoint,
             timeout=timeout,
-            extra_headers=extra_headers,
             max_retries=max_retries
         )
 

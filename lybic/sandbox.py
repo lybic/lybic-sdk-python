@@ -24,8 +24,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-# pylint: disable=fixme
-
 """sandbox.py provides the Sandbox API"""
 import base64
 from io import BytesIO
@@ -37,7 +35,6 @@ from PIL import Image
 from PIL.WebPImagePlugin import WebPImageFile
 
 from lybic import dto
-from lybic._api import deprecated
 
 if TYPE_CHECKING:
     from lybic.lybic import LybicClient
@@ -100,58 +97,6 @@ class Sandbox:
         await self.client.request(
             "DELETE",
             f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}")
-    @deprecated(
-        since="0.7.0",
-        removal="1.0.0",
-        message="Lybic Sandbox has support multiple types of tools now and will no longer be limited to computer_use. "
-                "To execute a single action tool, such as computer_use, use the execute_computer_use_action method "
-                "in the ComputerUse class. If no distinction is made, use the `execute_sandbox_action` method in "
-                "the Sandbox class,which is the recommended approach."
-    )
-    @overload
-    async def execute_computer_use_action(self, sandbox_id: str, data: dto.ComputerUseActionDto) -> dto.SandboxActionResponseDto: ...
-    @deprecated(
-        since="0.7.0",
-        removal="1.0.0",
-        message="Lybic Sandbox has support multiple types of tools now and will no longer be limited to computer_use. "
-                "To execute a single action tool, such as computer_use, use the execute_computer_use_action method "
-                "in the ComputerUse class. If no distinction is made, use the `execute_sandbox_action` method in "
-                "the Sandbox class,which is the recommended approach."
-    )
-    @overload
-    async def execute_computer_use_action(self, sandbox_id: str, **kwargs) -> dto.SandboxActionResponseDto: ...
-    @deprecated(
-        since="0.7.0",
-        removal="1.0.0",
-        message="Lybic Sandbox has support multiple types of tools now and will no longer be limited to computer_use. "
-                "To execute a single action tool, such as computer_use, use the execute_computer_use_action method "
-                "in the ComputerUse class. If no distinction is made, use the `execute_sandbox_action` method in "
-                "the Sandbox class,which is the recommended approach."
-    )
-    async def execute_computer_use_action(self, sandbox_id: str, *args, **kwargs) -> dto.SandboxActionResponseDto:
-        """
-        Execute a computer use action
-
-        is same as mcp.ComputerUse.execute_computer_use_action
-        """
-        if args and isinstance(args[0], dto.ComputerUseActionDto):
-            data = args[0]
-        elif "data" in kwargs:
-            data_arg = kwargs["data"]
-            if isinstance(data_arg, dto.ComputerUseActionDto):
-                data = data_arg
-            elif isinstance(data_arg, dict):
-                data = dto.ComputerUseActionDto(**data_arg)
-            else:
-                raise TypeError(f"The 'data' argument must be of type {dto.ComputerUseActionDto.__name__} or dict")
-        else:
-            data = dto.ComputerUseActionDto(**kwargs)
-        self.client.logger.debug(f"Execute computer use action request: {data.model_dump_json(exclude_none=True)}")
-        response = await self.client.request("POST",
-                                       f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/actions/computer-use",
-                                       json=data.model_dump(exclude_none=True))
-        self.client.logger.debug(f"Execute computer use action response: {response.text}")
-        return dto.SandboxActionResponseDto.model_validate_json(response.text)
 
     async def preview(self, sandbox_id: str) -> dto.SandboxActionResponseDto:
         """

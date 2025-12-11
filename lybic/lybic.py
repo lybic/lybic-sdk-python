@@ -35,7 +35,7 @@ from .stats import Stats
 from .project import Project
 from .sandbox import Sandbox
 from .authentication import LybicAuth
-from .base import _LybicBaseClient, _sentinel
+from .base import _LybicBaseClient
 from .exceptions import LybicAPIError, LybicInternalError
 from .tools import Tools
 
@@ -45,11 +45,7 @@ class LybicClient(_LybicBaseClient):
 
     def __init__(self,
                  auth: Optional[LybicAuth] = None,
-                 org_id: str = _sentinel,
-                 api_key: str = _sentinel,
-                 endpoint: str = _sentinel,
                  timeout: int = 10,
-                 extra_headers: dict = _sentinel,
                  max_retries: int = 3,
                  ):
         """
@@ -62,8 +58,7 @@ class LybicClient(_LybicBaseClient):
         :param max_retries: maximum number of retries for failed requests
         """
         super().__init__(
-            auth=auth, org_id=org_id, api_key=api_key, endpoint=endpoint,
-            timeout=timeout, extra_headers=extra_headers, max_retries=max_retries
+            auth=auth, timeout=timeout, max_retries=max_retries
         )
 
         self.client: httpx.AsyncClient | None = None

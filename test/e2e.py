@@ -27,11 +27,10 @@
 """This file is lybic SDK E2E Test scripts"""
 import asyncio
 from lybic import (Project,
-                   MCP,
                    Sandbox,
                    ComputerUse,
                    LybicClient,
-                   Stats, Pyautogui)
+                   Stats, Pyautogui, Mcp)
 
 async def test_stats(client:LybicClient):
     """
@@ -86,7 +85,7 @@ async def test_mcp(client:LybicClient):
     :return:
     """
     await Sandbox(client).create(name='test_mcp',shape="small")
-    mcp = MCP(client)
+    mcp = Mcp(client)
 
     print("Test List MCP:",await mcp.list())
     print("Test Create MCP:",await mcp.create(name="test_mcp"))
@@ -104,15 +103,15 @@ async def test_computer_use(client:LybicClient):
     computer_use = ComputerUse(client)
 
     print("Test parse model output:")
-    action = await computer_use.parse_model_output(
-        model="seed",
-        textContent="""Thought: The user wants to open the Chrome app. The screenshot shows the Google Chrome icon on the desktop. I should double-click the Google Chrome icon to open the app.
+    action = await computer_use.parse_llm_output(
+        model_type="seed",
+        llm_output="""Thought: The user wants to open the Chrome app. The screenshot shows the Google Chrome icon on the desktop. I should double-click the Google Chrome icon to open the app.
     Action: left_double(point='<point>10 10</point>')"""
     )
     print("ActionResult:",action)
 
     sandbox = Sandbox(client)
-    print("Execute computer use action:",await sandbox.execute_computer_use_action(
+    print("Execute computer use action:",await sandbox.execute_sandbox_action(
         sandbox_id='test_computer_use',
         action=action.actions[0]
     ))

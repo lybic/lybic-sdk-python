@@ -28,18 +28,14 @@ lybic.tools:
 ComputerUse tools
 MobileUse tools
 """
-from typing import overload, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 from lybic.dto import (
     ParseTextRequestDto,
-    ComputerUseParseRequestDto,
     ComputerUseActionResponseDto,
     ModelType,
-    ComputerUseActionDto,
-    SandboxActionResponseDto,
     MobileUseActionResponseDto,
 )
-from lybic._api import deprecated
 
 if TYPE_CHECKING:
     from lybic.lybic import LybicClient
@@ -48,45 +44,7 @@ class ComputerUse:
     """ComputerUse is an async client for lybic ComputerUse API(MCP and Restful)."""
     def __init__(self, client: "LybicClient"):
         self.client = client
-    @deprecated(
-        since="0.7.0",
-        removal="1.0.0",
-        message="Use parse_llm_output instead"
-    )
-    @overload
-    async def parse_model_output(self, data: ComputerUseParseRequestDto) -> ComputerUseActionResponseDto: ...
-    @deprecated(
-        since="0.7.0",
-        removal="1.0.0",
-        message="Use parse_llm_output instead"
-    )
-    @overload
-    async def parse_model_output(self, **kwargs) -> ComputerUseActionResponseDto: ...
-    @deprecated(
-        since="0.7.0",
-        removal="1.0.0",
-        message="Use parse_llm_output instead"
-    )
-    async def parse_model_output(self, *args, **kwargs) -> ComputerUseActionResponseDto:
-        """
-        parse doubao-ui-tars output
 
-        :param data:
-        :return:
-        """
-        if args and isinstance(args[0], ComputerUseParseRequestDto):
-            data = args[0]
-        elif "data" in kwargs and isinstance(kwargs["data"], ComputerUseParseRequestDto):
-            data = kwargs["data"]
-        else:
-            data = ComputerUseParseRequestDto(**kwargs)
-        self.client.logger.debug(f"Parse model output request: {data.model_dump_json(exclude_none=True)}")
-        response = await self.client.request(
-            "POST",
-            "/api/computer-use/parse",
-            json=data.model_dump(exclude_none=True))
-        self.client.logger.debug(f"Parse model output response: {response.text}")
-        return ComputerUseActionResponseDto.model_validate_json(response.text)
     async def parse_llm_output(
         self, model_type: ModelType | str, llm_output: str
     ) -> ComputerUseActionResponseDto:
@@ -116,64 +74,6 @@ class ComputerUse:
         )
         self.client.logger.debug(f"Parse model output response: {response.text}")
         return ComputerUseActionResponseDto.model_validate_json(response.text)
-
-    @deprecated(
-        since="0.8.0",
-        removal="1.0.0",
-        message="Use `lybic.sandbox.Sandbox.execute_sandbox_action` instead."
-    )
-    @overload
-    async def execute_computer_use_action(self, sandbox_id: str,
-                                    data: ComputerUseActionDto) -> SandboxActionResponseDto: ...
-    @deprecated(
-        since="0.8.0",
-        removal="1.0.0",
-        message="Use `lybic.sandbox.Sandbox.execute_sandbox_action` instead."
-    )
-    @overload
-    async def execute_computer_use_action(self, sandbox_id: str, **kwargs) -> SandboxActionResponseDto: ...
-
-    @deprecated(
-        since="0.8.0",
-        removal="1.0.0",
-        message="Use `lybic.sandbox.Sandbox.execute_sandbox_action` instead."
-    )
-    async def execute_computer_use_action(self, sandbox_id: str, *args, **kwargs) -> SandboxActionResponseDto:
-        """Executes a computer use action in a specific sandbox.
-
-        Note: This method provides the same functionality as
-        `lybic.sandbox.Sandbox.execute_computer_use_action`.
-
-        Args:
-            sandbox_id: The ID of the sandbox to execute the action in.
-            *args: Supports passing `dto.ComputerUseActionDto` as a positional argument.
-            **kwargs: Supports passing `data` as a `dto.ComputerUseActionDto` or a `dict`,
-                or the fields of `dto.ComputerUseActionDto` directly as keyword arguments.
-
-        Returns:
-            A `dto.SandboxActionResponseDto` containing the result of the action.
-
-        Raises:
-            TypeError: If the 'data' argument is not of the expected type.
-        """
-        if args and isinstance(args[0], ComputerUseActionDto):
-            data = args[0]
-        elif "data" in kwargs:
-            data_arg = kwargs["data"]
-            if isinstance(data_arg, ComputerUseActionDto):
-                data = data_arg
-            elif isinstance(data_arg, dict):
-                data = ComputerUseActionDto(**data_arg)
-            else:
-                raise TypeError(f"The 'data' argument must be of type {ComputerUseActionDto.__name__} or dict")
-        else:
-            data = ComputerUseActionDto(**kwargs)
-        self.client.logger.debug(f"Execute computer use action request: {data.model_dump_json(exclude_none=True)}")
-        response = await self.client.request("POST",
-                                       f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/actions/computer-use",
-                                       json=data.model_dump(exclude_none=True))
-        self.client.logger.debug(f"Execute computer use action response: {response.text}")
-        return SandboxActionResponseDto.model_validate_json(response.text)
 
 class MobileUse:
     """MobileUse is an async client for lybic MobileUse API(MCP and Restful)."""

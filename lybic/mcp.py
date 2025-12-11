@@ -31,7 +31,6 @@ from typing import overload, TYPE_CHECKING
 import httpx
 
 from lybic import dto
-from lybic._api import deprecated
 
 if TYPE_CHECKING:
     from lybic.lybic import LybicClient
@@ -178,24 +177,3 @@ class Mcp:
                     self.client.logger.error(f"Call tool failed after {self.client.max_retries + 1} attempts")
 
         raise RuntimeError(f"Failed to call tool: {last_exception}") from last_exception
-
-# pylint: disable=useless-parent-delegation
-
-@deprecated(
-    since="0.8.0",
-    removal="1.0.0",
-    message="renamed: Use Mcp instead"
-)
-class MCP(Mcp):
-    """
-    MCP client for lybic MCP(Model Context Protocol) and Restful Interface API.
-
-    According to the python naming convention, please use Class Mcp
-    """
-    def __init__(self, client: "LybicClient"):
-        """
-        Initialize MCP client
-
-        :param client: LybicClient
-        """
-        super().__init__(client)

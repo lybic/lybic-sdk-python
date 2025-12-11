@@ -31,8 +31,6 @@ from typing import List, Optional, Literal
 from pydantic import BaseModel, Field, RootModel, ConfigDict
 from pydantic.config import ExtraValues
 
-from lybic._api import deprecated
-
 # pylint: disable=invalid-name,unused-import
 
 # Import actions from the new action module for backward compatibility
@@ -258,24 +256,6 @@ class GetSandboxResponseDto(BaseModel):
 # Computer Use Schemas
 # (Actions moved to lybic.action module for better organization)
 
-
-@deprecated(
-    since="0.8.0",
-    removal="1.0.0",
-    message="Use `ExecuteSandboxActionDto` instead, which supports both computer and mobile use actions."
-)
-class ComputerUseActionDto(BaseModel):
-    """
-    Computer use action request.
-    """
-    model_config = ConfigDict(extra=json_extra_fields_policy)
-
-    action: ComputerUseAction | dict
-    includeScreenShot: bool = True
-    includeCursorPosition: bool = True
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
-
-
 class CursorPosition(BaseModel):
     """
     Represents the position of the cursor on the screen.
@@ -321,23 +301,6 @@ class ParseTextRequestDto(BaseModel):
     Request DTO for parsing text content.
     """
     textContent: str
-
-
-@deprecated(
-    since="0.7.0",
-    removal="1.0.0",
-    message=(
-        "Starting from v0.7.0, parsing LLM output functions(ComputerUse.parse_llm_output) will "
-        "no longer require ComputerUseParseRequestDto"
-    )
-)
-class ComputerUseParseRequestDto(BaseModel):
-    """
-    Request DTO for parsing text content into computer use actions.
-    """
-    model: Literal["ui-tars", "oai-compute-use", "seed"]
-    textContent: str
-
 
 class ComputerUseActionResponseDto(BaseModel):
     """
