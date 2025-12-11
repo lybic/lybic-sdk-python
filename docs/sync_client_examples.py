@@ -38,7 +38,7 @@ Key differences from async client:
 2. No async/await keywords needed
 3. Direct function calls instead of coroutines
 """
-# pylint: disable=wrong-import-position,reimported,invalid-name,f-string-without-interpolation
+# pylint: disable=pointless-string-statement,wrong-import-position,reimported,invalid-name,f-string-without-interpolation,wrong-import-order,ungrouped-imports
 
 # =============================================================================
 # Example 1: Basic synchronous client usage
@@ -102,7 +102,7 @@ from lybic_sync import LybicSyncClient, PyautoguiSync
 
 with LybicSyncClient() as client:
     sandbox_id = "your-sandbox-id"
-    
+
     # Context manager automatically handles cleanup
     with PyautoguiSync(client, sandbox_id) as pyautogui:
         # Execute pyautogui commands
@@ -138,7 +138,7 @@ from lybic_sync import LybicSyncClient, PyautoguiSync
 
 with LybicSyncClient() as client:
     sandbox_id = "your-sandbox-id"
-    
+
     with PyautoguiSync(client, sandbox_id) as pyautogui:
         pyautogui.click(100, 100)
         pyautogui.write("Using sync client - simpler!")
@@ -218,7 +218,7 @@ with LybicSyncClient(auth=auth) as client:
         llm_output=llm_output
     )
     print(f"Parsed {len(actions.actions)} actions from LLM output")
-    
+
     # Execute the parsed actions on a sandbox
     if actions.actions:
         sandbox_id = "SBX-xxxx"
@@ -242,16 +242,16 @@ with LybicSyncClient(auth=auth) as client:
     # List all projects
     projects = client.project.list()
     print(f"Total projects: {len(projects)}")
-    
+
     for project in projects:
         print(f"  - {project.name} ({project.id})")
-    
+
     # Create a new project
     new_project = client.project.create(
         data=dto.CreateProjectDto(name="My New Project")
     )
     print(f"Created project: {new_project.id}")
-    
+
     # Delete a project (if needed)
     # client.project.delete(new_project.id)
 
@@ -272,7 +272,7 @@ auth = LybicAuth(org_id="ORG-xxxx", api_key="lysk-xxxxxxxxxxx")
 
 with LybicSyncClient(auth=auth) as client:
     sandbox_id = "SBX-xxxx"
-    
+
     # Download file from URL to sandbox
     response = client.sandbox.copy_files(
         sandbox_id,
@@ -284,7 +284,7 @@ with LybicSyncClient(auth=auth) as client:
         ])
     )
     print(f"File copy result: {response}")
-    
+
     # Upload file from sandbox to URL
     response = client.sandbox.copy_files(
         sandbox_id,
@@ -309,18 +309,18 @@ auth = LybicAuth(org_id="ORG-xxxx", api_key="lysk-xxxxxxxxxxx")
 
 with LybicSyncClient(auth=auth) as client:
     sandbox_id = "SBX-xxxx"
-    
+
     # Execute a simple command
     result = client.sandbox.execute_process(
         sandbox_id,
         executable="/bin/echo",
         args=["Hello", "World"]
     )
-    
+
     stdout = base64.b64decode(result.stdoutBase64 or '').decode(errors='ignore')
     print(f"Exit code: {result.exitCode}")
     print(f"Output: {stdout}")
-    
+
     # Execute Python script with stdin
     stdin_data = base64.b64encode(b"print('Hello from Python')\n").decode()
     result = client.sandbox.execute_process(
@@ -332,7 +332,7 @@ with LybicSyncClient(auth=auth) as client:
             stdinBase64=stdin_data
         )
     )
-    
+
     stdout = base64.b64decode(result.stdoutBase64 or '').decode(errors='ignore')
     print(f"Python output: {stdout}")
 
