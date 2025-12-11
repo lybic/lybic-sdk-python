@@ -1,5 +1,7 @@
 ## examples
 
+### Asynchronous Usage (Default)
+
 ```python
 from lybic import LybicClient, LybicAuth
 
@@ -14,12 +16,40 @@ async def main():
         pass
 ```
 
+### Synchronous Usage
+
+The Lybic SDK also provides synchronous clients with the same API interface. Simply import from `lybic_sync` instead of `lybic`:
+
+```python
+from lybic_sync import LybicSyncClient, LybicAuth
+
+# No async/await needed!
+with LybicSyncClient(
+    LybicAuth(
+        org_id="ORG-xxxx",
+        api_key="lysk-xxxxxxxxxxx",
+        endpoint="https://api.lybic.cn/",
+    )
+) as client:
+    # Use the client directly without await
+    sandboxes = client.sandbox.list()
+    stats = client.stats.get()
+```
+
+**Note:** All examples below show the async version. For synchronous usage, replace:
+- `from lybic import LybicClient` → `from lybic_sync import LybicSyncClient`
+- `async with LybicClient()` → `with LybicSyncClient()`
+- `await client.method()` → `client.method()` (remove `await`)
+- Remove `async def` and `asyncio.run()` wrappers
+
 ### LybicClient Manual lifecycle management
 
 From v0.5.4, we've added a new feature that allows developers to manually manage the LybicClient lifecycle for increased 
 flexibility.
 
 However, please note that this introduces certain risks, and we still recommend using the `async with ... as ...` syntax.
+
+**Async version:**
 
 ```python
 import asyncio 
@@ -35,6 +65,18 @@ if __name__ == "__main__":
     asyncio.run(main())
 ```
 
+**Sync version:**
+
+```python
+from lybic_sync import LybicSyncClient, LybicAuth
+
+client = LybicSyncClient(LybicAuth(org_id="ORG-xxxx", api_key="lysk-xxxxxxxxxxx"))
+
+# No asyncio needed!
+response = client.request("GET", f"/api/orgs/{client.org_id}/stats")
+client.close()
+```
+
 ### Class Stats
 
 `Stats` is a class for describing the stats of the organization.
@@ -47,11 +89,20 @@ if __name__ == "__main__":
     - args: None
     - return: class dto.StatsResponseDto
 
+    **Async version:**
     ```python
     from lybic import Stats
     # Inside your async main function, with the client initialized:
     stats = Stats(client)
     print(await stats.get())
+    ```
+    
+    **Sync version:**
+    ```python
+    from lybic_sync import StatsSync
+    # With the sync client initialized:
+    stats = StatsSync(client)
+    print(stats.get())  # No await!
     ```
     
     It will out put something like this:
