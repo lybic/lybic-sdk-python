@@ -168,6 +168,16 @@ class Shape(BaseModel):
     architecture: Literal["x86_64","aarch64"]
 
 # Sandbox Schemas
+@unique
+class SandboxStatus(Enum):
+    """
+    Enumeration of possible sandbox statuses.
+    """
+    PENDING = "PENDING"
+    RUNNING = "RUNNING"
+    STOPPED = "STOPPED"
+    ERROR = "ERROR"
+
 class Sandbox(BaseModel):
     """
     Represents a sandbox environment.
@@ -182,7 +192,7 @@ class Sandbox(BaseModel):
     projectId: str = Field(..., description="Project ID to which the sandbox belongs.")
     shapeName: Optional[str] = Field(None, description="Specs and datacenter of the sandbox.") # This field does not exist in GetSandboxResponseDto (that is, this field is optional)
     shape: Optional[Shape] = None # This field does not exist in SandboxListResponseDto (that is, this field is optional)
-    status: Optional[Literal["PENDING", "RUNNING", "STOPPED", "ERROR"]] = Field(None, description="Current sandbox status")
+    status: Optional[SandboxStatus] = Field(None, description="Current sandbox status")
 
 
 class GatewayAddress(BaseModel):
@@ -574,8 +584,8 @@ class MachineImageQuota(BaseModel):
     """
     model_config = ConfigDict(extra=json_extra_fields_policy)
 
-    used: int
-    limit: int
+    used: float
+    limit: float
 
 
 class MachineImagesResponseDto(BaseModel):

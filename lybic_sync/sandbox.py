@@ -28,6 +28,7 @@
 
 """sandbox.py provides the synchronous Sandbox API"""
 import base64
+import json
 from io import BytesIO
 from typing import Tuple, overload, TYPE_CHECKING
 
@@ -298,7 +299,7 @@ class SandboxSync:
         self.client.logger.debug(f"Create sandbox from image response: {response.text}")
         return dto.CreateSandboxFromImageResponseDto.model_validate_json(response.text)
 
-    def get_status(self, sandbox_id: str) -> str:
+    def get_status(self, sandbox_id: str) -> dto.SandboxStatus:
         """
         Get the status of a sandbox (PENDING/RUNNING/STOPPED/ERROR)
         """
@@ -307,7 +308,8 @@ class SandboxSync:
             "GET",
             f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/status")
         self.client.logger.debug(f"Get sandbox status response: {response.text}")
-        return response.text
+        json_response = json.loads(response.text)
+        return json_response['status']
 
     @overload
     def create_machine_image(self, data: dto.CreateMachineImageDto) -> dto.MachineImageResponseDto: ...
