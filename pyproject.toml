@@ -31,4 +31,6 @@ Homepage = "https://github.com/lybic/lybic-sdk-python"
 Issues = "https://github.com/lybic/lybic-sdk-python/issues"
 
 [tool.setuptools.packages.find]
+where = ["."]
+include = ["lybic", "lybic_sync"]
 exclude = ["test*"]
