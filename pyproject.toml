@@ -32,5 +32,5 @@ Issues = "https://github.com/lybic/lybic-sdk-python/issues"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["lybic", "lybic_sync"]
+include = ["lybic", "lybic.*", "lybic_sync", "lybic_sync.*"]
 exclude = ["test*"]
