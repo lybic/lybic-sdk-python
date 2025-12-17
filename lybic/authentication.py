@@ -60,8 +60,8 @@ class LybicAuth:
             self.headers["x-api-key"] = api_key
         self.api_key = api_key
 
-        self.endpoint = endpoint.rstrip('/')
-        self.agent_service_endpoint = agent_service_endpoint.rstrip('/')
+        self.endpoint = (endpoint or "https://api.lybic.cn").rstrip('/')
+        self.agent_service_endpoint = (agent_service_endpoint or "https://agent.lybic.cn").rstrip('/')
 
         self.org_id = org_id
         self.headers["Content-Type"] = "application/json"
