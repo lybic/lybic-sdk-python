@@ -101,4 +101,4 @@ class _LybicSyncBaseClient:
         :param mcp_server_id:
         :return:
         """
-        return f"{self.endpoint}/mcp/{mcp_server_id}"
+        return f"{self.endpoint}/api/mcp/{mcp_server_id}"
