@@ -27,7 +27,7 @@
 """dto.py provides all the data types used in the API."""
 import uuid
 from enum import Enum, unique
-from typing import List, Optional, Literal
+from typing import List, Optional, Literal, Any
 from pydantic import BaseModel, Field, RootModel, ConfigDict
 from pydantic.config import ExtraValues
 
@@ -301,7 +301,7 @@ class SandboxActionResponseDto(BaseModel):
 
     screenShot: Optional[str] = None  # is a picture url of the screen eg. https://example.com/screen.webp
     cursorPosition: Optional[CursorPosition] = None
-    actionResult: Optional[str] = None
+    actionResult: Optional[Any] = None
 
 @unique
 class ModelType(Enum):
