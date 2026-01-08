@@ -27,7 +27,7 @@
 """dto.py provides all the data types used in the API."""
 import uuid
 from enum import Enum, unique
-from typing import List, Optional, Literal
+from typing import List, Optional, Literal, Any
 from pydantic import BaseModel, Field, RootModel, ConfigDict
 from pydantic.config import ExtraValues
 
@@ -163,6 +163,7 @@ class Shape(BaseModel):
     hardwareAcceleratedEncoding: bool = Field(False, description="Whether the shape supports hardware accelerated encoding.")
     pricePerHour: float = Field(..., description="This price acts as a multiplier, e.g. if it is set to 0.5, each hour of usage will be billed as 0.5 hours.")
     requiredPlanTier: float = Field(..., description="Required plan tier to use this shape.")
+    requiredFeatureFlag:str = Field(..., description="The feature flag required by creating the shape of sandbox.")
     os: Literal["Windows","Linux","Android"]
     virtualization: Literal["KVM","Container"]
     architecture: Literal["x86_64","aarch64"]
@@ -315,7 +316,7 @@ class SandboxActionResponseDto(BaseModel):
 
     screenShot: Optional[str] = None  # is a picture url of the screen eg. https://example.com/screen.webp
     cursorPosition: Optional[CursorPosition] = None
-    actionResult: Optional[str] = None
+    actionResult: Optional[Any] = None
 
 @unique
 class ModelType(Enum):

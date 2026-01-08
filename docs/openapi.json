@@ -1964,6 +1964,10 @@
                   "requiredPlanTier": {
                     "type": "number"
                   },
+                  "requiredFeatureFlag": {
+                    "description": "The feature flag required by creating the shape of sandbox.",
+                    "type": "string"
+                  },
                   "os": {
                     "type": "string",
                     "enum": [
@@ -1993,6 +1997,7 @@
                   "hardwareAcceleratedEncoding",
                   "pricePerHour",
                   "requiredPlanTier",
+                  "requiredFeatureFlag",
                   "os",
                   "virtualization",
                   "architecture"
@@ -3278,2001 +3283,1859 @@
           "action": {
             "oneOf": [
               {
-                "description": "All possible computer use actions, with optional callId",
-                "oneOf": [
-                  {
-                    "description": "Click the mouse at the specified coordinates",
-                    "type": "object",
-                    "properties": {
-                      "type": {
-                        "type": "string",
-                        "enum": [
-                          "mouse:click"
-                        ]
-                      },
-                      "x": {
-                        "description": "X coordinate",
-                        "oneOf": [
-                          {
-                            "description": "Length in pixels",
-                            "type": "object",
-                            "properties": {
-                              "type": {
-                                "description": "Indicates the unit is pixel",
-                                "type": "string",
-                                "enum": [
-                                  "px"
-                                ]
-                              },
-                              "value": {
-                                "description": "Length in pixels",
-                                "type": "number"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "value"
-                            ]
-                          },
-                          {
-                            "description": "Length as a fraction",
-                            "type": "object",
-                            "properties": {
-                              "type": {
-                                "type": "string",
-                                "enum": [
-                                  "/"
-                                ]
-                              },
-                              "numerator": {
-                                "description": "Numerator of the fraction",
-                                "type": "number"
-                              },
-                              "denominator": {
-                                "description": "Denominator of the fraction",
-                                "type": "number"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "numerator",
-                              "denominator"
-                            ]
-                          }
-                        ]
-                      },
-                      "y": {
-                        "description": "Y coordinate",
-                        "oneOf": [
-                          {
-                            "description": "Length in pixels",
-                            "type": "object",
-                            "properties": {
-                              "type": {
-                                "description": "Indicates the unit is pixel",
-                                "type": "string",
-                                "enum": [
-                                  "px"
-                                ]
-                              },
-                              "value": {
-                                "description": "Length in pixels",
-                                "type": "number"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "value"
-                            ]
-                          },
-                          {
-                            "description": "Length as a fraction",
-                            "type": "object",
-                            "properties": {
-                              "type": {
-                                "type": "string",
-                                "enum": [
-                                  "/"
-                                ]
-                              },
-                              "numerator": {
-                                "description": "Numerator of the fraction",
-                                "type": "number"
-                              },
-                              "denominator": {
-                                "description": "Denominator of the fraction",
-                                "type": "number"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "numerator",
-                              "denominator"
-                            ]
-                          }
-                        ]
-                      },
-                      "button": {
-                        "description": "Mouse button flag combination. 1: left, 2: right, 4: middle, 8: back, 16: forward; add them together to press multiple buttons at once.",
-                        "type": "number"
-                      },
-                      "holdKey": {
-                        "description": "Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\".",
-                        "type": "string"
-                      },
-                      "relative": {
-                        "description": "Whether the coordinates are relative to the current mouse position.",
-                        "type": "boolean"
-                      }
-                    },
-                    "required": [
-                      "type",
-                      "x",
-                      "y",
-                      "button"
-                    ]
-                  },
-                  {
-                    "description": "Double click the mouse at the specified coordinates",
-                    "type": "object",
-                    "properties": {
-                      "type": {
-                        "type": "string",
-                        "enum": [
-                          "mouse:doubleClick"
-                        ]
-                      },
-                      "x": {
-                        "description": "X coordinate",
-                        "oneOf": [
-                          {
-                            "description": "Length in pixels",
-                            "type": "object",
-                            "properties": {
-                              "type": {
-                                "description": "Indicates the unit is pixel",
-                                "type": "string",
-                                "enum": [
-                                  "px"
-                                ]
-                              },
-                              "value": {
-                                "description": "Length in pixels",
-                                "type": "number"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "value"
-                            ]
-                          },
-                          {
-                            "description": "Length as a fraction",
-                            "type": "object",
-                            "properties": {
-                              "type": {
-                                "type": "string",
-                                "enum": [
-                                  "/"
-                                ]
-                              },
-                              "numerator": {
-                                "description": "Numerator of the fraction",
-                                "type": "number"
-                              },
-                              "denominator": {
-                                "description": "Denominator of the fraction",
-                                "type": "number"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "numerator",
-                              "denominator"
-                            ]
-                          }
-                        ]
-                      },
-                      "y": {
-                        "description": "Y coordinate",
-                        "oneOf": [
-                          {
-                            "description": "Length in pixels",
-                            "type": "object",
-                            "properties": {
-                              "type": {
-                                "description": "Indicates the unit is pixel",
-                                "type": "string",
-                                "enum": [
-                                  "px"
-                                ]
-                              },
-                              "value": {
-                                "description": "Length in pixels",
-                                "type": "number"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "value"
-                            ]
-                          },
-                          {
-                            "description": "Length as a fraction",
-                            "type": "object",
-                            "properties": {
-                              "type": {
-                                "type": "string",
-                                "enum": [
-                                  "/"
-                                ]
-                              },
-                              "numerator": {
-                                "description": "Numerator of the fraction",
-                                "type": "number"
-                              },
-                              "denominator": {
-                                "description": "Denominator of the fraction",
-                                "type": "number"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "numerator",
-                              "denominator"
-                            ]
-                          }
-                        ]
-                      },
-                      "button": {
-                        "description": "Mouse button index",
-                        "type": "number"
-                      },
-                      "holdKey": {
-                        "description": "Key to hold down during double click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\".",
-                        "type": "string"
-                      },
-                      "relative": {
-                        "description": "Whether the coordinates are relative to the current mouse position.",
-                        "type": "boolean"
-                      }
-                    },
-                    "required": [
-                      "type",
-                      "x",
-                      "y",
-                      "button"
-                    ]
-                  },
-                  {
-                    "description": "Triple click the mouse at the specified coordinates",
-                    "type": "object",
-                    "properties": {
-                      "type": {
-                        "type": "string",
-                        "enum": [
-                          "mouse:tripleClick"
-                        ]
-                      },
-                      "x": {
-                        "description": "X coordinate",
-                        "oneOf": [
-                          {
-                            "description": "Length in pixels",
-                            "type": "object",
-                            "properties": {
-                              "type": {
-                                "description": "Indicates the unit is pixel",
-                                "type": "string",
-                                "enum": [
-                                  "px"
-                                ]
-                              },
-                              "value": {
-                                "description": "Length in pixels",
-                                "type": "number"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "value"
-                            ]
-                          },
-                          {
-                            "description": "Length as a fraction",
-                            "type": "object",
-                            "properties": {
-                              "type": {
-                                "type": "string",
-                                "enum": [
-                                  "/"
-                                ]
-                              },
-                              "numerator": {
-                                "description": "Numerator of the fraction",
-                                "type": "number"
-                              },
-                              "denominator": {
-                                "description": "Denominator of the fraction",
-                                "type": "number"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "numerator",
-                              "denominator"
-                            ]
-                          }
-                        ]
-                      },
-                      "y": {
-                        "description": "Y coordinate",
-                        "oneOf": [
-                          {
-                            "description": "Length in pixels",
-                            "type": "object",
-                            "properties": {
-                              "type": {
-                                "description": "Indicates the unit is pixel",
-                                "type": "string",
-                                "enum": [
-                                  "px"
-                                ]
-                              },
-                              "value": {
-                                "description": "Length in pixels",
-                                "type": "number"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "value"
-                            ]
-                          },
-                          {
-                            "description": "Length as a fraction",
-                            "type": "object",
-                            "properties": {
-                              "type": {
-                                "type": "string",
-                                "enum": [
-                                  "/"
-                                ]
-                              },
-                              "numerator": {
-                                "description": "Numerator of the fraction",
-                                "type": "number"
-                              },
-                              "denominator": {
-                                "description": "Denominator of the fraction",
-                                "type": "number"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "numerator",
-                              "denominator"
-                            ]
-                          }
-                        ]
-                      },
-                      "button": {
-                        "description": "Mouse button index",
-                        "type": "number"
-                      },
-                      "holdKey": {
-                        "description": "Key to hold down during triple click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\".",
-                        "type": "string"
-                      },
-                      "relative": {
-                        "description": "Whether the coordinates are relative to the current mouse position.",
-                        "type": "boolean"
-                      }
-                    },
-                    "required": [
-                      "type",
-                      "x",
-                      "y",
-                      "button"
-                    ]
-                  },
-                  {
-                    "description": "Move the mouse to the specified coordinates",
-                    "type": "object",
-                    "properties": {
-                      "type": {
-                        "type": "string",
-                        "enum": [
-                          "mouse:move"
-                        ]
-                      },
-                      "x": {
-                        "description": "X coordinate",
-                        "oneOf": [
-                          {
-                            "description": "Length in pixels",
-                            "type": "object",
-                            "properties": {
-                              "type": {
-                                "description": "Indicates the unit is pixel",
-                                "type": "string",
-                                "enum": [
-                                  "px"
-                                ]
-                              },
-                              "value": {
-                                "description": "Length in pixels",
-                                "type": "number"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "value"
-                            ]
-                          },
-                          {
-                            "description": "Length as a fraction",
-                            "type": "object",
-                            "properties": {
-                              "type": {
-                                "type": "string",
-                                "enum": [
-                                  "/"
-                                ]
-                              },
-                              "numerator": {
-                                "description": "Numerator of the fraction",
-                                "type": "number"
-                              },
-                              "denominator": {
-                                "description": "Denominator of the fraction",
-                                "type": "number"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "numerator",
-                              "denominator"
-                            ]
-                          }
-                        ]
-                      },
-                      "y": {
-                        "description": "Y coordinate",
-                        "oneOf": [
-                          {
-                            "description": "Length in pixels",
-                            "type": "object",
-                            "properties": {
-                              "type": {
-                                "description": "Indicates the unit is pixel",
-                                "type": "string",
-                                "enum": [
-                                  "px"
-                                ]
-                              },
-                              "value": {
-                                "description": "Length in pixels",
-                                "type": "number"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "value"
-                            ]
-                          },
-                          {
-                            "description": "Length as a fraction",
-                            "type": "object",
-                            "properties": {
-                              "type": {
-                                "type": "string",
-                                "enum": [
-                                  "/"
-                                ]
-                              },
-                              "numerator": {
-                                "description": "Numerator of the fraction",
-                                "type": "number"
-                              },
-                              "denominator": {
-                                "description": "Denominator of the fraction",
-                                "type": "number"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "numerator",
-                              "denominator"
-                            ]
-                          }
-                        ]
-                      },
-                      "holdKey": {
-                        "description": "Key to hold down during move, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\".",
-                        "type": "string"
-                      },
-                      "relative": {
-                        "description": "Whether the coordinates are relative to the current mouse position.",
-                        "type": "boolean"
-                      }
-                    },
-                    "required": [
-                      "type",
-                      "x",
-                      "y"
-                    ]
-                  },
-                  {
-                    "description": "Scroll the mouse",
-                    "type": "object",
-                    "properties": {
-                      "type": {
-                        "type": "string",
-                        "enum": [
-                          "mouse:scroll"
-                        ]
-                      },
-                      "x": {
-                        "description": "X coordinate",
-                        "oneOf": [
-                          {
-                            "description": "Length in pixels",
-                            "type": "object",
-                            "properties": {
-                              "type": {
-                                "description": "Indicates the unit is pixel",
-                                "type": "string",
-                                "enum": [
-                                  "px"
-                                ]
-                              },
-                              "value": {
-                                "description": "Length in pixels",
-                                "type": "number"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "value"
-                            ]
-                          },
-                          {
-                            "description": "Length as a fraction",
-                            "type": "object",
-                            "properties": {
-                              "type": {
-                                "type": "string",
-                                "enum": [
-                                  "/"
-                                ]
-                              },
-                              "numerator": {
-                                "description": "Numerator of the fraction",
-                                "type": "number"
-                              },
-                              "denominator": {
-                                "description": "Denominator of the fraction",
-                                "type": "number"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "numerator",
-                              "denominator"
-                            ]
-                          }
-                        ]
-                      },
-                      "y": {
-                        "description": "Y coordinate",
-                        "oneOf": [
-                          {
-                            "description": "Length in pixels",
-                            "type": "object",
-                            "properties": {
-                              "type": {
-                                "description": "Indicates the unit is pixel",
-                                "type": "string",
-                                "enum": [
-                                  "px"
-                                ]
-                              },
-                              "value": {
-                                "description": "Length in pixels",
-                                "type": "number"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "value"
-                            ]
-                          },
-                          {
-                            "description": "Length as a fraction",
-                            "type": "object",
-                            "properties": {
-                              "type": {
-                                "type": "string",
-                                "enum": [
-                                  "/"
-                                ]
-                              },
-                              "numerator": {
-                                "description": "Numerator of the fraction",
-                                "type": "number"
-                              },
-                              "denominator": {
-                                "description": "Denominator of the fraction",
-                                "type": "number"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "numerator",
-                              "denominator"
-                            ]
-                          }
-                        ]
-                      },
-                      "stepVertical": {
-                        "description": "Vertical scroll steps",
-                        "type": "number"
-                      },
-                      "stepHorizontal": {
-                        "description": "Horizontal scroll steps",
-                        "type": "number"
-                      },
-                      "holdKey": {
-                        "description": "Key to hold down during scroll, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\".",
-                        "type": "string"
-                      },
-                      "relative": {
-                        "description": "Whether the coordinates are relative to the current mouse position.",
-                        "type": "boolean"
-                      }
-                    },
-                    "required": [
-                      "type",
-                      "x",
-                      "y",
-                      "stepVertical",
-                      "stepHorizontal"
-                    ]
-                  },
-                  {
-                    "description": "Drag the mouse from start to end coordinates",
-                    "type": "object",
-                    "properties": {
-                      "type": {
-                        "type": "string",
-                        "enum": [
-                          "mouse:drag"
-                        ]
-                      },
-                      "startX": {
-                        "description": "Start X coordinate",
-                        "oneOf": [
-                          {
-                            "description": "Length in pixels",
-                            "type": "object",
-                            "properties": {
-                              "type": {
-                                "description": "Indicates the unit is pixel",
-                                "type": "string",
-                                "enum": [
-                                  "px"
-                                ]
-                              },
-                              "value": {
-                                "description": "Length in pixels",
-                                "type": "number"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "value"
-                            ]
-                          },
-                          {
-                            "description": "Length as a fraction",
-                            "type": "object",
-                            "properties": {
-                              "type": {
-                                "type": "string",
-                                "enum": [
-                                  "/"
-                                ]
-                              },
-                              "numerator": {
-                                "description": "Numerator of the fraction",
-                                "type": "number"
-                              },
-                              "denominator": {
-                                "description": "Denominator of the fraction",
-                                "type": "number"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "numerator",
-                              "denominator"
-                            ]
-                          }
-                        ]
-                      },
-                      "startY": {
-                        "description": "Start Y coordinate",
-                        "oneOf": [
-                          {
-                            "description": "Length in pixels",
-                            "type": "object",
-                            "properties": {
-                              "type": {
-                                "description": "Indicates the unit is pixel",
-                                "type": "string",
-                                "enum": [
-                                  "px"
-                                ]
-                              },
-                              "value": {
-                                "description": "Length in pixels",
-                                "type": "number"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "value"
-                            ]
-                          },
-                          {
-                            "description": "Length as a fraction",
-                            "type": "object",
-                            "properties": {
-                              "type": {
-                                "type": "string",
-                                "enum": [
-                                  "/"
-                                ]
-                              },
-                              "numerator": {
-                                "description": "Numerator of the fraction",
-                                "type": "number"
-                              },
-                              "denominator": {
-                                "description": "Denominator of the fraction",
-                                "type": "number"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "numerator",
-                              "denominator"
-                            ]
-                          }
-                        ]
-                      },
-                      "endX": {
-                        "description": "End X coordinate",
-                        "oneOf": [
-                          {
-                            "description": "Length in pixels",
-                            "type": "object",
-                            "properties": {
-                              "type": {
-                                "description": "Indicates the unit is pixel",
-                                "type": "string",
-                                "enum": [
-                                  "px"
-                                ]
-                              },
-                              "value": {
-                                "description": "Length in pixels",
-                                "type": "number"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "value"
-                            ]
-                          },
-                          {
-                            "description": "Length as a fraction",
-                            "type": "object",
-                            "properties": {
-                              "type": {
-                                "type": "string",
-                                "enum": [
-                                  "/"
-                                ]
-                              },
-                              "numerator": {
-                                "description": "Numerator of the fraction",
-                                "type": "number"
-                              },
-                              "denominator": {
-                                "description": "Denominator of the fraction",
-                                "type": "number"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "numerator",
-                              "denominator"
-                            ]
-                          }
-                        ]
-                      },
-                      "endY": {
-                        "description": "End Y coordinate",
-                        "oneOf": [
-                          {
-                            "description": "Length in pixels",
-                            "type": "object",
-                            "properties": {
-                              "type": {
-                                "description": "Indicates the unit is pixel",
-                                "type": "string",
-                                "enum": [
-                                  "px"
-                                ]
-                              },
-                              "value": {
-                                "description": "Length in pixels",
-                                "type": "number"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "value"
-                            ]
-                          },
-                          {
-                            "description": "Length as a fraction",
-                            "type": "object",
-                            "properties": {
-                              "type": {
-                                "type": "string",
-                                "enum": [
-                                  "/"
-                                ]
-                              },
-                              "numerator": {
-                                "description": "Numerator of the fraction",
-                                "type": "number"
-                              },
-                              "denominator": {
-                                "description": "Denominator of the fraction",
-                                "type": "number"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "numerator",
-                              "denominator"
-                            ]
-                          }
-                        ]
-                      },
-                      "button": {
-                        "description": "Mouse button index",
-                        "type": "number"
-                      },
-                      "holdKey": {
-                        "description": "Key to hold down during drag, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\".",
-                        "type": "string"
-                      },
-                      "startRelative": {
-                        "description": "Whether the coordinates are relative to the current mouse position.",
-                        "type": "boolean"
-                      },
-                      "endRelative": {
-                        "description": "Whether the coordinates are relative to the current mouse position.",
-                        "type": "boolean"
-                      }
-                    },
-                    "required": [
-                      "type",
-                      "startX",
-                      "startY",
-                      "endX",
-                      "endY"
-                    ]
-                  },
-                  {
-                    "description": "Type text content",
-                    "type": "object",
-                    "properties": {
-                      "type": {
-                        "type": "string",
-                        "enum": [
-                          "keyboard:type"
-                        ]
-                      },
-                      "content": {
-                        "description": "Text content to type",
-                        "type": "string"
-                      },
-                      "treatNewLineAsEnter": {
-                        "description": "Whether to treat line breaks as enter. If true, any line breaks(\\n) in content will be treated as enter key press, and content will be split into multiple lines.",
-                        "type": "boolean",
-                        "default": false,
-                        "nullable": true
-                      }
-                    },
-                    "required": [
-                      "type",
-                      "content",
-                      "treatNewLineAsEnter"
-                    ]
-                  },
-                  {
-                    "description": "Press a keyboard hotkey",
-                    "type": "object",
-                    "properties": {
-                      "type": {
-                        "type": "string",
-                        "enum": [
-                          "keyboard:hotkey"
-                        ]
-                      },
-                      "keys": {
-                        "description": "Hotkey combination, in xdotool key syntax. Examples: \"a\", \"Return\", \"alt+Tab\", \"ctrl+s\", \"Up\", \"KP_0\" (for the numpad 0 key).",
-                        "type": "string"
-                      },
-                      "duration": {
-                        "description": "Duration in milliseconds. If specified, the hotkey will be held for a while and then released.",
-                        "type": "number",
-                        "minimum": 1,
-                        "exclusiveMinimum": false,
-                        "maximum": 5000,
-                        "exclusiveMaximum": false
-                      }
-                    },
-                    "required": [
-                      "type",
-                      "keys"
-                    ]
-                  },
-                  {
-                    "description": "Take a screenshot of the current screen",
-                    "type": "object",
-                    "properties": {
-                      "type": {
-                        "type": "string",
-                        "enum": [
-                          "screenshot"
-                        ]
-                      }
-                    },
-                    "required": [
-                      "type"
-                    ]
-                  },
-                  {
-                    "description": "Wait for a specified duration",
-                    "type": "object",
-                    "properties": {
-                      "type": {
-                        "type": "string",
-                        "enum": [
-                          "wait"
-                        ]
-                      },
-                      "duration": {
-                        "description": "Duration in milliseconds",
-                        "type": "number"
-                      }
-                    },
-                    "required": [
-                      "type",
-                      "duration"
-                    ]
-                  },
-                  {
-                    "description": "Indicates the action has finished",
-                    "type": "object",
-                    "properties": {
-                      "type": {
-                        "type": "string",
-                        "enum": [
-                          "finished"
-                        ]
-                      },
-                      "message": {
-                        "description": "Completion message",
-                        "type": "string"
-                      }
-                    },
-                    "required": [
-                      "type"
-                    ]
-                  },
-                  {
-                    "description": "Indicates the action has failed",
-                    "type": "object",
-                    "properties": {
-                      "type": {
-                        "type": "string",
-                        "enum": [
-                          "failed"
-                        ]
-                      },
-                      "message": {
-                        "description": "Failure message",
-                        "type": "string"
-                      }
-                    },
-                    "required": [
-                      "type"
-                    ]
-                  },
-                  {
-                    "description": "Indicates the human user should take over the control",
-                    "type": "object",
-                    "properties": {
-                      "type": {
-                        "type": "string",
-                        "enum": [
-                          "client:user-takeover"
-                        ]
-                      }
-                    },
-                    "required": [
-                      "type"
-                    ]
-                  },
-                  {
-                    "description": "Press ONE key down, in xdotool key syntax. Only use this action if hotkey or type cannot satisfy your needs.",
-                    "type": "object",
-                    "properties": {
-                      "type": {
-                        "type": "string",
-                        "enum": [
-                          "key:down"
-                        ]
-                      },
-                      "key": {
-                        "description": "Key to press",
-                        "type": "string"
-                      }
-                    },
-                    "required": [
-                      "type",
-                      "key"
-                    ]
-                  },
-                  {
-                    "description": "Release ONE key, in xdotool key syntax. Only use this action if keydown cannot satisfy your needs and only after a key down.",
-                    "type": "object",
-                    "properties": {
-                      "type": {
-                        "type": "string",
-                        "enum": [
-                          "key:up"
-                        ]
-                      },
-                      "key": {
-                        "description": "Key to release",
-                        "type": "string"
-                      }
-                    },
-                    "required": [
-                      "type",
-                      "key"
-                    ]
-                  }
-                ],
+                "description": "Press ONE key down, in xdotool key syntax. Only use this action if hotkey or type cannot satisfy your needs.",
                 "type": "object",
                 "properties": {
-                  "callId": {
-                    "description": "Optional call identifier",
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "key:down"
+                    ]
+                  },
+                  "key": {
+                    "description": "Key to press",
                     "type": "string"
                   }
-                }
+                },
+                "required": [
+                  "type",
+                  "key"
+                ]
               },
               {
-                "description": "All possible mobile use actions, with optional callId",
-                "oneOf": [
-                  {
-                    "description": "Take a screenshot of the current screen",
-                    "type": "object",
-                    "properties": {
-                      "type": {
-                        "type": "string",
-                        "enum": [
-                          "screenshot"
-                        ]
-                      }
-                    },
-                    "required": [
-                      "type"
-                    ]
-                  },
-                  {
-                    "description": "Wait for a specified duration",
-                    "type": "object",
-                    "properties": {
-                      "type": {
-                        "type": "string",
-                        "enum": [
-                          "wait"
-                        ]
-                      },
-                      "duration": {
-                        "description": "Duration in milliseconds",
-                        "type": "number"
-                      }
-                    },
-                    "required": [
-                      "type",
-                      "duration"
-                    ]
-                  },
-                  {
-                    "description": "Indicates the action has finished",
-                    "type": "object",
-                    "properties": {
-                      "type": {
-                        "type": "string",
-                        "enum": [
-                          "finished"
-                        ]
-                      },
-                      "message": {
-                        "description": "Completion message",
-                        "type": "string"
-                      }
-                    },
-                    "required": [
-                      "type"
-                    ]
-                  },
-                  {
-                    "description": "Indicates the action has failed",
-                    "type": "object",
-                    "properties": {
-                      "type": {
-                        "type": "string",
-                        "enum": [
-                          "failed"
-                        ]
-                      },
-                      "message": {
-                        "description": "Failure message",
-                        "type": "string"
-                      }
-                    },
-                    "required": [
-                      "type"
-                    ]
-                  },
-                  {
-                    "description": "Indicates the human user should take over the control",
-                    "type": "object",
-                    "properties": {
-                      "type": {
-                        "type": "string",
-                        "enum": [
-                          "client:user-takeover"
-                        ]
-                      }
-                    },
-                    "required": [
-                      "type"
-                    ]
-                  },
-                  {
-                    "description": "Type text content",
-                    "type": "object",
-                    "properties": {
-                      "type": {
-                        "type": "string",
-                        "enum": [
-                          "keyboard:type"
-                        ]
-                      },
-                      "content": {
-                        "description": "Text content to type",
-                        "type": "string"
-                      },
-                      "treatNewLineAsEnter": {
-                        "description": "Whether to treat line breaks as enter. If true, any line breaks(\\n) in content will be treated as enter key press, and content will be split into multiple lines.",
-                        "type": "boolean",
-                        "default": false,
-                        "nullable": true
-                      }
-                    },
-                    "required": [
-                      "type",
-                      "content",
-                      "treatNewLineAsEnter"
-                    ]
-                  },
-                  {
-                    "description": "Press a keyboard hotkey",
-                    "type": "object",
-                    "properties": {
-                      "type": {
-                        "type": "string",
-                        "enum": [
-                          "keyboard:hotkey"
-                        ]
-                      },
-                      "keys": {
-                        "description": "Hotkey combination, in xdotool key syntax. Examples: \"a\", \"Return\", \"alt+Tab\", \"ctrl+s\", \"Up\", \"KP_0\" (for the numpad 0 key).",
-                        "type": "string"
-                      },
-                      "duration": {
-                        "description": "Duration in milliseconds. If specified, the hotkey will be held for a while and then released.",
-                        "type": "number",
-                        "minimum": 1,
-                        "exclusiveMinimum": false,
-                        "maximum": 5000,
-                        "exclusiveMaximum": false
-                      }
-                    },
-                    "required": [
-                      "type",
-                      "keys"
-                    ]
-                  },
-                  {
-                    "description": "Tap the screen at the specified coordinates",
-                    "type": "object",
-                    "properties": {
-                      "type": {
-                        "type": "string",
-                        "enum": [
-                          "touch:tap"
-                        ]
-                      },
-                      "x": {
-                        "description": "X coordinate",
-                        "oneOf": [
-                          {
-                            "description": "Length in pixels",
-                            "type": "object",
-                            "properties": {
-                              "type": {
-                                "description": "Indicates the unit is pixel",
-                                "type": "string",
-                                "enum": [
-                                  "px"
-                                ]
-                              },
-                              "value": {
-                                "description": "Length in pixels",
-                                "type": "number"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "value"
-                            ]
-                          },
-                          {
-                            "description": "Length as a fraction",
-                            "type": "object",
-                            "properties": {
-                              "type": {
-                                "type": "string",
-                                "enum": [
-                                  "/"
-                                ]
-                              },
-                              "numerator": {
-                                "description": "Numerator of the fraction",
-                                "type": "number"
-                              },
-                              "denominator": {
-                                "description": "Denominator of the fraction",
-                                "type": "number"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "numerator",
-                              "denominator"
-                            ]
-                          }
-                        ]
-                      },
-                      "y": {
-                        "description": "Y coordinate",
-                        "oneOf": [
-                          {
-                            "description": "Length in pixels",
-                            "type": "object",
-                            "properties": {
-                              "type": {
-                                "description": "Indicates the unit is pixel",
-                                "type": "string",
-                                "enum": [
-                                  "px"
-                                ]
-                              },
-                              "value": {
-                                "description": "Length in pixels",
-                                "type": "number"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "value"
-                            ]
-                          },
-                          {
-                            "description": "Length as a fraction",
-                            "type": "object",
-                            "properties": {
-                              "type": {
-                                "type": "string",
-                                "enum": [
-                                  "/"
-                                ]
-                              },
-                              "numerator": {
-                                "description": "Numerator of the fraction",
-                                "type": "number"
-                              },
-                              "denominator": {
-                                "description": "Denominator of the fraction",
-                                "type": "number"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "numerator",
-                              "denominator"
-                            ]
-                          }
-                        ]
-                      }
-                    },
-                    "required": [
-                      "type",
-                      "x",
-                      "y"
-                    ]
-                  },
-                  {
-                    "description": "Touch and hold at start coordinates, then move to end coordinates and release",
-                    "type": "object",
-                    "properties": {
-                      "type": {
-                        "type": "string",
-                        "enum": [
-                          "touch:drag"
-                        ]
-                      },
-                      "startX": {
-                        "description": "Start X coordinate",
-                        "oneOf": [
-                          {
-                            "description": "Length in pixels",
-                            "type": "object",
-                            "properties": {
-                              "type": {
-                                "description": "Indicates the unit is pixel",
-                                "type": "string",
-                                "enum": [
-                                  "px"
-                                ]
-                              },
-                              "value": {
-                                "description": "Length in pixels",
-                                "type": "number"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "value"
-                            ]
-                          },
-                          {
-                            "description": "Length as a fraction",
-                            "type": "object",
-                            "properties": {
-                              "type": {
-                                "type": "string",
-                                "enum": [
-                                  "/"
-                                ]
-                              },
-                              "numerator": {
-                                "description": "Numerator of the fraction",
-                                "type": "number"
-                              },
-                              "denominator": {
-                                "description": "Denominator of the fraction",
-                                "type": "number"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "numerator",
-                              "denominator"
-                            ]
-                          }
-                        ]
-                      },
-                      "startY": {
-                        "description": "Start Y coordinate",
-                        "oneOf": [
-                          {
-                            "description": "Length in pixels",
-                            "type": "object",
-                            "properties": {
-                              "type": {
-                                "description": "Indicates the unit is pixel",
-                                "type": "string",
-                                "enum": [
-                                  "px"
-                                ]
-                              },
-                              "value": {
-                                "description": "Length in pixels",
-                                "type": "number"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "value"
-                            ]
-                          },
-                          {
-                            "description": "Length as a fraction",
-                            "type": "object",
-                            "properties": {
-                              "type": {
-                                "type": "string",
-                                "enum": [
-                                  "/"
-                                ]
-                              },
-                              "numerator": {
-                                "description": "Numerator of the fraction",
-                                "type": "number"
-                              },
-                              "denominator": {
-                                "description": "Denominator of the fraction",
-                                "type": "number"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "numerator",
-                              "denominator"
-                            ]
-                          }
-                        ]
-                      },
-                      "endX": {
-                        "description": "End X coordinate",
-                        "oneOf": [
-                          {
-                            "description": "Length in pixels",
-                            "type": "object",
-                            "properties": {
-                              "type": {
-                                "description": "Indicates the unit is pixel",
-                                "type": "string",
-                                "enum": [
-                                  "px"
-                                ]
-                              },
-                              "value": {
-                                "description": "Length in pixels",
-                                "type": "number"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "value"
-                            ]
-                          },
-                          {
-                            "description": "Length as a fraction",
-                            "type": "object",
-                            "properties": {
-                              "type": {
-                                "type": "string",
-                                "enum": [
-                                  "/"
-                                ]
-                              },
-                              "numerator": {
-                                "description": "Numerator of the fraction",
-                                "type": "number"
-                              },
-                              "denominator": {
-                                "description": "Denominator of the fraction",
-                                "type": "number"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "numerator",
-                              "denominator"
-                            ]
-                          }
-                        ]
-                      },
-                      "endY": {
-                        "description": "End Y coordinate",
-                        "oneOf": [
-                          {
-                            "description": "Length in pixels",
-                            "type": "object",
-                            "properties": {
-                              "type": {
-                                "description": "Indicates the unit is pixel",
-                                "type": "string",
-                                "enum": [
-                                  "px"
-                                ]
-                              },
-                              "value": {
-                                "description": "Length in pixels",
-                                "type": "number"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "value"
-                            ]
-                          },
-                          {
-                            "description": "Length as a fraction",
-                            "type": "object",
-                            "properties": {
-                              "type": {
-                                "type": "string",
-                                "enum": [
-                                  "/"
-                                ]
-                              },
-                              "numerator": {
-                                "description": "Numerator of the fraction",
-                                "type": "number"
-                              },
-                              "denominator": {
-                                "description": "Denominator of the fraction",
-                                "type": "number"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "numerator",
-                              "denominator"
-                            ]
-                          }
-                        ]
-                      }
-                    },
-                    "required": [
-                      "type",
-                      "startX",
-                      "startY",
-                      "endX",
-                      "endY"
-                    ]
-                  },
-                  {
-                    "description": "Swipe the screen in a specified direction by a specified distance",
-                    "type": "object",
-                    "properties": {
-                      "type": {
-                        "type": "string",
-                        "enum": [
-                          "touch:swipe"
-                        ]
-                      },
-                      "x": {
-                        "description": "X coordinate",
-                        "oneOf": [
-                          {
-                            "description": "Length in pixels",
-                            "type": "object",
-                            "properties": {
-                              "type": {
-                                "description": "Indicates the unit is pixel",
-                                "type": "string",
-                                "enum": [
-                                  "px"
-                                ]
-                              },
-                              "value": {
-                                "description": "Length in pixels",
-                                "type": "number"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "value"
-                            ]
-                          },
-                          {
-                            "description": "Length as a fraction",
-                            "type": "object",
-                            "properties": {
-                              "type": {
-                                "type": "string",
-                                "enum": [
-                                  "/"
-                                ]
-                              },
-                              "numerator": {
-                                "description": "Numerator of the fraction",
-                                "type": "number"
-                              },
-                              "denominator": {
-                                "description": "Denominator of the fraction",
-                                "type": "number"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "numerator",
-                              "denominator"
-                            ]
-                          }
-                        ]
-                      },
-                      "y": {
-                        "description": "Y coordinate",
-                        "oneOf": [
-                          {
-                            "description": "Length in pixels",
-                            "type": "object",
-                            "properties": {
-                              "type": {
-                                "description": "Indicates the unit is pixel",
-                                "type": "string",
-                                "enum": [
-                                  "px"
-                                ]
-                              },
-                              "value": {
-                                "description": "Length in pixels",
-                                "type": "number"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "value"
-                            ]
-                          },
-                          {
-                            "description": "Length as a fraction",
-                            "type": "object",
-                            "properties": {
-                              "type": {
-                                "type": "string",
-                                "enum": [
-                                  "/"
-                                ]
-                              },
-                              "numerator": {
-                                "description": "Numerator of the fraction",
-                                "type": "number"
-                              },
-                              "denominator": {
-                                "description": "Denominator of the fraction",
-                                "type": "number"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "numerator",
-                              "denominator"
-                            ]
-                          }
-                        ]
-                      },
-                      "direction": {
-                        "description": "Scroll direction",
-                        "type": "string",
-                        "enum": [
-                          "up",
-                          "down",
-                          "left",
-                          "right"
-                        ]
-                      },
-                      "distance": {
-                        "description": "Scroll distance",
-                        "oneOf": [
-                          {
-                            "description": "Length in pixels",
-                            "type": "object",
-                            "properties": {
-                              "type": {
-                                "description": "Indicates the unit is pixel",
-                                "type": "string",
-                                "enum": [
-                                  "px"
-                                ]
-                              },
-                              "value": {
-                                "description": "Length in pixels",
-                                "type": "number"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "value"
-                            ]
-                          },
-                          {
-                            "description": "Length as a fraction",
-                            "type": "object",
-                            "properties": {
-                              "type": {
-                                "type": "string",
-                                "enum": [
-                                  "/"
-                                ]
-                              },
-                              "numerator": {
-                                "description": "Numerator of the fraction",
-                                "type": "number"
-                              },
-                              "denominator": {
-                                "description": "Denominator of the fraction",
-                                "type": "number"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "numerator",
-                              "denominator"
-                            ]
-                          }
-                        ]
-                      }
-                    },
-                    "required": [
-                      "type",
-                      "x",
-                      "y",
-                      "direction",
-                      "distance"
-                    ]
-                  },
-                  {
-                    "description": "Long press the screen at the specified coordinates",
-                    "type": "object",
-                    "properties": {
-                      "type": {
-                        "type": "string",
-                        "enum": [
-                          "touch:longPress"
-                        ]
-                      },
-                      "x": {
-                        "description": "X coordinate",
-                        "oneOf": [
-                          {
-                            "description": "Length in pixels",
-                            "type": "object",
-                            "properties": {
-                              "type": {
-                                "description": "Indicates the unit is pixel",
-                                "type": "string",
-                                "enum": [
-                                  "px"
-                                ]
-                              },
-                              "value": {
-                                "description": "Length in pixels",
-                                "type": "number"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "value"
-                            ]
-                          },
-                          {
-                            "description": "Length as a fraction",
-                            "type": "object",
-                            "properties": {
-                              "type": {
-                                "type": "string",
-                                "enum": [
-                                  "/"
-                                ]
-                              },
-                              "numerator": {
-                                "description": "Numerator of the fraction",
-                                "type": "number"
-                              },
-                              "denominator": {
-                                "description": "Denominator of the fraction",
-                                "type": "number"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "numerator",
-                              "denominator"
-                            ]
-                          }
-                        ]
-                      },
-                      "y": {
-                        "description": "Y coordinate",
-                        "oneOf": [
-                          {
-                            "description": "Length in pixels",
-                            "type": "object",
-                            "properties": {
-                              "type": {
-                                "description": "Indicates the unit is pixel",
-                                "type": "string",
-                                "enum": [
-                                  "px"
-                                ]
-                              },
-                              "value": {
-                                "description": "Length in pixels",
-                                "type": "number"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "value"
-                            ]
-                          },
-                          {
-                            "description": "Length as a fraction",
-                            "type": "object",
-                            "properties": {
-                              "type": {
-                                "type": "string",
-                                "enum": [
-                                  "/"
-                                ]
-                              },
-                              "numerator": {
-                                "description": "Numerator of the fraction",
-                                "type": "number"
-                              },
-                              "denominator": {
-                                "description": "Denominator of the fraction",
-                                "type": "number"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "numerator",
-                              "denominator"
-                            ]
-                          }
-                        ]
-                      },
-                      "duration": {
-                        "description": "Duration in milliseconds",
-                        "type": "number"
-                      }
-                    },
-                    "required": [
-                      "type",
-                      "x",
-                      "y",
-                      "duration"
-                    ]
-                  },
-                  {
-                    "description": "Press the back button",
-                    "type": "object",
-                    "properties": {
-                      "type": {
-                        "type": "string",
-                        "enum": [
-                          "android:back"
-                        ]
-                      }
-                    },
-                    "required": [
-                      "type"
-                    ]
-                  },
-                  {
-                    "description": "Press the home button",
-                    "type": "object",
-                    "properties": {
-                      "type": {
-                        "type": "string",
-                        "enum": [
-                          "android:home"
-                        ]
-                      }
-                    },
-                    "required": [
-                      "type"
-                    ]
-                  },
-                  {
-                    "description": "List all installed apps",
-                    "type": "object",
-                    "properties": {
-                      "type": {
-                        "type": "string",
-                        "enum": [
-                          "os:listApps"
-                        ]
-                      }
-                    },
-                    "required": [
-                      "type"
-                    ]
-                  },
-                  {
-                    "description": "Start an app by its package name",
-                    "type": "object",
-                    "properties": {
-                      "type": {
-                        "type": "string",
-                        "enum": [
-                          "os:startApp"
-                        ]
-                      },
-                      "packageName": {
-                        "description": "App package name",
-                        "type": "string"
-                      }
-                    },
-                    "required": [
-                      "type",
-                      "packageName"
-                    ]
-                  },
-                  {
-                    "description": "Start an app by its name",
-                    "type": "object",
-                    "properties": {
-                      "type": {
-                        "type": "string",
-                        "enum": [
-                          "os:startAppByName"
-                        ]
-                      },
-                      "name": {
-                        "description": "App name",
-                        "type": "string"
-                      }
-                    },
-                    "required": [
-                      "type",
-                      "name"
-                    ]
-                  },
-                  {
-                    "description": "Close the current app",
-                    "type": "object",
-                    "properties": {
-                      "type": {
-                        "type": "string",
-                        "enum": [
-                          "os:closeApp"
-                        ]
-                      }
-                    },
-                    "required": [
-                      "type"
-                    ]
-                  }
-                ],
+                "description": "Release ONE key, in xdotool key syntax. Only use this action if keydown cannot satisfy your needs and only after a key down.",
                 "type": "object",
                 "properties": {
-                  "callId": {
-                    "description": "Optional call identifier",
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "key:up"
+                    ]
+                  },
+                  "key": {
+                    "description": "Key to release",
                     "type": "string"
                   }
-                }
+                },
+                "required": [
+                  "type",
+                  "key"
+                ]
+              },
+              {
+                "description": "Click the mouse at the specified coordinates",
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "mouse:click"
+                    ]
+                  },
+                  "x": {
+                    "description": "X coordinate",
+                    "oneOf": [
+                      {
+                        "description": "Length in pixels",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "description": "Indicates the unit is pixel",
+                            "type": "string",
+                            "enum": [
+                              "px"
+                            ]
+                          },
+                          "value": {
+                            "description": "Length in pixels",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "value"
+                        ]
+                      },
+                      {
+                        "description": "Length as a fraction",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "/"
+                            ]
+                          },
+                          "numerator": {
+                            "description": "Numerator of the fraction",
+                            "type": "number"
+                          },
+                          "denominator": {
+                            "description": "Denominator of the fraction",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "numerator",
+                          "denominator"
+                        ]
+                      }
+                    ]
+                  },
+                  "y": {
+                    "description": "Y coordinate",
+                    "oneOf": [
+                      {
+                        "description": "Length in pixels",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "description": "Indicates the unit is pixel",
+                            "type": "string",
+                            "enum": [
+                              "px"
+                            ]
+                          },
+                          "value": {
+                            "description": "Length in pixels",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "value"
+                        ]
+                      },
+                      {
+                        "description": "Length as a fraction",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "/"
+                            ]
+                          },
+                          "numerator": {
+                            "description": "Numerator of the fraction",
+                            "type": "number"
+                          },
+                          "denominator": {
+                            "description": "Denominator of the fraction",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "numerator",
+                          "denominator"
+                        ]
+                      }
+                    ]
+                  },
+                  "button": {
+                    "description": "Mouse button flag combination. 1: left, 2: right, 4: middle, 8: back, 16: forward; add them together to press multiple buttons at once.",
+                    "type": "number"
+                  },
+                  "holdKey": {
+                    "description": "Key to hold down during click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\".",
+                    "type": "string"
+                  },
+                  "relative": {
+                    "description": "Whether the coordinates are relative to the current mouse position.",
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "type",
+                  "x",
+                  "y",
+                  "button"
+                ]
+              },
+              {
+                "description": "Double click the mouse at the specified coordinates",
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "mouse:doubleClick"
+                    ]
+                  },
+                  "x": {
+                    "description": "X coordinate",
+                    "oneOf": [
+                      {
+                        "description": "Length in pixels",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "description": "Indicates the unit is pixel",
+                            "type": "string",
+                            "enum": [
+                              "px"
+                            ]
+                          },
+                          "value": {
+                            "description": "Length in pixels",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "value"
+                        ]
+                      },
+                      {
+                        "description": "Length as a fraction",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "/"
+                            ]
+                          },
+                          "numerator": {
+                            "description": "Numerator of the fraction",
+                            "type": "number"
+                          },
+                          "denominator": {
+                            "description": "Denominator of the fraction",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "numerator",
+                          "denominator"
+                        ]
+                      }
+                    ]
+                  },
+                  "y": {
+                    "description": "Y coordinate",
+                    "oneOf": [
+                      {
+                        "description": "Length in pixels",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "description": "Indicates the unit is pixel",
+                            "type": "string",
+                            "enum": [
+                              "px"
+                            ]
+                          },
+                          "value": {
+                            "description": "Length in pixels",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "value"
+                        ]
+                      },
+                      {
+                        "description": "Length as a fraction",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "/"
+                            ]
+                          },
+                          "numerator": {
+                            "description": "Numerator of the fraction",
+                            "type": "number"
+                          },
+                          "denominator": {
+                            "description": "Denominator of the fraction",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "numerator",
+                          "denominator"
+                        ]
+                      }
+                    ]
+                  },
+                  "button": {
+                    "description": "Mouse button index",
+                    "type": "number"
+                  },
+                  "holdKey": {
+                    "description": "Key to hold down during double click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\".",
+                    "type": "string"
+                  },
+                  "relative": {
+                    "description": "Whether the coordinates are relative to the current mouse position.",
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "type",
+                  "x",
+                  "y",
+                  "button"
+                ]
+              },
+              {
+                "description": "Drag the mouse from start to end coordinates",
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "mouse:drag"
+                    ]
+                  },
+                  "startX": {
+                    "description": "Start X coordinate",
+                    "oneOf": [
+                      {
+                        "description": "Length in pixels",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "description": "Indicates the unit is pixel",
+                            "type": "string",
+                            "enum": [
+                              "px"
+                            ]
+                          },
+                          "value": {
+                            "description": "Length in pixels",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "value"
+                        ]
+                      },
+                      {
+                        "description": "Length as a fraction",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "/"
+                            ]
+                          },
+                          "numerator": {
+                            "description": "Numerator of the fraction",
+                            "type": "number"
+                          },
+                          "denominator": {
+                            "description": "Denominator of the fraction",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "numerator",
+                          "denominator"
+                        ]
+                      }
+                    ]
+                  },
+                  "startY": {
+                    "description": "Start Y coordinate",
+                    "oneOf": [
+                      {
+                        "description": "Length in pixels",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "description": "Indicates the unit is pixel",
+                            "type": "string",
+                            "enum": [
+                              "px"
+                            ]
+                          },
+                          "value": {
+                            "description": "Length in pixels",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "value"
+                        ]
+                      },
+                      {
+                        "description": "Length as a fraction",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "/"
+                            ]
+                          },
+                          "numerator": {
+                            "description": "Numerator of the fraction",
+                            "type": "number"
+                          },
+                          "denominator": {
+                            "description": "Denominator of the fraction",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "numerator",
+                          "denominator"
+                        ]
+                      }
+                    ]
+                  },
+                  "endX": {
+                    "description": "End X coordinate",
+                    "oneOf": [
+                      {
+                        "description": "Length in pixels",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "description": "Indicates the unit is pixel",
+                            "type": "string",
+                            "enum": [
+                              "px"
+                            ]
+                          },
+                          "value": {
+                            "description": "Length in pixels",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "value"
+                        ]
+                      },
+                      {
+                        "description": "Length as a fraction",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "/"
+                            ]
+                          },
+                          "numerator": {
+                            "description": "Numerator of the fraction",
+                            "type": "number"
+                          },
+                          "denominator": {
+                            "description": "Denominator of the fraction",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "numerator",
+                          "denominator"
+                        ]
+                      }
+                    ]
+                  },
+                  "endY": {
+                    "description": "End Y coordinate",
+                    "oneOf": [
+                      {
+                        "description": "Length in pixels",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "description": "Indicates the unit is pixel",
+                            "type": "string",
+                            "enum": [
+                              "px"
+                            ]
+                          },
+                          "value": {
+                            "description": "Length in pixels",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "value"
+                        ]
+                      },
+                      {
+                        "description": "Length as a fraction",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "/"
+                            ]
+                          },
+                          "numerator": {
+                            "description": "Numerator of the fraction",
+                            "type": "number"
+                          },
+                          "denominator": {
+                            "description": "Denominator of the fraction",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "numerator",
+                          "denominator"
+                        ]
+                      }
+                    ]
+                  },
+                  "button": {
+                    "description": "Mouse button index",
+                    "type": "number"
+                  },
+                  "holdKey": {
+                    "description": "Key to hold down during drag, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\".",
+                    "type": "string"
+                  },
+                  "startRelative": {
+                    "description": "Whether the coordinates are relative to the current mouse position.",
+                    "type": "boolean"
+                  },
+                  "endRelative": {
+                    "description": "Whether the coordinates are relative to the current mouse position.",
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "type",
+                  "startX",
+                  "startY",
+                  "endX",
+                  "endY"
+                ]
+              },
+              {
+                "description": "Move the mouse to the specified coordinates",
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "mouse:move"
+                    ]
+                  },
+                  "x": {
+                    "description": "X coordinate",
+                    "oneOf": [
+                      {
+                        "description": "Length in pixels",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "description": "Indicates the unit is pixel",
+                            "type": "string",
+                            "enum": [
+                              "px"
+                            ]
+                          },
+                          "value": {
+                            "description": "Length in pixels",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "value"
+                        ]
+                      },
+                      {
+                        "description": "Length as a fraction",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "/"
+                            ]
+                          },
+                          "numerator": {
+                            "description": "Numerator of the fraction",
+                            "type": "number"
+                          },
+                          "denominator": {
+                            "description": "Denominator of the fraction",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "numerator",
+                          "denominator"
+                        ]
+                      }
+                    ]
+                  },
+                  "y": {
+                    "description": "Y coordinate",
+                    "oneOf": [
+                      {
+                        "description": "Length in pixels",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "description": "Indicates the unit is pixel",
+                            "type": "string",
+                            "enum": [
+                              "px"
+                            ]
+                          },
+                          "value": {
+                            "description": "Length in pixels",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "value"
+                        ]
+                      },
+                      {
+                        "description": "Length as a fraction",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "/"
+                            ]
+                          },
+                          "numerator": {
+                            "description": "Numerator of the fraction",
+                            "type": "number"
+                          },
+                          "denominator": {
+                            "description": "Denominator of the fraction",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "numerator",
+                          "denominator"
+                        ]
+                      }
+                    ]
+                  },
+                  "holdKey": {
+                    "description": "Key to hold down during move, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\".",
+                    "type": "string"
+                  },
+                  "relative": {
+                    "description": "Whether the coordinates are relative to the current mouse position.",
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "type",
+                  "x",
+                  "y"
+                ]
+              },
+              {
+                "description": "Scroll the mouse",
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "mouse:scroll"
+                    ]
+                  },
+                  "x": {
+                    "description": "X coordinate",
+                    "oneOf": [
+                      {
+                        "description": "Length in pixels",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "description": "Indicates the unit is pixel",
+                            "type": "string",
+                            "enum": [
+                              "px"
+                            ]
+                          },
+                          "value": {
+                            "description": "Length in pixels",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "value"
+                        ]
+                      },
+                      {
+                        "description": "Length as a fraction",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "/"
+                            ]
+                          },
+                          "numerator": {
+                            "description": "Numerator of the fraction",
+                            "type": "number"
+                          },
+                          "denominator": {
+                            "description": "Denominator of the fraction",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "numerator",
+                          "denominator"
+                        ]
+                      }
+                    ]
+                  },
+                  "y": {
+                    "description": "Y coordinate",
+                    "oneOf": [
+                      {
+                        "description": "Length in pixels",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "description": "Indicates the unit is pixel",
+                            "type": "string",
+                            "enum": [
+                              "px"
+                            ]
+                          },
+                          "value": {
+                            "description": "Length in pixels",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "value"
+                        ]
+                      },
+                      {
+                        "description": "Length as a fraction",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "/"
+                            ]
+                          },
+                          "numerator": {
+                            "description": "Numerator of the fraction",
+                            "type": "number"
+                          },
+                          "denominator": {
+                            "description": "Denominator of the fraction",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "numerator",
+                          "denominator"
+                        ]
+                      }
+                    ]
+                  },
+                  "stepVertical": {
+                    "description": "Vertical scroll steps",
+                    "type": "number"
+                  },
+                  "stepHorizontal": {
+                    "description": "Horizontal scroll steps",
+                    "type": "number"
+                  },
+                  "holdKey": {
+                    "description": "Key to hold down during scroll, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\".",
+                    "type": "string"
+                  },
+                  "relative": {
+                    "description": "Whether the coordinates are relative to the current mouse position.",
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "type",
+                  "x",
+                  "y",
+                  "stepVertical",
+                  "stepHorizontal"
+                ]
+              },
+              {
+                "description": "Triple click the mouse at the specified coordinates",
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "mouse:tripleClick"
+                    ]
+                  },
+                  "x": {
+                    "description": "X coordinate",
+                    "oneOf": [
+                      {
+                        "description": "Length in pixels",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "description": "Indicates the unit is pixel",
+                            "type": "string",
+                            "enum": [
+                              "px"
+                            ]
+                          },
+                          "value": {
+                            "description": "Length in pixels",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "value"
+                        ]
+                      },
+                      {
+                        "description": "Length as a fraction",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "/"
+                            ]
+                          },
+                          "numerator": {
+                            "description": "Numerator of the fraction",
+                            "type": "number"
+                          },
+                          "denominator": {
+                            "description": "Denominator of the fraction",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "numerator",
+                          "denominator"
+                        ]
+                      }
+                    ]
+                  },
+                  "y": {
+                    "description": "Y coordinate",
+                    "oneOf": [
+                      {
+                        "description": "Length in pixels",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "description": "Indicates the unit is pixel",
+                            "type": "string",
+                            "enum": [
+                              "px"
+                            ]
+                          },
+                          "value": {
+                            "description": "Length in pixels",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "value"
+                        ]
+                      },
+                      {
+                        "description": "Length as a fraction",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "/"
+                            ]
+                          },
+                          "numerator": {
+                            "description": "Numerator of the fraction",
+                            "type": "number"
+                          },
+                          "denominator": {
+                            "description": "Denominator of the fraction",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "numerator",
+                          "denominator"
+                        ]
+                      }
+                    ]
+                  },
+                  "button": {
+                    "description": "Mouse button index",
+                    "type": "number"
+                  },
+                  "holdKey": {
+                    "description": "Key to hold down during triple click, in xdotool key syntax. Example: \"ctrl\", \"alt\", \"alt+shift\".",
+                    "type": "string"
+                  },
+                  "relative": {
+                    "description": "Whether the coordinates are relative to the current mouse position.",
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "type",
+                  "x",
+                  "y",
+                  "button"
+                ]
+              },
+              {
+                "description": "Indicates the action has failed",
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "failed"
+                    ]
+                  },
+                  "message": {
+                    "description": "Failure message",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "type"
+                ]
+              },
+              {
+                "description": "Indicates the action has finished",
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "finished"
+                    ]
+                  },
+                  "message": {
+                    "description": "Completion message",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "type"
+                ]
+              },
+              {
+                "description": "Press a keyboard hotkey",
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "keyboard:hotkey"
+                    ]
+                  },
+                  "keys": {
+                    "description": "Hotkey combination, in xdotool key syntax. Examples: \"a\", \"Return\", \"alt+Tab\", \"ctrl+s\", \"Up\", \"KP_0\" (for the numpad 0 key).",
+                    "type": "string"
+                  },
+                  "duration": {
+                    "description": "Duration in milliseconds. If specified, the hotkey will be held for a while and then released.",
+                    "type": "number",
+                    "minimum": 1,
+                    "exclusiveMinimum": false,
+                    "maximum": 5000,
+                    "exclusiveMaximum": false
+                  }
+                },
+                "required": [
+                  "type",
+                  "keys"
+                ]
+              },
+              {
+                "description": "Type text content",
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "keyboard:type"
+                    ]
+                  },
+                  "content": {
+                    "description": "Text content to type",
+                    "type": "string"
+                  },
+                  "treatNewLineAsEnter": {
+                    "description": "Whether to treat line breaks as enter. If true, any line breaks(\\n) in content will be treated as enter key press, and content will be split into multiple lines.",
+                    "type": "boolean",
+                    "default": false,
+                    "nullable": true
+                  }
+                },
+                "required": [
+                  "type",
+                  "content",
+                  "treatNewLineAsEnter"
+                ]
+              },
+              {
+                "description": "Take a screenshot of the current screen",
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "screenshot"
+                    ]
+                  }
+                },
+                "required": [
+                  "type"
+                ]
+              },
+              {
+                "description": "Indicates the human user should take over the control",
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "client:user-takeover"
+                    ]
+                  }
+                },
+                "required": [
+                  "type"
+                ]
+              },
+              {
+                "description": "Wait for a specified duration",
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "wait"
+                    ]
+                  },
+                  "duration": {
+                    "description": "Duration in milliseconds",
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "type",
+                  "duration"
+                ]
+              },
+              {
+                "description": "Close an app by its package name",
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "os:closeApp"
+                    ]
+                  },
+                  "packageName": {
+                    "description": "App package name",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "type",
+                  "packageName"
+                ]
+              },
+              {
+                "description": "Close an app by its name",
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "os:closeAppByName"
+                    ]
+                  },
+                  "name": {
+                    "description": "App name",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "type",
+                  "name"
+                ]
+              },
+              {
+                "description": "Touch and hold at start coordinates, then move to end coordinates and release",
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "touch:drag"
+                    ]
+                  },
+                  "startX": {
+                    "description": "Start X coordinate",
+                    "oneOf": [
+                      {
+                        "description": "Length in pixels",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "description": "Indicates the unit is pixel",
+                            "type": "string",
+                            "enum": [
+                              "px"
+                            ]
+                          },
+                          "value": {
+                            "description": "Length in pixels",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "value"
+                        ]
+                      },
+                      {
+                        "description": "Length as a fraction",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "/"
+                            ]
+                          },
+                          "numerator": {
+                            "description": "Numerator of the fraction",
+                            "type": "number"
+                          },
+                          "denominator": {
+                            "description": "Denominator of the fraction",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "numerator",
+                          "denominator"
+                        ]
+                      }
+                    ]
+                  },
+                  "startY": {
+                    "description": "Start Y coordinate",
+                    "oneOf": [
+                      {
+                        "description": "Length in pixels",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "description": "Indicates the unit is pixel",
+                            "type": "string",
+                            "enum": [
+                              "px"
+                            ]
+                          },
+                          "value": {
+                            "description": "Length in pixels",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "value"
+                        ]
+                      },
+                      {
+                        "description": "Length as a fraction",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "/"
+                            ]
+                          },
+                          "numerator": {
+                            "description": "Numerator of the fraction",
+                            "type": "number"
+                          },
+                          "denominator": {
+                            "description": "Denominator of the fraction",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "numerator",
+                          "denominator"
+                        ]
+                      }
+                    ]
+                  },
+                  "endX": {
+                    "description": "End X coordinate",
+                    "oneOf": [
+                      {
+                        "description": "Length in pixels",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "description": "Indicates the unit is pixel",
+                            "type": "string",
+                            "enum": [
+                              "px"
+                            ]
+                          },
+                          "value": {
+                            "description": "Length in pixels",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "value"
+                        ]
+                      },
+                      {
+                        "description": "Length as a fraction",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "/"
+                            ]
+                          },
+                          "numerator": {
+                            "description": "Numerator of the fraction",
+                            "type": "number"
+                          },
+                          "denominator": {
+                            "description": "Denominator of the fraction",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "numerator",
+                          "denominator"
+                        ]
+                      }
+                    ]
+                  },
+                  "endY": {
+                    "description": "End Y coordinate",
+                    "oneOf": [
+                      {
+                        "description": "Length in pixels",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "description": "Indicates the unit is pixel",
+                            "type": "string",
+                            "enum": [
+                              "px"
+                            ]
+                          },
+                          "value": {
+                            "description": "Length in pixels",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "value"
+                        ]
+                      },
+                      {
+                        "description": "Length as a fraction",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "/"
+                            ]
+                          },
+                          "numerator": {
+                            "description": "Numerator of the fraction",
+                            "type": "number"
+                          },
+                          "denominator": {
+                            "description": "Denominator of the fraction",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "numerator",
+                          "denominator"
+                        ]
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "type",
+                  "startX",
+                  "startY",
+                  "endX",
+                  "endY"
+                ]
+              },
+              {
+                "description": "List all installed apps",
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "os:listApps"
+                    ]
+                  }
+                },
+                "required": [
+                  "type"
+                ]
+              },
+              {
+                "description": "Long press the screen at the specified coordinates",
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "touch:longPress"
+                    ]
+                  },
+                  "x": {
+                    "description": "X coordinate",
+                    "oneOf": [
+                      {
+                        "description": "Length in pixels",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "description": "Indicates the unit is pixel",
+                            "type": "string",
+                            "enum": [
+                              "px"
+                            ]
+                          },
+                          "value": {
+                            "description": "Length in pixels",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "value"
+                        ]
+                      },
+                      {
+                        "description": "Length as a fraction",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "/"
+                            ]
+                          },
+                          "numerator": {
+                            "description": "Numerator of the fraction",
+                            "type": "number"
+                          },
+                          "denominator": {
+                            "description": "Denominator of the fraction",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "numerator",
+                          "denominator"
+                        ]
+                      }
+                    ]
+                  },
+                  "y": {
+                    "description": "Y coordinate",
+                    "oneOf": [
+                      {
+                        "description": "Length in pixels",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "description": "Indicates the unit is pixel",
+                            "type": "string",
+                            "enum": [
+                              "px"
+                            ]
+                          },
+                          "value": {
+                            "description": "Length in pixels",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "value"
+                        ]
+                      },
+                      {
+                        "description": "Length as a fraction",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "/"
+                            ]
+                          },
+                          "numerator": {
+                            "description": "Numerator of the fraction",
+                            "type": "number"
+                          },
+                          "denominator": {
+                            "description": "Denominator of the fraction",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "numerator",
+                          "denominator"
+                        ]
+                      }
+                    ]
+                  },
+                  "duration": {
+                    "description": "Duration in milliseconds",
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "type",
+                  "x",
+                  "y",
+                  "duration"
+                ]
+              },
+              {
+                "description": "Press the back button",
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "android:back"
+                    ]
+                  }
+                },
+                "required": [
+                  "type"
+                ]
+              },
+              {
+                "description": "Press the home button",
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "android:home"
+                    ]
+                  }
+                },
+                "required": [
+                  "type"
+                ]
+              },
+              {
+                "description": "Start an app by its name",
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "os:startAppByName"
+                    ]
+                  },
+                  "name": {
+                    "description": "App name",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "type",
+                  "name"
+                ]
+              },
+              {
+                "description": "Start an app by its package name",
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "os:startApp"
+                    ]
+                  },
+                  "packageName": {
+                    "description": "App package name",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "type",
+                  "packageName"
+                ]
+              },
+              {
+                "description": "Swipe the screen in a specified direction by a specified distance",
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "touch:swipe"
+                    ]
+                  },
+                  "x": {
+                    "description": "X coordinate",
+                    "oneOf": [
+                      {
+                        "description": "Length in pixels",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "description": "Indicates the unit is pixel",
+                            "type": "string",
+                            "enum": [
+                              "px"
+                            ]
+                          },
+                          "value": {
+                            "description": "Length in pixels",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "value"
+                        ]
+                      },
+                      {
+                        "description": "Length as a fraction",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "/"
+                            ]
+                          },
+                          "numerator": {
+                            "description": "Numerator of the fraction",
+                            "type": "number"
+                          },
+                          "denominator": {
+                            "description": "Denominator of the fraction",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "numerator",
+                          "denominator"
+                        ]
+                      }
+                    ]
+                  },
+                  "y": {
+                    "description": "Y coordinate",
+                    "oneOf": [
+                      {
+                        "description": "Length in pixels",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "description": "Indicates the unit is pixel",
+                            "type": "string",
+                            "enum": [
+                              "px"
+                            ]
+                          },
+                          "value": {
+                            "description": "Length in pixels",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "value"
+                        ]
+                      },
+                      {
+                        "description": "Length as a fraction",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "/"
+                            ]
+                          },
+                          "numerator": {
+                            "description": "Numerator of the fraction",
+                            "type": "number"
+                          },
+                          "denominator": {
+                            "description": "Denominator of the fraction",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "numerator",
+                          "denominator"
+                        ]
+                      }
+                    ]
+                  },
+                  "direction": {
+                    "description": "Scroll direction",
+                    "type": "string",
+                    "enum": [
+                      "up",
+                      "down",
+                      "left",
+                      "right"
+                    ]
+                  },
+                  "distance": {
+                    "description": "Scroll distance",
+                    "oneOf": [
+                      {
+                        "description": "Length in pixels",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "description": "Indicates the unit is pixel",
+                            "type": "string",
+                            "enum": [
+                              "px"
+                            ]
+                          },
+                          "value": {
+                            "description": "Length in pixels",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "value"
+                        ]
+                      },
+                      {
+                        "description": "Length as a fraction",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "/"
+                            ]
+                          },
+                          "numerator": {
+                            "description": "Numerator of the fraction",
+                            "type": "number"
+                          },
+                          "denominator": {
+                            "description": "Denominator of the fraction",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "numerator",
+                          "denominator"
+                        ]
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "type",
+                  "x",
+                  "y",
+                  "direction",
+                  "distance"
+                ]
+              },
+              {
+                "description": "Tap the screen at the specified coordinates",
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "touch:tap"
+                    ]
+                  },
+                  "x": {
+                    "description": "X coordinate",
+                    "oneOf": [
+                      {
+                        "description": "Length in pixels",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "description": "Indicates the unit is pixel",
+                            "type": "string",
+                            "enum": [
+                              "px"
+                            ]
+                          },
+                          "value": {
+                            "description": "Length in pixels",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "value"
+                        ]
+                      },
+                      {
+                        "description": "Length as a fraction",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "/"
+                            ]
+                          },
+                          "numerator": {
+                            "description": "Numerator of the fraction",
+                            "type": "number"
+                          },
+                          "denominator": {
+                            "description": "Denominator of the fraction",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "numerator",
+                          "denominator"
+                        ]
+                      }
+                    ]
+                  },
+                  "y": {
+                    "description": "Y coordinate",
+                    "oneOf": [
+                      {
+                        "description": "Length in pixels",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "description": "Indicates the unit is pixel",
+                            "type": "string",
+                            "enum": [
+                              "px"
+                            ]
+                          },
+                          "value": {
+                            "description": "Length in pixels",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "value"
+                        ]
+                      },
+                      {
+                        "description": "Length as a fraction",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "/"
+                            ]
+                          },
+                          "numerator": {
+                            "description": "Numerator of the fraction",
+                            "type": "number"
+                          },
+                          "denominator": {
+                            "description": "Denominator of the fraction",
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "numerator",
+                          "denominator"
+                        ]
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "type",
+                  "x",
+                  "y"
+                ]
               }
             ]
           },
@@ -7515,7 +7378,7 @@
                   ]
                 },
                 {
-                  "description": "Close the current app",
+                  "description": "Close an app by its package name",
                   "type": "object",
                   "properties": {
                     "type": {
@@ -7523,10 +7386,35 @@
                       "enum": [
                         "os:closeApp"
                       ]
+                    },
+                    "packageName": {
+                      "description": "App package name",
+                      "type": "string"
                     }
                   },
                   "required": [
-                    "type"
+                    "type",
+                    "packageName"
+                  ]
+                },
+                {
+                  "description": "Close an app by its name",
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "os:closeAppByName"
+                      ]
+                    },
+                    "name": {
+                      "description": "App name",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "name"
                   ]
                 }
               ],
