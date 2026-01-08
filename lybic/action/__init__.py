@@ -99,7 +99,6 @@ MobileUseAction = Union[
 
     OsStartAppAction, # mobileUseActionStartAppSchema
     OsStartAppByNameAction, # mobileUseActionStartAppByNameSchema
-    OsCloseAppActionByName, # typo corrected, please use OsCloseAppByNameAction
     OsCloseAppByNameAction, # mobileUseActionCloseAppByNameSchema
     OsCloseAppAction, # mobileUseActionCloseAppSchema
     OsListAppsAction, # mobileUseActionListAppsSchema
@@ -148,7 +147,6 @@ __all__ = [
     "OsStartAppAction",
     "OsStartAppByNameAction",
     "OsCloseAppAction",
-    "OsCloseAppActionByName", # typo corrected,please use OsCloseAppByNameAction
     "OsCloseAppByNameAction",
     "OsListAppsAction",
 
