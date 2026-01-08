@@ -47,6 +47,14 @@ class OsCloseAppAction(BaseModel):
     Close the current app.
     """
     type: Literal["os:closeApp"] = "os:closeApp"
+    packageName: str
+
+class OsCloseAppActionByName(BaseModel):
+    """
+    Close the current app.
+    """
+    type: Literal["os:closeAppByName"] = "os:closeAppByName"
+    name: str
 
 class OsListAppsAction(BaseModel):
     """
