@@ -273,8 +273,8 @@ class CreateSandboxFromImageDto(BaseModel):
     model_config = ConfigDict(extra=json_extra_fields_policy)
 
     imageId: str = Field(..., description="The machine image ID to create sandbox from.")
-    name: str = Field(..., description="The name of the sandbox.", min_length=1, max_length=100)
-    maxLifeSeconds: int = Field(..., description="The maximum life time of the sandbox in seconds.", ge=300, le=604800)
+    name: str = Field("sandbox", description="The name of the sandbox.", min_length=1, max_length=100)
+    maxLifeSeconds: int = Field(3600, description="The maximum life time of the sandbox in seconds.", ge=300, le=604800)
     projectId: Optional[str] = Field(None, description="The project id to use for the sandbox. Use default if not provided.")
 
 
