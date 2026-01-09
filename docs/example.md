@@ -958,6 +958,204 @@ client.close()
         asyncio.run(run_process_example())
     ```
 
+11. Create a sandbox from a machine image
+
+    Create a new sandbox using a previously saved machine image. This allows you to start sandboxes with pre-configured environments and installed software.
+
+    method: `create_from_image(data: dto.CreateSandboxFromImageDto)` or `create_from_image(**kwargs)`
+    - args:
+      - imageId: str (required) The machine image ID to create sandbox from
+      - name: str (optional) The name of the sandbox (default: "sandbox")
+      - maxLifeSeconds: int (optional) Maximum lifetime in seconds (default: 3600, min: 300, max: 604800)
+      - projectId: str (optional) Project ID to associate with the sandbox
+    - return: dto.CreateSandboxFromImageResponseDto
+
+    ```python
+    import asyncio
+    from lybic import dto, LybicClient, LybicAuth
+
+    async def create_from_image_example():
+        async with LybicClient(
+            LybicAuth(
+                org_id="ORG-xxxx",
+                api_key="lysk-xxxxxxxxxxx",
+                endpoint="https://api.lybic.cn/"
+            )
+        ) as client:
+            # Using DTO
+            sandbox = await client.sandbox.create_from_image(
+                dto.CreateSandboxFromImageDto(
+                    imageId="IMG-xxxx",
+                    name="my-sandbox-from-image",
+                    maxLifeSeconds=7200
+                )
+            )
+            print(f"Created sandbox: {sandbox}")
+            
+            # Using keyword arguments
+            sandbox2 = await client.sandbox.create_from_image(
+                imageId="IMG-xxxx",
+                name="my-sandbox-2",
+                maxLifeSeconds=3600,
+                projectId="PRJ-xxxx"
+            )
+            print(f"Created sandbox 2: {sandbox2}")
+
+    if __name__ == '__main__':
+        asyncio.run(create_from_image_example())
+    ```
+
+12. Get sandbox status
+
+    Get the current status of a sandbox (PENDING/RUNNING/STOPPED/ERROR).
+
+    method: `get_status(sandbox_id: str)`
+    - args:
+      - sandbox_id: str ID of the sandbox
+    - return: dto.SandboxStatus (Enum: PENDING, RUNNING, STOPPED, ERROR)
+
+    ```python
+    import asyncio
+    from lybic import LybicClient, LybicAuth
+
+    async def get_status_example():
+        async with LybicClient(
+            LybicAuth(
+                org_id="ORG-xxxx",
+                api_key="lysk-xxxxxxxxxxx",
+                endpoint="https://api.lybic.cn/"
+            )
+        ) as client:
+            status = await client.sandbox.get_status("SBX-xxxx")
+            print(f"Sandbox status: {status}")
+            
+            # Check status conditionally
+            if status == "RUNNING":
+                print("Sandbox is ready to use")
+            elif status == "PENDING":
+                print("Sandbox is starting up...")
+            elif status == "ERROR":
+                print("Sandbox encountered an error")
+            elif status == "STOPPED":
+                print("Sandbox has been stopped")
+
+    if __name__ == '__main__':
+        asyncio.run(get_status_example())
+    ```
+
+13. Create a machine image from a sandbox
+
+    Create a machine image (snapshot) from an existing sandbox. This captures the current state of the sandbox including installed software, files, and configurations.
+
+    method: `create_machine_image(data: dto.CreateMachineImageDto)` or `create_machine_image(**kwargs)`
+    - args:
+      - sandboxId: str (required) The sandbox ID to create image from
+      - name: str (required) The name of the machine image (1-100 characters)
+      - description: str (optional) Optional description (max 500 characters)
+    - return: dto.MachineImageResponseDto
+
+    ```python
+    import asyncio
+    from lybic import dto, LybicClient, LybicAuth
+
+    async def create_image_example():
+        async with LybicClient(
+            LybicAuth(
+                org_id="ORG-xxxx",
+                api_key="lysk-xxxxxxxxxxx",
+                endpoint="https://api.lybic.cn/"
+            )
+        ) as client:
+            # Using DTO
+            image = await client.sandbox.create_machine_image(
+                dto.CreateMachineImageDto(
+                    sandboxId="SBX-xxxx",
+                    name="my-configured-environment",
+                    description="Ubuntu with Python 3.11 and dependencies installed"
+                )
+            )
+            print(f"Created image: {image.id}")
+            print(f"Image name: {image.name}")
+            print(f"Created at: {image.createdAt}")
+            
+            # Using keyword arguments
+            image2 = await client.sandbox.create_machine_image(
+                sandboxId="SBX-yyyy",
+                name="dev-environment",
+                description="Development environment with tools"
+            )
+            print(f"Created image 2: {image2.id}")
+
+    if __name__ == '__main__':
+        asyncio.run(create_image_example())
+    ```
+
+14. List machine images
+
+    List all machine images in your organization.
+
+    method: `list_machine_images()`
+    - args: None
+    - return: dto.MachineImagesResponseDto (contains list of images and quota information)
+
+    ```python
+    import asyncio
+    from lybic import LybicClient, LybicAuth
+
+    async def list_images_example():
+        async with LybicClient(
+            LybicAuth(
+                org_id="ORG-xxxx",
+                api_key="lysk-xxxxxxxxxxx",
+                endpoint="https://api.lybic.cn/"
+            )
+        ) as client:
+            result = await client.sandbox.list_machine_images()
+            
+            print(f"Total images: {len(result.images)}")
+            print(f"Quota: {result.quota.used}/{result.quota.limit}")
+            
+            for image in result.images:
+                print(f"ID: {image.id}")
+                print(f"  Name: {image.name}")
+                print(f"  Description: {image.description}")
+                print(f"  Shape: {image.shapeName}")
+                print(f"  Created: {image.createdAt}")
+                print(f"  Size: {image.size} bytes")
+                print()
+
+    if __name__ == '__main__':
+        asyncio.run(list_images_example())
+    ```
+
+15. Delete a machine image
+
+    Delete a machine image from your organization.
+
+    method: `delete_machine_image(image_id: str)`
+    - args:
+      - image_id: str ID of the machine image to delete
+    - return: None
+
+    ```python
+    import asyncio
+    from lybic import LybicClient, LybicAuth
+
+    async def delete_image_example():
+        async with LybicClient(
+            LybicAuth(
+                org_id="ORG-xxxx",
+                api_key="lysk-xxxxxxxxxxx",
+                endpoint="https://api.lybic.cn/"
+            )
+        ) as client:
+            await client.sandbox.delete_machine_image("IMG-xxxx")
+            print("Machine image deleted successfully")
+
+    if __name__ == '__main__':
+        asyncio.run(delete_image_example())
+    ```
+
 ### Error Handling
 
 The SDK provides user-friendly exceptions for API errors instead of raw HTTP errors.
