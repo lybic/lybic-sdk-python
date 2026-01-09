@@ -360,49 +360,6 @@
         ]
       }
     },
-    "/api/orgs/{orgId}/sandboxes/from-image": {
-      "post": {
-        "description": "Creates a new sandbox from a machine image.",
-        "operationId": "createSandboxFromImage",
-        "parameters": [
-          {
-            "name": "orgId",
-            "required": true,
-            "in": "path",
-            "description": "The organization ID",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateSandboxFromImageDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CreateSandboxFromImageResponseDto"
-                }
-              }
-            }
-          }
-        },
-        "summary": "Create Sandbox from Image",
-        "tags": [
-          "Sandbox"
-        ]
-      }
-    },
     "/api/orgs/{orgId}/sandboxes/{sandboxId}": {
       "delete": {
         "description": "Deletes a sandbox by its ID.",
@@ -515,40 +472,6 @@
           }
         },
         "summary": "Extend Sandbox",
-        "tags": [
-          "Sandbox"
-        ]
-      }
-    },
-    "/api/orgs/{orgId}/sandboxes/{sandboxId}/status": {
-      "get": {
-        "description": "Returns the status of a sandbox (PENDING/RUNNING/STOPPED/ERROR).",
-        "operationId": "getSandboxStatus",
-        "parameters": [
-          {
-            "name": "sandboxId",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "orgId",
-            "required": true,
-            "in": "path",
-            "description": "The organization ID",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "summary": "Get Sandbox Status",
         "tags": [
           "Sandbox"
         ]
@@ -694,112 +617,6 @@
         "summary": "Preview Sandbox",
         "tags": [
           "Sandbox"
-        ]
-      }
-    },
-    "/api/orgs/{orgId}/machine-images": {
-      "post": {
-        "operationId": "MachineImageController_createMachineImage",
-        "parameters": [
-          {
-            "name": "orgId",
-            "required": true,
-            "in": "path",
-            "description": "The organization ID",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateMachineImageDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MachineImageResponseDto"
-                }
-              }
-            }
-          }
-        },
-        "summary": "Create a machine image from a sandbox",
-        "tags": [
-          "MachineImage"
-        ]
-      },
-      "get": {
-        "operationId": "MachineImageController_listMachineImages",
-        "parameters": [
-          {
-            "name": "orgId",
-            "required": true,
-            "in": "path",
-            "description": "The organization ID",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MachineImagesResponseDto"
-                }
-              }
-            }
-          }
-        },
-        "summary": "List all machine images",
-        "tags": [
-          "MachineImage"
-        ]
-      }
-    },
-    "/api/orgs/{orgId}/machine-images/{imageId}": {
-      "delete": {
-        "operationId": "MachineImageController_deleteMachineImage",
-        "parameters": [
-          {
-            "name": "imageId",
-            "required": true,
-            "in": "path",
-            "description": "The machine image ID",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "orgId",
-            "required": true,
-            "in": "path",
-            "description": "The organization ID",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": ""
-          }
-        },
-        "summary": "Delete a machine image",
-        "tags": [
-          "MachineImage"
         ]
       }
     },
@@ -1348,16 +1165,6 @@
             },
             "shapeName": {
               "type": "string"
-            },
-            "status": {
-              "description": "Current sandbox status",
-              "type": "string",
-              "enum": [
-                "PENDING",
-                "RUNNING",
-                "STOPPED",
-                "ERROR"
-              ]
             }
           },
           "required": [
@@ -1428,16 +1235,6 @@
           },
           "shapeName": {
             "type": "string"
-          },
-          "status": {
-            "description": "Current sandbox status",
-            "type": "string",
-            "enum": [
-              "PENDING",
-              "RUNNING",
-              "STOPPED",
-              "ERROR"
-            ]
           }
         },
         "required": [
@@ -1797,99 +1594,6 @@
           "exitCode"
         ]
       },
-      "CreateSandboxFromImageDto": {
-        "type": "object",
-        "properties": {
-          "imageId": {
-            "description": "The machine image ID to create sandbox from.",
-            "type": "string"
-          },
-          "name": {
-            "description": "The name of the sandbox.",
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 100
-          },
-          "maxLifeSeconds": {
-            "description": "The maximum life time of the sandbox in seconds.",
-            "type": "integer",
-            "minimum": 300,
-            "exclusiveMinimum": false,
-            "maximum": 604800,
-            "exclusiveMaximum": false
-          },
-          "projectId": {
-            "description": "The project id to use for the sandbox. Use default if not provided.",
-            "type": "string"
-          }
-        },
-        "required": [
-          "imageId",
-          "name",
-          "maxLifeSeconds"
-        ]
-      },
-      "CreateSandboxFromImageResponseDto": {
-        "type": "object",
-        "properties": {
-          "sandbox": {
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "string"
-              },
-              "name": {
-                "type": "string"
-              },
-              "expiredAt": {
-                "description": "Deprecated, use `expiresAt` instead.",
-                "type": "string",
-                "format": "date-time"
-              },
-              "expiresAt": {
-                "type": "string",
-                "format": "date-time"
-              },
-              "createdAt": {
-                "type": "string",
-                "format": "date-time"
-              },
-              "projectId": {
-                "type": "string"
-              },
-              "shapeName": {
-                "type": "string"
-              },
-              "status": {
-                "description": "Current sandbox status",
-                "type": "string",
-                "enum": [
-                  "PENDING",
-                  "RUNNING",
-                  "STOPPED",
-                  "ERROR"
-                ]
-              }
-            },
-            "required": [
-              "id",
-              "name",
-              "expiredAt",
-              "expiresAt",
-              "createdAt",
-              "projectId",
-              "shapeName"
-            ]
-          },
-          "bookId": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "sandbox",
-          "bookId"
-        ]
-      },
       "ExtendSandboxDto": {
         "type": "object",
         "properties": {
@@ -1934,16 +1638,6 @@
               },
               "shapeName": {
                 "type": "string"
-              },
-              "status": {
-                "description": "Current sandbox status",
-                "type": "string",
-                "enum": [
-                  "PENDING",
-                  "RUNNING",
-                  "STOPPED",
-                  "ERROR"
-                ]
               },
               "shape": {
                 "type": "object",
@@ -5152,133 +4846,6 @@
         },
         "required": [
           "action"
-        ]
-      },
-      "CreateMachineImageDto": {
-        "type": "object",
-        "properties": {
-          "sandboxId": {
-            "description": "The sandbox ID to create image from.",
-            "type": "string"
-          },
-          "name": {
-            "description": "The name of the machine image.",
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 100
-          },
-          "description": {
-            "description": "Optional description of the machine image.",
-            "type": "string",
-            "maxLength": 500
-          }
-        },
-        "required": [
-          "sandboxId",
-          "name"
-        ]
-      },
-      "MachineImageResponseDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string",
-            "nullable": true
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "shapeName": {
-            "type": "string"
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "CREATING",
-              "READY",
-              "ERROR"
-            ]
-          }
-        },
-        "required": [
-          "id",
-          "name",
-          "description",
-          "createdAt",
-          "shapeName",
-          "status"
-        ]
-      },
-      "MachineImagesResponseDto": {
-        "type": "object",
-        "properties": {
-          "images": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "type": "string"
-                },
-                "name": {
-                  "type": "string"
-                },
-                "description": {
-                  "type": "string",
-                  "nullable": true
-                },
-                "createdAt": {
-                  "type": "string",
-                  "format": "date-time"
-                },
-                "shapeName": {
-                  "type": "string"
-                },
-                "status": {
-                  "type": "string",
-                  "enum": [
-                    "CREATING",
-                    "READY",
-                    "ERROR"
-                  ]
-                }
-              },
-              "required": [
-                "id",
-                "name",
-                "description",
-                "createdAt",
-                "shapeName",
-                "status"
-              ]
-            }
-          },
-          "quota": {
-            "type": "object",
-            "properties": {
-              "used": {
-                "type": "number"
-              },
-              "limit": {
-                "type": "number"
-              }
-            },
-            "required": [
-              "used",
-              "limit"
-            ]
-          }
-        },
-        "required": [
-          "images",
-          "quota"
         ]
       },
       "ListProjectsResponseDto": {
