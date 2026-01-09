@@ -163,7 +163,7 @@ class Shape(BaseModel):
     hardwareAcceleratedEncoding: bool = Field(False, description="Whether the shape supports hardware accelerated encoding.")
     pricePerHour: float = Field(..., description="This price acts as a multiplier, e.g. if it is set to 0.5, each hour of usage will be billed as 0.5 hours.")
     requiredPlanTier: float = Field(..., description="Required plan tier to use this shape.")
-    requiredFeatureFlag:str = Field(..., description="The feature flag required by creating the shape of sandbox.")
+    requiredFeatureFlag: Optional[Any] = Field(..., description="The feature flag required by creating the shape of sandbox.")
     os: Literal["Windows","Linux","Android"]
     virtualization: Literal["KVM","Container"]
     architecture: Literal["x86_64","aarch64"]

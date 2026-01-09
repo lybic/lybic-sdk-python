@@ -207,6 +207,7 @@ class PyautoguiSync:
         raise ConnectionError("Could not get mouse position")
 
     def _execute_action(self, code):
+        logging.debug(f"PythonCode:{code}")
         actions: List[MobileUseAction] | List[ComputerUseAction]
 
         if self.mobile_sandbox:
