@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "lybic"
 # The mainline branch will no longer add version numbers by default
-version = "0.13.0"
+version = "1.0.0b2"
 authors = [
   { name="Lybic Development Team", email="team@lybic.ai" },
 ]
