@@ -27,10 +27,19 @@
 """
 pyautogui.py implements a synchronous calling interface compatible with pyautogui.py through lybic
 
-from lybic_sync import LybicSyncClient, PyautoguiSync
+from lybic import LybicClient, Pyautogui
 
-client = LybicSyncClient()
-pyautogui = PyautoguiSync(client, 'your-sandbox-id')
+# You can use either async or sync client
+# With async client (uses synchronous client internally):
+client = LybicClient()
+pyautogui = Pyautogui(client, 'your-sandbox-id')
+
+# Or with sync client directly:
+from lybic_sync import LybicSyncClient
+sync_client = LybicSyncClient()
+pyautogui = Pyautogui(sync_client, 'your-sandbox-id')
+
+The following pyautogui code remains compatible with Lybic actions:
 
 pyautogui.position()
 pyautogui.moveTo(1443,343)
@@ -53,48 +62,80 @@ pyautogui.dragTo(500, 500)
 """
 import logging
 import re
-import time
-from typing import overload, Optional, List, Union
+from typing import overload, Optional, List, Union, TYPE_CHECKING
 
-from lybic_sync.lybic_sync import LybicSyncClient
-from lybic_sync.sandbox import SandboxSync
+from lybic.authentication import LybicAuth
 from lybic.action import (
     FinishedAction,
-    MouseMoveAction,
-    PixelLength,
-    MouseDoubleClickAction,
-    MouseClickAction,
-    MouseDragAction,
-    MouseScrollAction,
-    KeyboardTypeAction,
-    KeyboardHotkeyAction,
-    KeyDownAction,
-    KeyUpAction,
+    ComputerUseAction,
+    MobileUseAction,
 )
-from lybic.dto import ExecuteSandboxActionDto
+
+from lybic.dto import ExecuteSandboxActionDto, ModelType
+
+if TYPE_CHECKING:
+    from lybic.lybic import LybicClient
+
 
 # pylint: disable=unused-argument,invalid-name,logging-fstring-interpolation
 class PyautoguiSync:
     """
-    PyautoguiSync implements a synchronous calling interface compatible with pyautogui.py through lybic
+    Pyautogui implements a calling interface compatible with pyautogui.py through lybic
 
     Examples:
 
     LLM_OUTPUT = 'pyautogui.click(x=1443, y=343)'
 
-    from lybic_sync import LybicSyncClient, PyautoguiSync
+    from lybic import LybicClient, Pyautogui
+    from lybic_sync.lybic_sync import LybicSyncClient
 
-    client = LybicSyncClient()
+    client = LybicClient() || LybicSyncClient()
 
-    pyautogui = PyautoguiSync(client,sandbox_id)
+    pyautogui = Pyautogui(client,sandbox_id)
 
     eval(LLM_OUTPUT)
     """
-    def __init__(self, client: LybicSyncClient, sandbox_id: str):
-        self.client = client
+    def __init__(self, client, sandbox_id: str):
         self.logger = logging.getLogger(__name__)
-        self.sandbox = SandboxSync(self.client)
+
+        # Check if client is a sync client
+        # pylint: disable=import-outside-toplevel
+        from lybic_sync.lybic_sync import LybicSyncClient
+        from lybic.lybic import LybicClient
+
+        if isinstance(client, LybicSyncClient):
+            # Use sync client directly
+            self.client = client
+        elif isinstance(client, LybicClient):
+            # Convert async client to sync client
+            self.logger.info("Converting async LybicClient to synchronous client for Pyautogui")
+            self.client = LybicSyncClient(
+                auth=LybicAuth(
+                    org_id=client.org_id,
+                    api_key=client._api_key,
+                    endpoint=client.endpoint,
+                    extra_headers=client.headers,
+                ),
+                timeout=client.timeout,
+                max_retries=client.max_retries,
+            )
+        else:
+            raise TypeError("client must be either LybicClient or LybicSyncClient")
+
+        self.sandbox = self.client.sandbox
         self.sandbox_id = sandbox_id
+        self.mobile_sandbox = self._sandbox_is_mobile()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        # The `LybicClient` lifecycle is controlled by the upper layer.
+        pass
+
+    def _sandbox_is_mobile(self) -> bool:
+        sandbox = self.sandbox.get(self.sandbox_id)
+        return sandbox.sandbox.shape.os == "Android"
 
     @staticmethod
     def parse(content: str) -> str:
@@ -112,10 +153,12 @@ class PyautoguiSync:
         return "\n".join(matches)
 
     @overload
-    def clone(self, sandbox_id: str) -> "PyautoguiSync": ...
+    def clone(self, sandbox_id: str) -> "PyautoguiSync":
+        ...
 
     @overload
-    def clone(self) -> "PyautoguiSync": ...
+    def clone(self) -> "PyautoguiSync":
+        ...
 
     def clone(self, sandbox_id: str = None) -> "PyautoguiSync":
         """
@@ -163,6 +206,26 @@ class PyautoguiSync:
             return result.cursorPosition.x, result.cursorPosition.y
         raise ConnectionError("Could not get mouse position")
 
+    def _execute_action(self, code):
+        actions: List[MobileUseAction] | List[ComputerUseAction]
+
+        if self.mobile_sandbox:
+            actions = self.client.tools.mobile_use.parse_llm_output(
+                model_type=ModelType.PYAUTOGUI,
+                llm_output=code
+            ).actions
+        else:
+            actions = self.client.tools.computer_use.parse_llm_output(
+                model_type=ModelType.PYAUTOGUI,
+                llm_output=code
+            ).actions
+
+        for action in actions:
+            self.sandbox.execute_sandbox_action(
+                sandbox_id=self.sandbox_id,
+                data=ExecuteSandboxActionDto(action=action, includeScreenShot=False, includeCursorPosition=False)
+            )
+
     def moveTo(self, x, y, duration=0.0, tween=None, logScreenshot=False, _pause=True):
         """
         Moves the mouse to the specified position.
@@ -175,15 +238,10 @@ class PyautoguiSync:
             logScreenshot (Placeholder):
             _pause (Placeholder):
         """
-        request = MouseMoveAction(
-            type="mouse:move",
-            x=PixelLength(type="px", value=x),
-            y=PixelLength(type="px", value=y),
-        )
-        self.sandbox.execute_sandbox_action(
-            sandbox_id=self.sandbox_id,
-            data=ExecuteSandboxActionDto(action=request, includeScreenShot=False, includeCursorPosition=False)
-        )
+        code = f"""```python
+        pyautogui.moveTo(x={x}, y={y}, duration={duration}, tween={tween}, logScreenshot={logScreenshot}, _pause={_pause})
+        ```"""
+        self._execute_action(code)
 
     def move(self, xOffset=None, yOffset=None, duration=0.0, tween=None, _pause=True):
         """
@@ -196,16 +254,10 @@ class PyautoguiSync:
             tween (Placeholder):
             _pause (Placeholder):
         """
-        if xOffset is None and yOffset is None:
-            return
-
-        current_x, current_y = self.position()
-        xOffset = xOffset if xOffset is not None else 0
-        yOffset = yOffset if yOffset is not None else 0
-
-        new_x = current_x + xOffset
-        new_y = current_y + yOffset
-        self.moveTo(new_x, new_y, duration, tween, _pause=_pause)
+        code = f"""```python
+        pyautogui.move(xOffset={xOffset}, yOffset={yOffset}, duration={duration}, tween={tween}, _pause={_pause})
+        ```"""
+        self._execute_action(code)
 
     def click(self, x: Optional[int] = None, y: Optional[int] = None,
               clicks=1, interval=0.0, button='left', duration=0.0, tween=None,
@@ -224,39 +276,10 @@ class PyautoguiSync:
             x, y = self.position()
 
         self.logger.info(f"click(x={x}, y={y}, clicks={clicks}, button='{button}')")
-
-        button_map = {'left': 1, 'right': 2, 'middle': 4}
-        button_code = button_map.get(button.lower(), 1)
-
-        if clicks == 2:
-            action = MouseDoubleClickAction(
-                type="mouse:doubleClick",
-                x=PixelLength(type="px", value=x),
-                y=PixelLength(type="px", value=y),
-                button=button_code
-            )
-            self.sandbox.execute_sandbox_action(
-                sandbox_id=self.sandbox_id,
-                data=ExecuteSandboxActionDto(action=action, includeScreenShot=False,
-                                              includeCursorPosition=False)
-            )
-        else:
-            for i in range(clicks):
-                action = MouseClickAction(
-                    type="mouse:click",
-                    x=PixelLength(type="px", value=x),
-                    y=PixelLength(type="px", value=y),
-                    button=button_code
-                )
-
-                self.sandbox.execute_sandbox_action(
-                    sandbox_id=self.sandbox_id,
-                    data=ExecuteSandboxActionDto(action=action, includeScreenShot=False,
-                                                  includeCursorPosition=False)
-                )
-
-                if i < clicks - 1:
-                    time.sleep(interval)
+        code = f"""```python
+        pyautogui.click(x={x}, y={y}, clicks={clicks}, interval={interval}, button='{button}', duration={duration}, tween={tween}, logScreenshot={logScreenshot}, _pause={_pause})
+        ```"""
+        self._execute_action(code)
 
     def doubleClick(self, x: Optional[int] = None, y: Optional[int] = None,
                     interval=0.0, button='left', duration=0.0, tween=None, _pause=True):
@@ -300,7 +323,8 @@ class PyautoguiSync:
         self.click(x, y, button='middle', duration=duration, tween=tween, _pause=_pause)
 
     def tripleClick(self, x: Optional[int] = None, y: Optional[int] = None,
-                    interval: float = 0.0, button: str = 'left', duration: float = 0.0, tween=None, _pause: bool = True):
+                    interval: float = 0.0, button: str = 'left', duration: float = 0.0, tween=None,
+                    _pause: bool = True):
         """
         Performs a triple-click at the specified position.
 
@@ -325,24 +349,10 @@ class PyautoguiSync:
             duration (float, optional): The time in seconds to spend moving the mouse. Defaults to 0.0. This parameter is currently ignored.
             button (str, optional): The button to drag with. Can be 'left', 'right', or 'middle'. Defaults to 'left'.
         """
-        if button.lower() != 'left':
-            self.logger.warning(f"Lybic API currently only supports dragging with the left mouse button, but '{button}' was requested. Proceeding with left button.")
-
-        start_x, start_y = self.position()
-
-        self.logger.info(f"dragTo(x={x}, y={y}, button='{button}')")
-
-        request = MouseDragAction(
-            type="mouse:drag",
-            startX=PixelLength(type="px", value=start_x),
-            startY=PixelLength(type="px", value=start_y),
-            endX=PixelLength(type="px", value=x),
-            endY=PixelLength(type="px", value=y)
-        )
-        self.sandbox.execute_sandbox_action(
-            sandbox_id=self.sandbox_id,
-            data=ExecuteSandboxActionDto(action=request, includeScreenShot=False, includeCursorPosition=False)
-        )
+        code = f"""```python
+        pyautogui.dragTo(x={x}, y={y}, duration={duration}, button='{button}', _pause={_pause})
+        ```"""
+        self._execute_action(code)
 
     def scroll(self, clicks: int, x: Optional[int] = None, y: Optional[int] = None, _pause: bool = True):
         """
@@ -352,32 +362,13 @@ class PyautoguiSync:
             x (int, optional): The x position to move to before scrolling. Defaults to the current mouse position.
             y (int, optional): The y position to move to before scrolling. Defaults to the current mouse position.
         """
-        if x is not None and y is not None:
-            scroll_x, scroll_y = x, y
-            self.moveTo(scroll_x, scroll_y)
-        elif x is None and y is None:
-            scroll_x, scroll_y = self.position()
-        else:  # one of x or y is None
-            current_x, current_y = self.position()
-            scroll_x = x if x is not None else current_x
-            scroll_y = y if y is not None else current_y
-            self.moveTo(scroll_x, scroll_y)
+        if x is None or y is None:
+            x, y = self.position()
 
-        self.logger.info(f"scroll(clicks={clicks}) at ({scroll_x}, {scroll_y})")
-
-        # In pyautogui, positive clicks scroll up.
-        # The MouseScrollAction uses stepVertical, assuming positive is up.
-        request = MouseScrollAction(
-            type="mouse:scroll",
-            x=PixelLength(type="px", value=scroll_x),
-            y=PixelLength(type="px", value=scroll_y),
-            stepVertical=clicks,
-            stepHorizontal=0
-        )
-        self.sandbox.execute_sandbox_action(
-            sandbox_id=self.sandbox_id,
-            data=ExecuteSandboxActionDto(action=request, includeScreenShot=False, includeCursorPosition=False)
-        )
+        code = f"""```python
+        pyautogui.scroll(clicks={clicks}, x={x}, y={y}, _pause={_pause})
+        ```"""
+        self._execute_action(code)
 
     def write(self, message: str, interval: float = 0.0, _pause: bool = True):
         """
@@ -399,32 +390,18 @@ class PyautoguiSync:
                                          If a list of strings, each string is typed or pressed as a key.
             interval (float, optional): The interval in seconds between each key press. Defaults to 0.0.
         """
-        if isinstance(message, str):
-            if interval == 0.0:
-                request = KeyboardTypeAction(
-                    type="keyboard:type",
-                    content=message,
-                    treatNewLineAsEnter=True
-                )
-                self.sandbox.execute_sandbox_action(
-                    sandbox_id=self.sandbox_id,
-                    data=ExecuteSandboxActionDto(action=request, includeScreenShot=False, includeCursorPosition=False)
-                )
-                return
-
-            keys_to_press = ['enter' if char == '\n' else char for char in message]
-            self.press(keys_to_press, interval=interval, _pause=_pause)
-
-        elif isinstance(message, list):
-            self.press(message, interval=interval, _pause=_pause)
-        else:
-            raise TypeError("message argument must be a string or a list of strings.")
+        code = f"""```python
+        pyautogui.typewrite(message={repr(message)}, interval={interval}, _pause={_pause})
+        ```"""
+        self._execute_action(code)
 
     @overload
-    def press(self, keys: str, presses: int = 1, interval: float = 0.0, _pause: bool = True): ...
+    def press(self, keys: str, presses: int = 1, interval: float = 0.0, _pause: bool = True):
+        ...
 
     @overload
-    def press(self, keys: List[str], presses: int = 1, interval: float = 0.0, _pause: bool = True): ...
+    def press(self, keys: List[str], presses: int = 1, interval: float = 0.0, _pause: bool = True):
+        ...
 
     def press(self, keys, presses=1, interval=0.0, _pause=True):
         """
@@ -435,23 +412,10 @@ class PyautoguiSync:
             presses (int, optional): The number of times to press the keys. Defaults to 1.
             interval (float, optional): The interval in seconds between each press. Defaults to 0.0
         """
-        if isinstance(keys, str):
-            _keys = [keys] * presses
-        else:
-            _keys = keys * presses
-
-        for i, key in enumerate(_keys):
-            request = KeyboardHotkeyAction(
-                type="keyboard:hotkey",
-                keys=key
-            )
-            self.sandbox.execute_sandbox_action(
-                sandbox_id=self.sandbox_id,
-                data=ExecuteSandboxActionDto(action=request, includeScreenShot=False,
-                                              includeCursorPosition=False)
-            )
-            if i < len(_keys) - 1:
-                time.sleep(interval)
+        code = f"""```python
+        pyautogui.press(keys={repr(keys)}, presses={presses}, interval={interval}, _pause={_pause})
+        ```"""
+        self._execute_action(code)
 
     def hotkey(self, *args, interval=0.0, _pause=True):
         """
@@ -459,21 +423,12 @@ class PyautoguiSync:
 
         Args:
             *args (str): The keys to press.
-            interval (Placeholder):
+            interval (float, optional): The interval in seconds between each press. Defaults to 0.0.
         """
-        keys = args
-        if len(keys) == 1 and isinstance(keys[0], (list, tuple)):
-            keys = keys[0]
-
-        keys_to_press = '+'.join(keys)
-        request = KeyboardHotkeyAction(
-            type="keyboard:hotkey",
-            keys=keys_to_press
-        )
-        self.sandbox.execute_sandbox_action(
-            sandbox_id=self.sandbox_id,
-            data=ExecuteSandboxActionDto(action=request, includeScreenShot=False, includeCursorPosition=False)
-        )
+        code = f"""```python
+        pyautogui.hotkey({', '.join(repr(key) for key in args)}, interval={interval}, _pause={_pause})
+        ```"""
+        self._execute_action(code)
 
     def keyDown(self, key):
         """
@@ -482,14 +437,10 @@ class PyautoguiSync:
         Args:
             key (str): The key to hold down.
         """
-        request = KeyDownAction(
-            type="key:down",
-            key=key
-        )
-        self.sandbox.execute_sandbox_action(
-            sandbox_id=self.sandbox_id,
-            data=ExecuteSandboxActionDto(action=request, includeScreenShot=False, includeCursorPosition=False)
-        )
+        code = f"""```python
+        pyautogui.keyDown(key={repr(key)})
+        ```"""
+        self._execute_action(code)
 
     def keyUp(self, key):
         """
@@ -498,19 +449,11 @@ class PyautoguiSync:
         Args:
             key (str): The key to release.
         """
-        request = KeyUpAction(
-            type="key:up",
-            key=key
-        )
-        self.sandbox.execute_sandbox_action(
-            sandbox_id=self.sandbox_id,
-            data=ExecuteSandboxActionDto(action=request, includeScreenShot=False, includeCursorPosition=False)
-        )
+        code = f"""```python
+        pyautogui.keyUp(key={repr(key)})
+        ```"""
+        self._execute_action(code)
 
     # pylint: disable=missing-function-docstring
     def close(self):
-        pass
-    def __enter__(self):
-        return self
-    def __exit__(self, exc_type, exc_val, exc_tb):
         pass
