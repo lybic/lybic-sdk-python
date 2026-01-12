@@ -906,13 +906,7 @@ client.close()
    )
    ```
 
-9. Legacy file transfer methods (Deprecated)
-
-   > [!WARNING]
-   > The `upload_files` and `download_files` methods have been removed in favor of the unified `copy_files` method.
-   > Please migrate your code to use `copy_files` as shown in section 8 above.
-
-10. Execute a process inside a sandbox
+9. Execute a process inside a sandbox
 
     Run an executable with arguments; capture stdout/stderr (base64-encoded) and exit code.
     
@@ -958,7 +952,7 @@ client.close()
         asyncio.run(run_process_example())
     ```
 
-11. Create a sandbox from a machine image
+10. Create a sandbox from a machine image
 
     Create a new sandbox using a previously saved machine image. This allows you to start sandboxes with pre-configured environments and installed software.
 
@@ -1005,7 +999,7 @@ client.close()
         asyncio.run(create_from_image_example())
     ```
 
-12. Get sandbox status
+11. Get sandbox status
 
     Get the current status of a sandbox (PENDING/RUNNING/STOPPED/ERROR).
 
@@ -1043,7 +1037,7 @@ client.close()
         asyncio.run(get_status_example())
     ```
 
-13. Create a machine image from a sandbox
+12. Create a machine image from a sandbox
 
     Create a machine image (snapshot) from an existing sandbox. This captures the current state of the sandbox including installed software, files, and configurations.
 
@@ -1090,7 +1084,7 @@ client.close()
         asyncio.run(create_image_example())
     ```
 
-14. List machine images
+13. List machine images
 
     List all machine images in your organization.
 
@@ -1128,7 +1122,7 @@ client.close()
         asyncio.run(list_images_example())
     ```
 
-15. Delete a machine image
+14. Delete a machine image
 
     Delete a machine image from your organization.
 
@@ -1154,6 +1148,34 @@ client.close()
 
     if __name__ == '__main__':
         asyncio.run(delete_image_example())
+    ```
+
+15. Restart a sandbox
+
+    Restart a running sandbox.
+
+    method: `restart(sandbox_id: str)`
+    - args:
+      - sandbox_id: str ID of the sandbox to restart
+    - return: None
+
+    ```python
+    import asyncio
+    from lybic import LybicClient, LybicAuth
+
+    async def restart_sandbox_example():
+        async with LybicClient(
+            LybicAuth(
+                org_id="ORG-xxxx",
+                api_key="lysk-xxxxxxxxxxx",
+                endpoint="https://api.lybic.cn/"
+            )
+        ) as client:
+            await client.sandbox.restart("SBX-xxxx")
+            print("Sandbox restarted successfully")
+
+    if __name__ == '__main__':
+        asyncio.run(restart_sandbox_example())
     ```
 
 ### Error Handling

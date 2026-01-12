@@ -5,10 +5,7 @@ To use the `Mcp` client, you must first install it with the optional dependencie
 pip install 'lybic[mcp]'
 ```
 
-You can use the `MCP(Model Context Protocol)` to execute action via `lybic.mcp`.
-
-> [!NOTE]
-> The `MCP` class is deprecated and will be removed in a future version (>=1.0.0). Please use `Mcp` instead, which follows Python's naming conventions.
+You can use the `MCP(Model Context Protocol)` to execute action via `lybic.Mcp`.
 
 ```python
 class Mcp:
