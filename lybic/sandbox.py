@@ -353,3 +353,12 @@ class Sandbox:
         await self.client.request(
             "DELETE",
             f"/api/orgs/{self.client.org_id}/machine-images/{image_id}")
+
+    async def restart(self, sandbox_id: str) -> None:
+        """
+        Restart a sandbox
+        """
+        self.client.logger.debug(f"Restarting sandbox {sandbox_id}")
+        await self.client.request(
+            "POST",
+            f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/restart")

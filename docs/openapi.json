@@ -520,6 +520,40 @@
         ]
       }
     },
+    "/api/orgs/{orgId}/sandboxes/{sandboxId}/restart": {
+      "post": {
+        "description": "Restarts a sandbox by its ID.",
+        "operationId": "restartSandbox",
+        "parameters": [
+          {
+            "name": "sandboxId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orgId",
+            "required": true,
+            "in": "path",
+            "description": "The organization ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Restart Sandbox",
+        "tags": [
+          "Sandbox"
+        ]
+      }
+    },
     "/api/orgs/{orgId}/sandboxes/{sandboxId}/status": {
       "get": {
         "description": "Returns the status of a sandbox (PENDING/RUNNING/STOPPED/ERROR).",
