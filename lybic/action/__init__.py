@@ -88,7 +88,6 @@ MobileUseAction = Union[
     ClientUserTakeoverAction, # generalActionUserTakeoverSchema
 
     KeyboardTypeAction, # generalActionKeyboardTypeSchema
-    KeyboardHotkeyAction, # generalActionKeyboardHotkeySchema
 
     TouchTapAction, # mobileUseActionTapSchema
     TouchDragAction,  # mobileUseActionDragSchema
