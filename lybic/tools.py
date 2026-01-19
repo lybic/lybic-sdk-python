@@ -110,6 +110,25 @@ class MobileUse:
         self.client.logger.debug(f"Parse model output response: {response.text}")
         return MobileUseActionResponseDto.model_validate_json(response.text)
 
+    async def set_gps_location(
+        self, sandbox_id: str, longitude: float, latitude: float
+    ):
+        """Set GPS location for Android device.
+
+        Args:
+            sandbox_id: The ID of the sandbox containing the Android device.
+            longitude: The longitude coordinate.
+            latitude: The latitude coordinate.
+
+        Returns:
+            The process execution result.
+        """
+        return await self.client.sandbox.execute_process(
+            sandbox_id,
+            executable="settings",
+            args=["put", "global", "gps_inject_info", f"{longitude},{latitude}"]
+        )
+
 class Tools:
     """Tools is a container for various tool clients."""
     def __init__(self, client: "LybicClient"):
