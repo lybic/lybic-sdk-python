@@ -123,10 +123,14 @@ class MobileUse:
         Returns:
             The process execution result.
         """
+        sandbox_details = await self.client.sandbox.get(sandbox_id)
+        if not sandbox_details.sandbox.shape or sandbox_details.sandbox.shape.os != "Android":
+            raise ValueError("set_gps_location is only supported for Android sandboxes")
+
         return await self.client.sandbox.execute_process(
             sandbox_id,
             executable="settings",
-            args=["put", "global", "gps_inject_info", f"{longitude},{latitude}"]
+            args=["put", "global", "gps_inject_info", f"{longitude},{latitude}"],
         )
 
 class Tools:
