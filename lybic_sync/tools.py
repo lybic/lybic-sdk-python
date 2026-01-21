@@ -111,14 +111,14 @@ class MobileUseSync:
         return MobileUseActionResponseDto.model_validate_json(response.text)
 
     def set_gps_location(
-        self, sandbox_id: str, longitude: float, latitude: float
+        self, sandbox_id: str, latitude: float, longitude: float
     ):
         """Set GPS location for Android device.
 
         Args:
             sandbox_id: The ID of the sandbox containing the Android device.
-            longitude: The longitude coordinate.
             latitude: The latitude coordinate.
+            longitude: The longitude coordinate.
 
         Returns:
             The process execution result.
@@ -130,7 +130,7 @@ class MobileUseSync:
         return self.client.sandbox.execute_process(
             sandbox_id,
             executable="settings",
-            args=["put", "global", "gps_inject_info", f"{longitude},{latitude}"],
+            args=["put", "global", "gps_inject_info", f"{latitude:.6f},{longitude:.6f}"],
         )
 
 class ToolsSync:
