@@ -110,6 +110,29 @@ class MobileUseSync:
         self.client.logger.debug(f"Parse model output response: {response.text}")
         return MobileUseActionResponseDto.model_validate_json(response.text)
 
+    def set_gps_location(
+        self, sandbox_id: str, latitude: float, longitude: float
+    ):
+        """Set GPS location for Android device.
+
+        Args:
+            sandbox_id: The ID of the sandbox containing the Android device.
+            latitude: The latitude coordinate.
+            longitude: The longitude coordinate.
+
+        Returns:
+            The process execution result.
+        """
+        sandbox_details = self.client.sandbox.get(sandbox_id)
+        if not sandbox_details.sandbox.shape or sandbox_details.sandbox.shape.os != "Android":
+            raise ValueError("set_gps_location is only supported for Android sandboxes")
+
+        return self.client.sandbox.execute_process(
+            sandbox_id,
+            executable="settings",
+            args=["put", "global", "gps_inject_info", f"{latitude:.6f},{longitude:.6f}"],
+        )
+
 class ToolsSync:
     """ToolsSync is a container for various synchronous tool clients."""
     def __init__(self, client: "LybicSyncClient"):
