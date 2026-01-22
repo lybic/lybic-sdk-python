@@ -28,6 +28,7 @@ lybic_sync.tools:
 Synchronous ComputerUse tools
 Synchronous MobileUse tools
 """
+import os
 from typing import TYPE_CHECKING
 
 from lybic.dto import (
@@ -35,6 +36,9 @@ from lybic.dto import (
     ComputerUseActionResponseDto,
     ModelType,
     MobileUseActionResponseDto,
+    APPSources,
+    Android_local,
+    HTTP_remote,
 )
 
 if TYPE_CHECKING:
@@ -132,6 +136,64 @@ class MobileUseSync:
             executable="settings",
             args=["put", "global", "gps_inject_info", f"{latitude:.6f},{longitude:.6f}"],
         )
+
+    def _download_apk_from_url(self, sandbox_id: str, url: str, headers: dict = None) -> str:
+        """Download APK from URL to /sdcard/Download and return the local path."""
+        filename = os.path.basename(url.split('?')[0])
+        if not filename.endswith('.apk'):
+            filename = f"{filename}.apk"
+        dest_path = f"/sdcard/Download/{filename}"
+        
+        args = []
+        if headers:
+            for key, value in headers.items():
+                args.extend(["-H", f"{key}: {value}"])
+        args.extend(["-L", "-o", dest_path, url])
+        
+        self.client.sandbox.execute_process(
+            sandbox_id,
+            executable="curl",
+            args=args,
+        )
+        return dest_path
+
+    def _install_apk_file(self, sandbox_id: str, apk_path: str):
+        """Install a single APK file using pm install."""
+        return self.client.sandbox.execute_process(
+            sandbox_id,
+            executable="pm",
+            args=["install", "-r", apk_path],
+        ).exitCode == 0
+
+    def install_apk(self, sandbox_id: str, app_sources: list[APPSources])-> list[bool]:
+        """Install APK files on Android device.
+
+        Args:
+            sandbox_id: The ID of the sandbox containing the Android device.
+            app_sources: List of APK sources (Android_local or HTTP_remote).
+
+        Returns:
+            List of installation results.
+        """
+        sandbox_details = self.client.sandbox.get(sandbox_id)
+        if not sandbox_details.sandbox.shape or sandbox_details.sandbox.shape.os != "Android":
+            raise ValueError("install_apk is only supported for Android sandboxes")
+
+        apk_paths = []
+        
+        for source in app_sources:
+            if isinstance(source, Android_local):
+                apk_paths.append(source.apk_path)
+            elif isinstance(source, HTTP_remote):
+                downloaded_path = self._download_apk_from_url(sandbox_id, source.url_path, source.headers)
+                apk_paths.append(downloaded_path)
+        
+        results = []
+        for apk_path in apk_paths:
+            result = self._install_apk_file(sandbox_id, apk_path)
+            results.append(result)
+        
+        return results
 
 class ToolsSync:
     """ToolsSync is a container for various synchronous tool clients."""
