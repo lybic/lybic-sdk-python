@@ -38,7 +38,7 @@ from lybic.dto import (
     MobileUseActionResponseDto,
     APPSources,
     Android_local,
-    HTTP_remote,
+    HTTP_remote, SandboxFileCopyRequestDto, FileCopyItem, HttpGetLocation, SandboxFileLocation,
 )
 
 if TYPE_CHECKING:
@@ -143,18 +143,15 @@ class MobileUseSync:
         if not filename.endswith('.apk'):
             filename = f"{filename}.apk"
         dest_path = f"/sdcard/Download/{filename}"
-        
-        args = []
-        if headers:
-            for key, value in headers.items():
-                args.extend(["-H", f"{key}: {value}"])
-        args.extend(["-L", "-o", dest_path, url])
-        
-        self.client.sandbox.execute_process(
-            sandbox_id,
-            executable="curl",
-            args=args,
-        )
+
+        self.client.sandbox.copy_files(sandbox_id,SandboxFileCopyRequestDto(
+            files=[
+                FileCopyItem(
+                    src=HttpGetLocation(url=url,headers=headers),
+                    dest=SandboxFileLocation(path=dest_path)
+                )
+            ]
+        ))
         return dest_path
 
     def _install_apk_file(self, sandbox_id: str, apk_path: str):
@@ -180,7 +177,6 @@ class MobileUseSync:
             raise ValueError("install_apk is only supported for Android sandboxes")
 
         apk_paths = []
-        
         for source in app_sources:
             if isinstance(source, Android_local):
                 apk_paths.append(source.apk_path)

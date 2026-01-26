@@ -39,7 +39,7 @@ from lybic.dto import (
     MobileUseActionResponseDto,
     APPSources,
     Android_local,
-    HTTP_remote,
+    HTTP_remote, SandboxFileCopyRequestDto, FileCopyItem, HttpGetLocation, SandboxFileLocation,
 )
 
 if TYPE_CHECKING:
@@ -144,17 +144,14 @@ class MobileUse:
             filename = f"{filename}.apk"
         dest_path = f"/sdcard/Download/{filename}"
         
-        args = []
-        if headers:
-            for key, value in headers.items():
-                args.extend(["-H", f"{key}: {value}"])
-        args.extend(["-L", "-o", dest_path, url])
-        
-        await self.client.sandbox.execute_process(
-            sandbox_id,
-            executable="curl",
-            args=args,
-        )
+        await self.client.sandbox.copy_files(sandbox_id,SandboxFileCopyRequestDto(
+            files=[
+                FileCopyItem(
+                    src=HttpGetLocation(url=url,headers=headers),
+                    dest=SandboxFileLocation(path=dest_path)
+                )
+            ]
+        ))
         return dest_path
 
     async def _install_apk_file(self, sandbox_id: str, apk_path: str):
