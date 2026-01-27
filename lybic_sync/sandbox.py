@@ -363,3 +363,50 @@ class SandboxSync:
         self.client.request(
             "POST",
             f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/restart")
+
+    def create_http_port_mapping(self, sandbox_id: str,
+        target_endpoint: str,title: str|None =None) -> dto.CreateHttpMappingResponse:
+        """
+        Create an HTTP port mapping for a sandbox.
+        :param sandbox_id:
+        :param target_endpoint: Target TCP endpoint, e.g., 127.0.0.1:3000
+        :param title:
+        :return:
+        """
+        self.client.logger.debug(f"Creating HTTP port mapping for sandbox {sandbox_id}")
+        data = dto.CreateHttpMappingDto(
+            targetEndpoint=target_endpoint,
+            title=title
+        )
+        response = self.client.request(
+            "POST",
+            f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/mappings",
+            json=data.model_dump(exclude_none=True))
+        self.client.logger.debug(f"Create HTTP port mapping response: {response.text}")
+        return dto.CreateHttpMappingResponse.model_validate_json(response.text)
+
+    def list_http_port_mappings(self, sandbox_id: str) -> dto.ListHttpMappingsResponseDto:
+        """
+        List HTTP port mappings for a sandbox.
+        :param self:
+        :param sandbox_id:
+        :return:
+        """
+        self.client.logger.debug(f"Listing HTTP port mappings for sandbox {sandbox_id}")
+        response = self.client.request(
+            "GET",
+            f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/mappings")
+        self.client.logger.debug(f"List HTTP port mappings response: {response.text}")
+        return dto.ListHttpMappingsResponseDto.model_validate_json(response.text)
+
+    def delete_http_port_mapping(self, sandbox_id: str, mapping_id: str) -> None:
+        """
+        Delete an HTTP port mapping for a sandbox.
+        :param sandbox_id:
+        :param mapping_id:
+        :return:
+        """
+        self.client.logger.debug(f"Deleting HTTP port mapping {mapping_id} for sandbox {sandbox_id}")
+        self.client.request(
+            "DELETE",
+            f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/mappings/{mapping_id}")

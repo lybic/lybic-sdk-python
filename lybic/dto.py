@@ -597,3 +597,42 @@ class MachineImagesResponseDto(BaseModel):
 
     images: List[MachineImageResponseDto]
     quota: MachineImageQuota
+
+class CreateHttpMappingDto(BaseModel):
+    """
+    Create HTTP mapping request.
+    """
+    model_config = ConfigDict(extra=json_extra_fields_policy)
+
+    targetEndpoint: str = Field(..., description="Target TCP endpoint, e.g., 127.0.0.1:3000")
+    title: Optional[str] = Field(None, description="Optional title for the HTTP mapping.")
+
+class HttpMappingResponse(BaseModel):
+    """
+    HTTP mapping response.
+    """
+    model_config = ConfigDict(extra=json_extra_fields_policy)
+
+    id: str = Field(..., description="HTTP mapping ID")
+    domain: str = Field(..., description="Assigned domain for the HTTP mapping")
+    targetEndpoint:str = Field(..., description="Target TCP endpoint, e.g. 127.0.0.1:3000")
+    accessToken:str = Field(..., description="Access token for the HTTP mapping")
+    gatewayId:str = Field(..., description="Gateway ID associated with the HTTP mapping")
+    createdAt:str = Field(..., description="Creation timestamp of the HTTP mapping")
+
+class CreateHttpMappingResponse(HttpMappingResponse):
+    """
+    Create HTTP mapping response.
+    """
+
+class ListHttpMappingsResponseDto(RootModel):
+    """
+    List HTTP mappings response.
+    """
+    root: List[HttpMappingResponse]
+
+    def __iter__(self):
+        return iter(self.root)
+
+    def __getitem__(self, item):
+        return self.root[item]
