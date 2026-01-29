@@ -382,6 +382,20 @@ class Sandbox:
         self.client.logger.debug(f"Create HTTP port mapping response: {response.text}")
         return dto.CreateHttpMappingResponse.model_validate_json(response.text)
 
+    async def get_http_port_mapping(self, sandbox_id: str, target_endpoint: str) -> dto.HttpMappingResponse:
+        """
+        Get an HTTP port mapping for a sandbox.
+        :param sandbox_id:
+        :param target_endpoint:
+        :return:
+        """
+        self.client.logger.debug(f"Getting HTTP port mapping {target_endpoint} for sandbox {sandbox_id}")
+        response = await self.client.request(
+            "GET",
+            f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/mappings/{target_endpoint}")
+        self.client.logger.debug(f"Get HTTP port mapping response: {response.text}")
+        return dto.HttpMappingResponse.model_validate_json(response.text)
+
     async def list_http_port_mappings(self, sandbox_id: str) -> dto.ListHttpMappingsResponseDto:
         """
         List HTTP port mappings for a sandbox.
