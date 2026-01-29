@@ -621,8 +621,6 @@ class CreateHttpMappingDto(BaseModel):
     """
     Create HTTP mapping request.
     """
-    model_config = ConfigDict(extra=json_extra_fields_policy)
-
     targetEndpoint: str = Field(..., description="Target TCP endpoint, e.g., 127.0.0.1:3000")
 
 class HttpMappingResponse(BaseModel):
