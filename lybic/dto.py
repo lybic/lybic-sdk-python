@@ -613,8 +613,6 @@ class HttpMappingResponse(BaseModel):
     domain: str = Field(..., description="Assigned domain for the HTTP mapping")
     targetEndpoint:str = Field(..., description="Target TCP endpoint, e.g. 127.0.0.1:3000")
     accessToken:str = Field(..., description="Access token for the HTTP mapping")
-    gatewayId:str = Field(..., description="Gateway ID associated with the HTTP mapping")
-    createdAt:str = Field(..., description="Creation timestamp of the HTTP mapping")
 
 class CreateHttpMappingResponse(HttpMappingResponse):
     """
