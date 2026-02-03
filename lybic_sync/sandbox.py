@@ -31,6 +31,7 @@ import base64
 import json
 from io import BytesIO
 from typing import Tuple, overload, TYPE_CHECKING
+from urllib.parse import quote
 
 import httpx
 
@@ -407,7 +408,7 @@ class SandboxSync:
         self.client.logger.debug(f"Deleting HTTP port mapping {target_endpoint} for sandbox {sandbox_id}")
         self.client.request(
             "DELETE",
-            f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/mappings/{target_endpoint}")
+            f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/mappings/{quote(target_endpoint, safe='')}")
 
     def get_http_port_mapping(self, sandbox_id: str, target_endpoint: str) -> dto.HttpMappingResponse:
         """
@@ -419,6 +420,6 @@ class SandboxSync:
         self.client.logger.debug(f"Getting HTTP port mapping {target_endpoint} for sandbox {sandbox_id}")
         response = self.client.request(
             "GET",
-            f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/mappings/{target_endpoint}")
+            f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/mappings/{quote(target_endpoint, safe='')}")
         self.client.logger.debug(f"Get HTTP port mapping response: {response.text}")
         return dto.HttpMappingResponse.model_validate_json(response.text)
