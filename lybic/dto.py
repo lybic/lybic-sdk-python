@@ -597,3 +597,22 @@ class MachineImagesResponseDto(BaseModel):
 
     images: List[MachineImageResponseDto]
     quota: MachineImageQuota
+
+
+# APK Installation Schemas
+class AndroidLocal(BaseModel):
+    """
+    APK source from local Android device.
+    """
+    apk_path: str = Field(..., description="Path to APK on Android device, e.g., /sdcard/Download/apk1.apk")
+
+
+class HttpRemote(BaseModel):
+    """
+    APK source from HTTP remote URL.
+    """
+    url_path: str = Field(..., description="HTTP URL to download APK from")
+    headers: Optional[dict] = Field(None, description="Optional HTTP headers for authentication")
+
+
+APPSources = AndroidLocal | HttpRemote
