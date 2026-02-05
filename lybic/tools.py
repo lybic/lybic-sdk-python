@@ -38,7 +38,7 @@ from lybic.dto import (
     MobileUseActionResponseDto,
     APPSources,
     AndroidLocal,
-    HttpRemote, SandboxFileCopyRequestDto, FileCopyItem, HttpGetLocation, SandboxFileLocation,
+    HttpRemote
 )
 
 if TYPE_CHECKING:
@@ -173,10 +173,10 @@ class MobileUse:
 
         for apk_path in apk_paths:
             script_lines.append(f"pm install -r '{apk_path}'")
-        
+
         for downloaded_path in downloaded_paths:
             script_lines.append(f"rm -f '{downloaded_path}'")
-        
+
         return "\n".join(script_lines)
 
     async def install_apk(self, sandbox_id: str, app_sources: list[APPSources]) -> None:

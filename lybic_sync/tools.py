@@ -38,7 +38,7 @@ from lybic.dto import (
     MobileUseActionResponseDto,
     APPSources,
     AndroidLocal,
-    HttpRemote, SandboxFileCopyRequestDto, FileCopyItem, HttpGetLocation, SandboxFileLocation,
+    HttpRemote
 )
 
 if TYPE_CHECKING:
@@ -147,13 +147,13 @@ class MobileUseSync:
             Shell script content.
         """
         script_lines = ["#!/system/bin/sh"]
-        
+
         remote_sources = [s for s in app_sources if isinstance(s, HttpRemote)]
         local_sources = [s for s in app_sources if isinstance(s, AndroidLocal)]
-        
+
         apk_paths = []
         downloaded_paths = []
-        
+
         if remote_sources:
             for source in remote_sources:
                 filename = os.path.basename(source.url_path.split('?')[0])
@@ -162,22 +162,22 @@ class MobileUseSync:
                 dest_path = f"/sdcard/Download/{filename}"
                 downloaded_paths.append(dest_path)
                 apk_paths.append(dest_path)
-                
+
                 curl_cmd = f"curl -L -o '{dest_path}' '{source.url_path}'"
                 if source.headers:
                     for key, value in source.headers.items():
                         curl_cmd += f" -H '{key}: {value}'"
                 script_lines.append(curl_cmd)
-        
+
         for source in local_sources:
             apk_paths.append(source.apk_path)
-        
+
         for apk_path in apk_paths:
             script_lines.append(f"pm install -r '{apk_path}'")
-        
+
         for downloaded_path in downloaded_paths:
             script_lines.append(f"rm -f '{downloaded_path}'")
-        
+
         return "\n".join(script_lines)
 
     def install_apk(self, sandbox_id: str, app_sources: list[APPSources]) -> None:
@@ -196,7 +196,7 @@ class MobileUseSync:
             raise ValueError("install_apk is only supported for Android sandboxes")
 
         script_content = self._generate_install_script(app_sources)
-        
+
         self.client.sandbox.execute_process(
             sandbox_id,
             executable="sh",
