@@ -28,7 +28,6 @@ lybic.tools:
 ComputerUse tools
 MobileUse tools
 """
-import asyncio
 import os
 from typing import TYPE_CHECKING
 
@@ -38,8 +37,8 @@ from lybic.dto import (
     ModelType,
     MobileUseActionResponseDto,
     APPSources,
-    Android_local,
-    HTTP_remote, SandboxFileCopyRequestDto, FileCopyItem, HttpGetLocation, SandboxFileLocation,
+    AndroidLocal,
+    HttpRemote, SandboxFileCopyRequestDto, FileCopyItem, HttpGetLocation, SandboxFileLocation,
 )
 
 if TYPE_CHECKING:
@@ -137,64 +136,71 @@ class MobileUse:
             args=["put", "global", "gps_inject_info", f"{latitude:.6f},{longitude:.6f}"],
         )
 
-    async def _download_apk_from_url(self, sandbox_id: str, url: str, headers: dict = None) -> str:
-        """Download APK from URL to /sdcard/Download and return the local path."""
-        filename = os.path.basename(url.split('?')[0])
-        if not filename.endswith('.apk'):
-            filename = f"{filename}.apk"
-        dest_path = f"/sdcard/Download/{filename}"
+    def _generate_install_script(self, app_sources: list[APPSources]) -> str:
+        """Generate shell script for APK installation.
         
-        await self.client.sandbox.copy_files(sandbox_id,SandboxFileCopyRequestDto(
-            files=[
-                FileCopyItem(
-                    src=HttpGetLocation(url=url,headers=headers),
-                    dest=SandboxFileLocation(path=dest_path)
-                )
-            ]
-        ))
-        return dest_path
+        Args:
+            app_sources: List of APK sources (Android_local or HTTP_remote).
+            
+        Returns:
+            Shell script content.
+        """
+        script_lines = ["#!/system/bin/sh"]
 
-    async def _install_apk_file(self, sandbox_id: str, apk_path: str):
-        """Install a single APK file using pm install."""
-        return (await self.client.sandbox.execute_process(
-            sandbox_id,
-            executable="pm",
-            args=["install", "-r", apk_path],
-        )).exitCode == 0
+        remote_sources = [s for s in app_sources if isinstance(s, HttpRemote)]
+        local_sources = [s for s in app_sources if isinstance(s, AndroidLocal)]
 
-    async def install_apk(self, sandbox_id: str, app_sources: list[APPSources])-> list[bool]:
-        """Install APK files on Android device.
+        apk_paths = []
+        downloaded_paths = []
+
+        if remote_sources:
+            for source in remote_sources:
+                filename = os.path.basename(source.url_path.split('?')[0])
+                if not filename.endswith('.apk'):
+                    filename = f"{filename}.apk"
+                dest_path = f"/sdcard/Download/{filename}"
+                downloaded_paths.append(dest_path)
+                apk_paths.append(dest_path)
+
+                curl_cmd = f"curl -L -o '{dest_path}' '{source.url_path}'"
+                if source.headers:
+                    for key, value in source.headers.items():
+                        curl_cmd += f" -H '{key}: {value}'"
+                script_lines.append(curl_cmd)
+
+        for source in local_sources:
+            apk_paths.append(source.apk_path)
+
+        for apk_path in apk_paths:
+            script_lines.append(f"pm install -r '{apk_path}'")
+        
+        for downloaded_path in downloaded_paths:
+            script_lines.append(f"rm -f '{downloaded_path}'")
+        
+        return "\n".join(script_lines)
+
+    async def install_apk(self, sandbox_id: str, app_sources: list[APPSources]) -> None:
+        """Install APK files on Android device asynchronously.
 
         Args:
             sandbox_id: The ID of the sandbox containing the Android device.
             app_sources: List of APK sources (Android_local or HTTP_remote).
 
-        Returns:
-            List of installation results.
+        Note:
+            This method executes installation asynchronously using nohup to avoid timeout issues.
+            The installation runs in the background and does not return installation results.
         """
         sandbox_details = await self.client.sandbox.get(sandbox_id)
         if not sandbox_details.sandbox.shape or sandbox_details.sandbox.shape.os != "Android":
             raise ValueError("install_apk is only supported for Android sandboxes")
 
-        apk_paths = []
-        download_tasks = []
-        
-        for source in app_sources:
-            if isinstance(source, Android_local):
-                apk_paths.append(source.apk_path)
-            elif isinstance(source, HTTP_remote):
-                download_tasks.append(self._download_apk_from_url(sandbox_id, source.url_path, source.headers))
-        
-        if download_tasks:
-            downloaded_paths = await asyncio.gather(*download_tasks)
-            apk_paths.extend(downloaded_paths)
-        
-        results = []
-        for apk_path in apk_paths:
-            result = await self._install_apk_file(sandbox_id, apk_path)
-            results.append(result)
-        
-        return results
+        script_content = self._generate_install_script(app_sources)
+
+        await self.client.sandbox.execute_process(
+            sandbox_id,
+            executable="sh",
+            args=["-c", f"nohup sh -c '{script_content}' >/dev/null 2>&1 &"],
+        )
 
 class Tools:
     """Tools is a container for various tool clients."""

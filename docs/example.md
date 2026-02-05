@@ -1178,6 +1178,193 @@ client.close()
         asyncio.run(restart_sandbox_example())
     ```
 
+### Class Tools - MobileUse
+
+`MobileUse` is a client for Lybic's Mobile automation APIs, providing tools for Android device management and APK installation.
+
+#### 1. Set GPS Location
+
+Set the GPS location for an Android device in a sandbox.
+
+method: `set_gps_location(sandbox_id: str, latitude: float, longitude: float)`
+- args:
+  - sandbox_id: str ID of the Android sandbox
+  - latitude: float Latitude coordinate (-90 to 90)
+  - longitude: float Longitude coordinate (-180 to 180)
+- return: Process execution result
+
+```python
+import asyncio
+from lybic import LybicClient, LybicAuth
+
+async def set_gps_example():
+    async with LybicClient(
+        LybicAuth(
+            org_id="ORG-xxxx",
+            api_key="lysk-xxxxxxxxxxx",
+            endpoint="https://api.lybic.cn/"
+        )
+    ) as client:
+        # Set GPS location to coordinates (39.9042° N, 116.4074° E - Beijing)
+        result = await client.tools.mobile_use.set_gps_location(
+            sandbox_id="SBX-xxxx",
+            latitude=39.9042,
+            longitude=116.4074
+        )
+        print(f"GPS location set successfully: {result}")
+
+if __name__ == '__main__':
+    asyncio.run(set_gps_example())
+```
+
+#### 2. Install APK Files
+
+Install APK files on an Android device. This method uses asynchronous shell script execution to avoid timeout issues when installing multiple or large APK files.
+
+method: `install_apk(sandbox_id: str, app_sources: list[APPSources])`
+- args:
+  - sandbox_id: str ID of the Android sandbox
+  - app_sources: list[APPSources] List of APK sources (AndroidLocal or HttpRemote)
+- return: None (installation runs asynchronously in the background)
+
+**Note:** The installation process runs asynchronously using `nohup` to avoid timeout issues with the `copy_files` and `execute_process` APIs. The method returns immediately without waiting for installation to complete.
+
+**Supported APK Sources:**
+- `HttpRemote`: Download APK from URL
+- `AndroidLocal`: Install APK already on the device
+
+```python
+import asyncio
+from lybic import LybicClient, LybicAuth, dto
+
+async def install_apk_example():
+    async with LybicClient(
+        LybicAuth(
+            org_id="ORG-xxxx",
+            api_key="lysk-xxxxxxxxxxx",
+            endpoint="https://api.lybic.cn/"
+        )
+    ) as client:
+        # Example 1: Install APK from URL
+        await client.tools.mobile_use.install_apk(
+            sandbox_id="SBX-xxxx",
+            app_sources=[
+                dto.HttpRemote(url_path="https://example.com/app.apk")
+            ]
+        )
+        print("APK installation started (running in background)")
+        
+        # Example 2: Install multiple APKs from URLs with custom headers
+        await client.tools.mobile_use.install_apk(
+            sandbox_id="SBX-xxxx",
+            app_sources=[
+                dto.HttpRemote(
+                    url_path="https://example.com/app1.apk",
+                    headers={"Authorization": "Bearer token"}
+                ),
+                dto.HttpRemote(
+                    url_path="https://example.com/app2.apk",
+                    headers={"User-Agent": "CustomAgent/1.0"}
+                )
+            ]
+        )
+        print("Multiple APKs installation started")
+        
+        # Example 3: Install APK from local path
+        await client.tools.mobile_use.install_apk(
+            sandbox_id="SBX-xxxx",
+            app_sources=[
+                dto.AndroidLocal(apk_path="/data/local/tmp/app.apk")
+            ]
+        )
+        print("Local APK installation started")
+        
+        # Example 4: Mix local and remote APKs
+        await client.tools.mobile_use.install_apk(
+            sandbox_id="SBX-xxxx",
+            app_sources=[
+                dto.HttpRemote(url_path="https://example.com/app.apk"),
+                dto.AndroidLocal(apk_path="/sdcard/Download/local.apk")
+            ]
+        )
+        print("Mixed APK installation started")
+
+if __name__ == '__main__':
+    asyncio.run(install_apk_example())
+```
+
+**How the Installation Works:**
+1. For HTTP URLs: APKs are downloaded to `/sdcard/Download/` using `curl`
+2. All APKs (downloaded + local) are installed using `pm install -r`
+3. Downloaded APK files are automatically cleaned up
+4. Local APK files are preserved
+
+**Error Handling:**
+
+```python
+import asyncio
+from lybic import LybicClient, LybicAuth, LybicAPIError, dto
+
+async def install_apk_with_error_handling():
+    async with LybicClient(
+        LybicAuth(
+            org_id="ORG-xxxx",
+            api_key="lysk-xxxxxxxxxxx",
+            endpoint="https://api.lybic.cn/"
+        )
+    ) as client:
+        try:
+            # Verify the sandbox is Android
+            sandbox = await client.sandbox.get("SBX-xxxx")
+            if not sandbox.sandbox.shape or sandbox.sandbox.shape.os != "Android":
+                print("Error: This sandbox is not an Android device")
+                return
+            
+            # Install APK
+            await client.tools.mobile_use.install_apk(
+                sandbox_id="SBX-xxxx",
+                app_sources=[
+                    dto.HttpRemote(url_path="https://example.com/app.apk")
+                ]
+            )
+            print("APK installation initiated successfully")
+            
+        except LybicAPIError as e:
+            print(f"❌ API Error: {e.message}")
+            if e.code:
+                print(f"   Error Code: {e.code}")
+        except ValueError as e:
+            print(f"❌ Invalid argument: {e}")
+        except Exception as e:
+            print(f"❌ Unexpected error: {e}")
+
+if __name__ == '__main__':
+    asyncio.run(install_apk_with_error_handling())
+```
+
+**Synchronous Usage:**
+
+```python
+from lybic_sync import LybicSyncClient, LybicAuth
+from lybic import dto
+
+with LybicSyncClient(
+    LybicAuth(
+        org_id="ORG-xxxx",
+        api_key="lysk-xxxxxxxxxxx",
+        endpoint="https://api.lybic.cn/"
+    )
+) as client:
+    # Install APK synchronously (no await needed)
+    client.tools.mobile_use.install_apk(
+        sandbox_id="SBX-xxxx",
+        app_sources=[
+            dto.HttpRemote(url_path="https://example.com/app.apk")
+        ]
+    )
+    print("APK installation started")
+```
+
 ### Error Handling
 
 The SDK provides user-friendly exceptions for API errors instead of raw HTTP errors.
