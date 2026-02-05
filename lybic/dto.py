@@ -616,3 +616,36 @@ class HttpRemote(BaseModel):
 
 
 APPSources = AndroidLocal | HttpRemote
+
+class CreateHttpMappingDto(BaseModel):
+    """
+    Create HTTP mapping request.
+    """
+    targetEndpoint: str = Field(..., description="Target TCP endpoint, e.g., 127.0.0.1:3000")
+
+class HttpMappingResponse(BaseModel):
+    """
+    HTTP mapping response.
+    """
+    model_config = ConfigDict(extra=json_extra_fields_policy)
+
+    domain: str = Field(..., description="Assigned domain for the HTTP mapping")
+    targetEndpoint:str = Field(..., description="Target TCP endpoint, e.g. 127.0.0.1:3000")
+    accessToken:str = Field(..., description="Access token for the HTTP mapping")
+
+class CreateHttpMappingResponse(HttpMappingResponse):
+    """
+    Create HTTP mapping response.
+    """
+
+class ListHttpMappingsResponseDto(RootModel):
+    """
+    List HTTP mappings response.
+    """
+    root: List[HttpMappingResponse]
+
+    def __iter__(self):
+        return iter(self.root)
+
+    def __getitem__(self, item):
+        return self.root[item]

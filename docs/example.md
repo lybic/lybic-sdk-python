@@ -1178,6 +1178,36 @@ client.close()
         asyncio.run(restart_sandbox_example())
     ```
 
+16. HTTP Port forwarding
+
+    Create HTTP port forwarding for a sandbox to allow external access to services running inside the sandbox.
+
+    method: `create_http_port_mapping(sandbox_id: str,target_endpoint: str) -> dto.CreateHttpMappingResponse`
+    - args:
+      - sandbox_id: str ID of the sandbox
+      - target_endpoint: str The internal endpoint in the sandbox to forward to (e.g., "localhost:8080")
+    - return: dto.CreateHttpMappingResponse
+    
+    ```python
+    import asyncio 
+    from lybic import LybicClient, LybicAuth
+    async def create_http_port_mapping_example():
+        async with LybicClient(
+            LybicAuth(
+                org_id="ORG-xxxx",
+                api_key="lysk-xxxxxxxxxxx",
+                endpoint="https://api.lybic.cn/"
+            )
+        ) as client:
+            response = await client.sandbox.create_http_port_mapping(
+                sandbox_id="SBX-xxxx",
+                target_endpoint="localhost:8080"
+            )
+            print(f"Port mapping created: {response}")
+    if __name__ == '__main__':
+        asyncio.run(create_http_port_mapping_example())
+    ```
+
 ### Class Tools - MobileUse
 
 `MobileUse` is a client for Lybic's Mobile automation APIs, providing tools for Android device management and APK installation.
