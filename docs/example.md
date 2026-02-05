@@ -1178,7 +1178,7 @@ client.close()
         asyncio.run(restart_sandbox_example())
     ```
 
-16. Http Port forwarding
+16. HTTP Port forwarding
 
     Create HTTP port forwarding for a sandbox to allow external access to services running inside the sandbox.
 
