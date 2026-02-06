@@ -25,7 +25,6 @@
 # THE SOFTWARE.
 
 """dto.py provides all the data types used in the API."""
-import uuid
 from enum import Enum, unique
 from typing import List, Optional, Literal, Any
 from pydantic import BaseModel, Field, RootModel, ConfigDict
@@ -363,7 +362,6 @@ class ExecuteSandboxActionDto(BaseModel):
     action: Action | dict
     includeScreenShot: bool = True
     includeCursorPosition: bool = True
-    callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
 
 
 # Project Schemas
