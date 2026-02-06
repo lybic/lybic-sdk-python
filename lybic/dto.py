@@ -364,6 +364,7 @@ class ExecuteSandboxActionDto(BaseModel):
     includeScreenShot: bool = True
     includeCursorPosition: bool = True
     callId: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
+    screenShotPutUrl: Optional[str] = Field(None,description="If provided, the screenshot will be uploaded to this URL using HTTP PUT method")
 
 
 # Project Schemas
