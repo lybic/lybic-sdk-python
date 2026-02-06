@@ -268,6 +268,7 @@
             "name": "sandboxId",
             "required": true,
             "in": "path",
+            "description": "The sandbox ID",
             "schema": {
               "type": "string"
             }
@@ -318,6 +319,7 @@
             "name": "sandboxId",
             "required": true,
             "in": "path",
+            "description": "The sandbox ID",
             "schema": {
               "type": "string"
             }
@@ -412,6 +414,7 @@
             "name": "sandboxId",
             "required": true,
             "in": "path",
+            "description": "The sandbox ID",
             "schema": {
               "type": "string"
             }
@@ -444,6 +447,7 @@
             "name": "sandboxId",
             "required": true,
             "in": "path",
+            "description": "The sandbox ID",
             "schema": {
               "type": "string"
             }
@@ -485,6 +489,7 @@
             "name": "sandboxId",
             "required": true,
             "in": "path",
+            "description": "The sandbox ID",
             "schema": {
               "type": "string"
             }
@@ -529,6 +534,7 @@
             "name": "sandboxId",
             "required": true,
             "in": "path",
+            "description": "The sandbox ID",
             "schema": {
               "type": "string"
             }
@@ -563,6 +569,7 @@
             "name": "sandboxId",
             "required": true,
             "in": "path",
+            "description": "The sandbox ID",
             "schema": {
               "type": "string"
             }
@@ -597,6 +604,7 @@
             "name": "sandboxId",
             "required": true,
             "in": "path",
+            "description": "The sandbox ID",
             "schema": {
               "type": "string"
             }
@@ -648,6 +656,7 @@
             "name": "sandboxId",
             "required": true,
             "in": "path",
+            "description": "The sandbox ID",
             "schema": {
               "type": "string"
             }
@@ -699,6 +708,7 @@
             "name": "sandboxId",
             "required": true,
             "in": "path",
+            "description": "The sandbox ID",
             "schema": {
               "type": "string"
             }
@@ -726,6 +736,198 @@
           }
         },
         "summary": "Preview Sandbox",
+        "tags": [
+          "Sandbox"
+        ]
+      }
+    },
+    "/api/orgs/{orgId}/sandboxes/{sandboxId}/mappings": {
+      "get": {
+        "description": "Returns a list of HTTP gateway mappings for a sandbox.",
+        "operationId": "listHttpMappings",
+        "parameters": [
+          {
+            "name": "sandboxId",
+            "required": true,
+            "in": "path",
+            "description": "The sandbox ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orgId",
+            "required": true,
+            "in": "path",
+            "description": "The organization ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpMappingListResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "List HTTP Gateway Mappings",
+        "tags": [
+          "Sandbox"
+        ]
+      },
+      "post": {
+        "description": "Creates a new HTTP gateway mapping for a sandbox.",
+        "operationId": "createHttpMapping",
+        "parameters": [
+          {
+            "name": "sandboxId",
+            "required": true,
+            "in": "path",
+            "description": "The sandbox ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orgId",
+            "required": true,
+            "in": "path",
+            "description": "The organization ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateHttpMappingDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateHttpMappingResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Create HTTP Gateway Mapping",
+        "tags": [
+          "Sandbox"
+        ]
+      }
+    },
+    "/api/orgs/{orgId}/sandboxes/{sandboxId}/mappings/{targetEndpoint}": {
+      "get": {
+        "description": "Returns a single HTTP gateway mapping by its target endpoint.",
+        "operationId": "getHttpMapping",
+        "parameters": [
+          {
+            "name": "sandboxId",
+            "required": true,
+            "in": "path",
+            "description": "The sandbox ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "targetEndpoint",
+            "required": true,
+            "in": "path",
+            "description": "The sandbox-local target endpoint (host:port)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orgId",
+            "required": true,
+            "in": "path",
+            "description": "The organization ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateHttpMappingResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get HTTP Gateway Mapping",
+        "tags": [
+          "Sandbox"
+        ]
+      },
+      "delete": {
+        "description": "Deletes an HTTP gateway mapping by its target endpoint.",
+        "operationId": "deleteHttpMapping",
+        "parameters": [
+          {
+            "name": "sandboxId",
+            "required": true,
+            "in": "path",
+            "description": "The sandbox ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "targetEndpoint",
+            "required": true,
+            "in": "path",
+            "description": "The sandbox-local target endpoint (host:port)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orgId",
+            "required": true,
+            "in": "path",
+            "description": "The organization ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteHttpMappingResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Delete HTTP Gateway Mapping",
         "tags": [
           "Sandbox"
         ]
@@ -5187,6 +5389,70 @@
         "required": [
           "action"
         ]
+      },
+      "HttpMappingListResponseDto": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "domain": {
+              "description": "Public HTTP/HTTPS domain for this mapping",
+              "type": "string"
+            },
+            "targetEndpoint": {
+              "description": "Sandbox-local TCP endpoint (host:port)",
+              "type": "string"
+            },
+            "accessToken": {
+              "description": "Access token used to reach the mapped domain",
+              "type": "string"
+            }
+          },
+          "required": [
+            "domain",
+            "targetEndpoint",
+            "accessToken"
+          ]
+        }
+      },
+      "CreateHttpMappingDto": {
+        "type": "object",
+        "properties": {
+          "targetEndpoint": {
+            "description": "Sandbox-local TCP endpoint in host:port form, e.g., 127.0.0.1:3000",
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "targetEndpoint"
+        ]
+      },
+      "CreateHttpMappingResponseDto": {
+        "type": "object",
+        "properties": {
+          "domain": {
+            "description": "Public HTTP/HTTPS domain for this mapping",
+            "type": "string"
+          },
+          "targetEndpoint": {
+            "description": "Sandbox-local TCP endpoint (host:port)",
+            "type": "string"
+          },
+          "accessToken": {
+            "description": "Access token used to reach the mapped domain",
+            "type": "string"
+          }
+        },
+        "required": [
+          "domain",
+          "targetEndpoint",
+          "accessToken"
+        ]
+      },
+      "DeleteHttpMappingResponseDto": {
+        "type": "object",
+        "properties": {}
       },
       "CreateMachineImageDto": {
         "type": "object",
