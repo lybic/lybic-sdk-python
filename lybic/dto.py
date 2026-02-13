@@ -26,7 +26,7 @@
 
 """dto.py provides all the data types used in the API."""
 from enum import Enum, unique
-from typing import List, Optional, Literal, Any
+from typing import List, Optional, Literal, Any, Union
 from pydantic import BaseModel, Field, RootModel, ConfigDict
 from pydantic.config import ExtraValues
 
@@ -647,3 +647,95 @@ class ListHttpMappingsResponseDto(RootModel):
 
     def __getitem__(self, item):
         return self.root[item]
+
+
+class SandboxShellCommandStreamCreateRequestDto(BaseModel):
+    """Request to create a streaming shell session."""
+    model_config = ConfigDict(extra=json_extra_fields_policy)
+
+    command: str = Field(..., min_length=1, description="The command to execute in the shell.")
+    useTty: bool = Field(False, description="Whether to use a TTY for the shell session.")
+    timeoutSeconds: Optional[int] = Field(None, ge=1, le=60 * 60 * 24,
+                                       description="Optional timeout for the shell session in seconds.")
+    workingDirectory: Optional[str] = Field(None, description="Optional working directory for the shell session.")
+    ttyRows: Optional[int] = Field(None, ge=1, description="Number of rows for TTY (if useTty is true).")
+    ttyCols: Optional[int] = Field(None, ge=1, description="Number of columns for TTY (if useTty is true).")
+
+
+class SandboxShellCommandCreateRequestDto(BaseModel):
+    """Request to create a shell session."""
+    model_config = ConfigDict(extra=json_extra_fields_policy)
+
+    command: str = Field(..., min_length=1, description="The command to execute in the shell.")
+    useTty: bool = Field(False, description="Whether to use a TTY for the shell session.")
+    timeoutSeconds: Optional[int]  = Field(None, ge=1, le=60 * 60 * 24,
+                                       description="Optional timeout for the shell session in seconds.")
+    workingDirectory: Optional[str] = Field(None, description="Optional working directory for the shell session.")
+    ttyRows: Optional[int] = Field(None, ge=1, description="Number of rows for TTY (if useTty is true).")
+    ttyCols: Optional[int] = Field(None, ge=1, description="Number of columns for TTY (if useTty is true).")
+
+
+class SandboxShellCommandCreateResponseDto(BaseModel):
+    """Response from creating a shell session."""
+    model_config = ConfigDict(extra=json_extra_fields_policy)
+
+    sessionId: str = Field(..., description="The ID of the created shell session.")
+
+
+class ShellOutputStdout(BaseModel):
+    """Standard output from the shell session."""
+    model_config = ConfigDict(extra=json_extra_fields_policy)
+
+    oneofKind: Literal["stdout"] = "stdout"
+    stdout: str = Field(..., description="Standard output from the shell session.")
+
+
+class ShellOutputStderr(BaseModel):
+    """Standard error output from the shell session."""
+    model_config = ConfigDict(extra=json_extra_fields_policy)
+
+    oneofKind: Literal["stderr"] = "stderr"
+    stderr: str = Field(..., description="Standard error output from the shell session.")
+
+
+class ShellOutputWaiting(BaseModel):
+    """Waiting state indicator."""
+    model_config = ConfigDict(extra=json_extra_fields_policy)
+
+    oneofKind: Literal["waiting"] = "waiting"
+    waiting: bool = Field(..., description="Indicates a prompt waiting state.")
+
+
+ShellOutput = Union[ShellOutputStdout, ShellOutputStderr, ShellOutputWaiting]
+
+
+class SandboxShellCommandReadResponseDto(BaseModel):
+    """Response from reading shell output."""
+    model_config = ConfigDict(extra=json_extra_fields_policy)
+
+    output: list[ShellOutput] = Field(..., description="Accumulated output parts from the shell session.")
+    isRunning: bool = Field(..., description="Whether the shell session is still running.")
+
+
+class SandboxShellCommandWriteRequestDto(BaseModel):
+    """Request to write input to a shell session."""
+    model_config = ConfigDict(extra=json_extra_fields_policy)
+
+    data: str = Field(..., description="The input data to write to the shell session.")
+
+
+class StreamEventType(str, Enum):
+    """SSE event types."""
+    STDOUT = "stdout"
+    STDERR = "stderr"
+    WAITING = "waiting"
+    TIMEOUT = "timeout"
+    END = "end"
+
+
+class StreamEvent(BaseModel):
+    """Streaming event from shell execution."""
+    model_config = ConfigDict(extra=json_extra_fields_policy)
+
+    event_type: StreamEventType = Field(..., description="The type of the event.")
+    data: str = Field("", description="The base64-encoded data of the event.")

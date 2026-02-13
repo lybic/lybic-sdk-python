@@ -1208,6 +1208,216 @@ client.close()
         asyncio.run(create_http_port_mapping_example())
     ```
 
+### Class StreamShell
+
+`StreamShell` provides methods for interactive shell session management with real-time streaming capabilities.
+
+**Note:** StreamShell is different from `sandbox.execute_process()` as it supports:
+- Server-Sent Events (SSE) for real-time output streaming
+- Interactive TTY sessions with bidirectional communication
+- Working directory and timeout configuration
+
+#### 1. Streaming Shell Execution
+
+Execute a command and stream the output in real-time via SSE.
+
+method: `create_stream(sandbox_id: str, command: str, ...)`
+- args:
+  - sandbox_id: str ID of the sandbox
+  - command: str The command to execute
+  - use_tty: bool (optional) Whether to use a TTY. Default: False
+  - timeout_seconds: int (optional) Timeout in seconds (1-86400)
+  - working_directory: str (optional) Working directory for the command
+  - tty_rows: int (optional) Number of TTY rows (if use_tty is True)
+  - tty_cols: int (optional) Number of TTY columns (if use_tty is True)
+- return: AsyncIterator[StreamEvent] (async) or Iterator[StreamEvent] (sync)
+
+**Async version:**
+```python
+import asyncio
+from lybic import LybicClient, LybicAuth
+from lybic.stream_shell import StreamEventType
+
+async def stream_shell_example():
+    async with LybicClient(
+        LybicAuth(
+            org_id="ORG-xxxx",
+            api_key="lysk-xxxxxxxxxxx",
+            endpoint="https://api.lybic.cn/"
+        )
+    ) as client:
+        async for event in client.stream_shell.create_stream(
+            sandbox_id="SBX-xxxx",
+            command="npm install",
+            working_directory="/app",
+            timeout_seconds=300,
+        ):
+            if event.event_type == StreamEventType.STDOUT:
+                print(event.data, end="")
+            elif event.event_type == StreamEventType.STDERR:
+                print(f"[ERROR] {event.data}", end="")
+            elif event.event_type == StreamEventType.TIMEOUT:
+                print(f"Command timed out: {event.data}")
+            elif event.event_type == StreamEventType.END:
+                print("Command completed")
+                break
+
+if __name__ == '__main__':
+    asyncio.run(stream_shell_example())
+```
+
+**Sync version:**
+```python
+from lybic_sync import LybicSyncClient, LybicAuth
+from lybic.stream_shell import StreamEventType
+
+with LybicSyncClient(
+    LybicAuth(
+        org_id="ORG-xxxx",
+        api_key="lysk-xxxxxxxxxxx",
+        endpoint="https://api.lybic.cn/"
+    )
+) as client:
+    for event in client.stream_shell.create_stream(
+        sandbox_id="SBX-xxxx",
+        command="ls -la /app",
+    ):
+        if event.event_type == StreamEventType.STDOUT:
+            print(event.data, end="")
+```
+
+#### 2. Create Interactive Shell Session
+
+Create an interactive shell session for bidirectional communication.
+
+method: `create(sandbox_id: str, command: str, ...)`
+- args: Same as create_stream()
+- return: SandboxShellCommandCreateResponseDto with sessionId
+
+```python
+import asyncio
+from lybic import LybicClient, LybicAuth
+
+async def interactive_shell_example():
+    async with LybicClient(
+        LybicAuth(
+            org_id="ORG-xxxx",
+            api_key="lysk-xxxxxxxxxxx",
+            endpoint="https://api.lybic.cn/"
+        )
+    ) as client:
+        # Create shell session
+        response = await client.stream_shell.create(
+            sandbox_id="SBX-xxxx",
+            command="bash",
+            use_tty=True,
+            tty_rows=24,
+            tty_cols=80,
+        )
+        shell_id = response.sessionId
+        print(f"Created shell session: {shell_id}")
+        
+        # Write commands
+        await client.stream_shell.write(sandbox_id, shell_id, "echo 'Hello World'\n")
+        await client.stream_shell.write(sandbox_id, shell_id, "ls -la\n")
+        
+        # Read output
+        output = await client.stream_shell.read(sandbox_id, shell_id)
+        for item in output.output:
+            if item.oneofKind == "stdout":
+                print(f"STDOUT: {item.stdout}")
+            elif item.oneofKind == "stderr":
+                print(f"STDERR: {item.stderr}")
+        
+        # Clean up
+        await client.stream_shell.finish(sandbox_id, shell_id)
+        await client.stream_shell.terminate(sandbox_id, shell_id)
+
+if __name__ == '__main__':
+    asyncio.run(interactive_shell_example())
+```
+
+#### 3. Write to Shell Session
+
+Write input to an interactive shell session.
+
+method: `write(sandbox_id: str, shell_id: str, data: str)`
+- args:
+  - sandbox_id: str ID of the sandbox
+  - shell_id: str ID of the shell session
+  - data: str Input data to write
+- return: None
+
+```python
+# Write a command to the shell
+await client.stream_shell.write(sandbox_id, shell_id, "pwd\n")
+```
+
+#### 4. Read Shell Output
+
+Read accumulated output from a shell session.
+
+method: `read(sandbox_id: str, shell_id: str)`
+- args:
+  - sandbox_id: str ID of the sandbox
+  - shell_id: str ID of the shell session
+- return: SandboxShellCommandReadResponseDto
+
+```python
+response = await client.stream_shell.read(sandbox_id, shell_id)
+print(f"Is running: {response.isRunning}")
+for output in response.output:
+    if output.oneofKind == "stdout":
+        print(f"Output: {output.stdout}")
+    elif output.oneofKind == "stderr":
+        print(f"Error: {output.stderr}")
+```
+
+#### 5. Finish Writing to Shell
+
+Signal EOF to the shell session to indicate no more input will be sent.
+
+method: `finish(sandbox_id: str, shell_id: str)`
+- args:
+  - sandbox_id: str ID of the sandbox
+  - shell_id: str ID of the shell session
+- return: None
+
+```python
+# Finish writing to the shell (sends EOF)
+await client.stream_shell.finish(sandbox_id, shell_id)
+```
+
+#### 6. Terminate Shell Session
+
+Terminate a shell session.
+
+method: `terminate(sandbox_id: str, shell_id: str)`
+- args:
+  - sandbox_id: str ID of the sandbox
+  - shell_id: str ID of the shell session
+- return: None
+
+```python
+# Terminate the shell session
+await client.stream_shell.terminate(sandbox_id, shell_id)
+```
+
+#### 7. Stream Events
+
+The `create_stream()` method yields `StreamEvent` objects with the following types:
+
+```python
+from lybic.stream_shell import StreamEventType
+
+# Possible event types:
+# - StreamEventType.STDOUT: Standard output
+# - StreamEventType.STDERR: Standard error
+# - StreamEventType.WAITING: Shell waiting for input
+# - StreamEventType.TIMEOUT: Timeout occurred
+# - StreamEventType.END: Stream ended
+```
+
 ### Class Tools - MobileUse
 
 `MobileUse` is a client for Lybic's Mobile automation APIs, providing tools for Android device management and APK installation.
