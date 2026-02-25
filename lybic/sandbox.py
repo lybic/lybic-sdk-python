@@ -28,7 +28,7 @@
 import base64
 import json
 from io import BytesIO
-from typing import Tuple, overload, TYPE_CHECKING
+from typing import Tuple, overload, TYPE_CHECKING, Literal
 
 import httpx
 
@@ -334,13 +334,12 @@ class Sandbox:
         self.client.logger.debug(f"Create machine image response: {response.text}")
         return dto.MachineImageResponseDto.model_validate_json(response.text)
 
-    async def list_machine_images(self,scope:str="org") -> dto.MachineImagesResponseDto:
+    async def list_machine_images(self, scope: Literal["org", "public", "all"] = "org") -> dto.MachineImagesResponseDto:
+        """List all machine images.
+        :param scope: The scope of machine images to list. Can be "org" for
+                      organization-level images, "public" for public images,
+                      or "all" for all images. Defaults to "org".
         """
-        List all machine images
-
-        :param
-        scope:
-        The scope of machine images to list. Can be "org" for organization-level images, "public" for public images and "all" for all images. Default is "org".        """
         self.client.logger.debug("Listing machine images")
         response = await self.client.request(
             "GET",
