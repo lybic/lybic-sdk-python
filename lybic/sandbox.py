@@ -344,7 +344,7 @@ class Sandbox:
         self.client.logger.debug("Listing machine images")
         response = await self.client.request(
             "GET",
-            f"/api/orgs/{self.client.org_id}/machine-images?scope={scope}")
+            f"/api/orgs/{self.client.org_id}/machine-images", params={"scope": scope})
         self.client.logger.debug(f"List machine images response: {response.text}")
         return dto.MachineImagesResponseDto.model_validate_json(response.text)
 
