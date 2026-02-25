@@ -1088,8 +1088,9 @@ client.close()
 
     List all machine images in your organization.
 
-    method: `list_machine_images()`
-    - args: None
+    method: `list_machine_images(scope: Literal["org", "public", "all"] = "org")`
+    - args:
+      - `scope` (optional): The scope of machine images to list. Can be `"org"` for organization-level images, `"public"` for public images, or `"all"` for all images. Defaults to `"org"`.
     - return: dto.MachineImagesResponseDto (contains list of images and quota information)
 
     ```python
@@ -1104,7 +1105,14 @@ client.close()
                 endpoint="https://api.lybic.cn/"
             )
         ) as client:
+            # List organization images (default)
             result = await client.sandbox.list_machine_images()
+
+            # List public images
+            # result = await client.sandbox.list_machine_images(scope="public")
+
+            # List all images
+            # result = await client.sandbox.list_machine_images(scope="all")
             
             print(f"Total images: {len(result.images)}")
             print(f"Quota: {result.quota.used}/{result.quota.limit}")
