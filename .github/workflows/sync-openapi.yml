@@ -31,7 +31,7 @@ jobs:
         if: steps.check_pr.outputs.stop_workflow == 'false'
         id: compare
         run: |
-          curl -s -o openapi_new.json https://lybic.ai/docs/openapi.json
+          curl -s -o openapi_new.json https://docs.lybic.cn/openapi.json
           
           # Use diff -q to quietly check for differences.
           # If files are different, diff exits with 1, triggering the 'if' block.
