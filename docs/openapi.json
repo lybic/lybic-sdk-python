@@ -978,6 +978,20 @@
         "operationId": "MachineImageController_listMachineImages",
         "parameters": [
           {
+            "name": "scope",
+            "required": false,
+            "in": "query",
+            "description": "List scope, defaults to org",
+            "schema": {
+              "enum": [
+                "org",
+                "public",
+                "all"
+              ],
+              "type": "string"
+            }
+          },
+          {
             "name": "orgId",
             "required": true,
             "in": "path",
@@ -1197,6 +1211,7 @@
                 "glm-4.1v",
                 "glm-4.5v",
                 "qwen-2.5-vl",
+                "qwen-3-vl",
                 "pyautogui"
               ],
               "type": "string"
@@ -1248,6 +1263,7 @@
                 "glm-4.1v",
                 "glm-4.5v",
                 "qwen-2.5-vl",
+                "qwen-3-vl",
                 "pyautogui"
               ],
               "type": "string"
@@ -5400,7 +5416,7 @@
               "type": "string"
             },
             "targetEndpoint": {
-              "description": "Sandbox-local TCP endpoint (host:port)",
+              "description": "Sandbox-local TCP endpoint (IPv4:port)",
               "type": "string"
             },
             "accessToken": {
@@ -5419,7 +5435,7 @@
         "type": "object",
         "properties": {
           "targetEndpoint": {
-            "description": "Sandbox-local TCP endpoint in host:port form, e.g., 127.0.0.1:3000",
+            "description": "Sandbox-local TCP endpoint in IPv4:port form, e.g., 127.0.0.1:3000",
             "type": "string",
             "minLength": 1
           }
@@ -5436,7 +5452,7 @@
             "type": "string"
           },
           "targetEndpoint": {
-            "description": "Sandbox-local TCP endpoint (host:port)",
+            "description": "Sandbox-local TCP endpoint (IPv4:port)",
             "type": "string"
           },
           "accessToken": {
@@ -5498,6 +5514,17 @@
           "shapeName": {
             "type": "string"
           },
+          "requiredFeatureFlag": {
+            "type": "string",
+            "nullable": true
+          },
+          "scope": {
+            "type": "string",
+            "enum": [
+              "ORG",
+              "PUBLIC"
+            ]
+          },
           "status": {
             "type": "string",
             "enum": [
@@ -5513,6 +5540,8 @@
           "description",
           "createdAt",
           "shapeName",
+          "requiredFeatureFlag",
+          "scope",
           "status"
         ]
       },
@@ -5541,6 +5570,17 @@
                 "shapeName": {
                   "type": "string"
                 },
+                "requiredFeatureFlag": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "scope": {
+                  "type": "string",
+                  "enum": [
+                    "ORG",
+                    "PUBLIC"
+                  ]
+                },
                 "status": {
                   "type": "string",
                   "enum": [
@@ -5556,6 +5596,8 @@
                 "description",
                 "createdAt",
                 "shapeName",
+                "requiredFeatureFlag",
+                "scope",
                 "status"
               ]
             }

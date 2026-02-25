@@ -574,6 +574,8 @@ class MachineImageResponseDto(BaseModel):
     description: Optional[str]
     createdAt: str
     shapeName: str
+    requiredFeatureFlag: Optional[str]
+    scope: Literal["ORG", "PUBLIC"]
     status: Literal["CREATING", "READY", "ERROR"]
 
 
