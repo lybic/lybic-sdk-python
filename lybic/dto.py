@@ -362,6 +362,7 @@ class ExecuteSandboxActionDto(BaseModel):
     action: Action | dict
     includeScreenShot: bool = True
     includeCursorPosition: bool = True
+    screenShotPutUrl: Optional[str] = Field(None,description="If provided, the screenshot will be uploaded to this URL using HTTP PUT method")
 
 
 # Project Schemas
