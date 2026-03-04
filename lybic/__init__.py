@@ -54,6 +54,9 @@ from .pyautogui import Pyautogui
 # Sandbox
 from .sandbox import Sandbox
 
+# Stream Shell
+from .stream_shell import StreamShell
+
 # Stats
 from .stats import Stats
 
@@ -70,6 +73,7 @@ __all__ = [
     "Project",
     "Pyautogui",
     "Sandbox",
+    "StreamShell",
     "Stats",
 
     "json_extra_fields_policy",

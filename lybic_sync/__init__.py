@@ -47,6 +47,9 @@ from lybic_sync.pyautogui import PyautoguiSync
 # Synchronous Sandbox
 from lybic_sync.sandbox import SandboxSync
 
+# Synchronous Stream Shell
+from lybic_sync.stream_shell import StreamShellSync
+
 # Synchronous Stats
 from lybic_sync.stats import StatsSync
 
@@ -66,6 +69,7 @@ __all__ = [
     "ProjectSync",
     "PyautoguiSync",
     "SandboxSync",
+    "StreamShellSync",
     "StatsSync",
 
     "json_extra_fields_policy",

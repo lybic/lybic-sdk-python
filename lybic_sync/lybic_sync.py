@@ -38,6 +38,7 @@ from lybic_sync.mcp import McpSync
 from lybic_sync.project import ProjectSync
 from lybic_sync.sandbox import SandboxSync
 from lybic_sync.stats import StatsSync
+from lybic_sync.stream_shell import StreamShellSync
 from lybic_sync.tools import ToolsSync
 
 
@@ -72,6 +73,7 @@ class LybicSyncClient(_LybicSyncBaseClient):
         self.mcp = McpSync(self)
         self.stats = StatsSync(self)
         self.tools = ToolsSync(self)
+        self.stream_shell = StreamShellSync(self)
 
     def _ensure_client_is_open(self):
         if self.client is None:

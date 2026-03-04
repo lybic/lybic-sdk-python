@@ -34,6 +34,7 @@ from .mcp import Mcp
 from .stats import Stats
 from .project import Project
 from .sandbox import Sandbox
+from .stream_shell import StreamShell
 from .authentication import LybicAuth
 from .base import _LybicBaseClient
 from .exceptions import LybicAPIError, LybicInternalError
@@ -69,6 +70,7 @@ class LybicClient(_LybicBaseClient):
         self.mcp = Mcp(self)
         self.stats = Stats(self)
         self.tools = Tools(self)
+        self.stream_shell = StreamShell(self)
 
     def _ensure_client_is_open(self):
         if self.client is None:
