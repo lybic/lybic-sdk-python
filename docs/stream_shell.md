@@ -94,7 +94,7 @@ Create an interactive shell session that can be written to and read from.
 ```python
 response = await client.stream_shell.create(
     sandbox_id="sandbox-123",
-    command="bash",
+    command="your-command",
     use_tty=True,
     tty_rows=24,
     tty_cols=80,
@@ -129,9 +129,9 @@ Read accumulated output from a shell session.
 **Example:**
 ```python
 read_response = await client.stream_shell.read(sandbox_id, shell_id)
-for output in read_response.output:
-    if output.oneofKind == "stdout":
-        print(output.stdout)
+for outputs in read_response.outputs:
+    if outputs.output.oneofKind == "stdout":
+        print(outputs.output.stdout)
 ```
 
 ### `finish()`
@@ -209,7 +209,7 @@ async with LybicClient(auth=auth) as client:
     # Create interactive shell
     response = await client.stream_shell.create(
         sandbox_id="sandbox-123",
-        command="bash",
+        command="program",
         use_tty=True,
         tty_rows=24,
         tty_cols=80,

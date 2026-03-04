@@ -26,7 +26,7 @@
 
 """dto.py provides all the data types used in the API."""
 from enum import Enum, unique
-from typing import List, Optional, Literal, Any, Union
+from typing import Annotated, List, Optional, Literal, Any, Union
 from pydantic import BaseModel, Field, RootModel, ConfigDict
 from pydantic.config import ExtraValues
 
@@ -706,14 +706,19 @@ class ShellOutputWaiting(BaseModel):
     waiting: bool = Field(..., description="Indicates a prompt waiting state.")
 
 
-ShellOutput = Union[ShellOutputStdout, ShellOutputStderr, ShellOutputWaiting]
+ShellOutput = Annotated[
+    Union[ShellOutputStdout, ShellOutputStderr, ShellOutputWaiting],
+    Field(discriminator="oneofKind")
+]
 
+class _output(BaseModel):
+    output: ShellOutput = Field(..., description="Accumulated output parts from the shell session.")
 
 class SandboxShellCommandReadResponseDto(BaseModel):
     """Response from reading shell output."""
     model_config = ConfigDict(extra=json_extra_fields_policy)
 
-    output: list[ShellOutput] = Field(..., description="Accumulated output parts from the shell session.")
+    outputs: list[_output] = Field(..., description="Accumulated output parts from the shell session.")
     isRunning: bool = Field(..., description="Whether the shell session is still running.")
 
 
