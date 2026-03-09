@@ -618,6 +618,24 @@ class HttpRemote(BaseModel):
 
 APPSources = AndroidLocal | HttpRemote
 
+SandboxApplicationStatus = Literal["PENDING", "RUNNING", "SUCCEEDED", "FAILED", "CANCELLED"]
+
+class SandboxApplicationInstallAcceptedDto(BaseModel):
+    """
+    Response from install sandbox application request.
+    """
+    operationId: str = Field(..., description="The ID of the installation operation.")
+    status: SandboxApplicationStatus = Field(..., description="Current status of the operation.")
+
+
+class SandboxApplicationOperationDto(BaseModel):
+    """
+    Latest state of an application installation operation.
+    """
+    status: SandboxApplicationStatus = Field(..., description="Current status of the operation.")
+    detail: Optional[Any] = Field(..., description="Additional detail about the operation result.")
+
+
 class CreateHttpMappingDto(BaseModel):
     """
     Create HTTP mapping request.
