@@ -38,7 +38,9 @@ from lybic.dto import (
     MobileUseActionResponseDto,
     APPSources,
     AndroidLocal,
-    HttpRemote
+    HttpRemote,
+    SandboxApplicationInstallAcceptedDto,
+    SandboxApplicationOperationDto,
 )
 
 if TYPE_CHECKING:
@@ -201,6 +203,44 @@ class MobileUse:
             executable="sh",
             args=["-c", f"nohup sh -c '{script_content}' >/dev/null 2>&1 &"],
         )
+
+    async def install_sandbox_application(
+        self, sandbox_id: str, app_id: str
+    ) -> SandboxApplicationInstallAcceptedDto:
+        """Request application installation on a sandbox through nomos.
+
+        Args:
+            sandbox_id: The ID of the sandbox.
+            app_id: The ID of the application to install.
+
+        Returns:
+            A DTO containing the operation ID and initial status.
+        """
+        response = await self.client.request(
+            "PUT",
+            f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/apps/{app_id}",
+        )
+        self.client.logger.debug(f"Install sandbox application response: {response.text}")
+        return SandboxApplicationInstallAcceptedDto.model_validate_json(response.text)
+
+    async def get_sandbox_application_operation(
+        self, sandbox_id: str, operation_id: str
+    ) -> SandboxApplicationOperationDto:
+        """Get the latest state of an application installation operation.
+
+        Args:
+            sandbox_id: The ID of the sandbox.
+            operation_id: The ID of the sandbox operation.
+
+        Returns:
+            A DTO containing the current status and detail of the operation.
+        """
+        response = await self.client.request(
+            "GET",
+            f"/api/orgs/{self.client.org_id}/sandboxes/{sandbox_id}/operations/{operation_id}",
+        )
+        self.client.logger.debug(f"Get sandbox application operation response: {response.text}")
+        return SandboxApplicationOperationDto.model_validate_json(response.text)
 
 class Tools:
     """Tools is a container for various tool clients."""
