@@ -1613,6 +1613,118 @@ with LybicSyncClient(
     print("APK installation started")
 ```
 
+#### 3. Install Sandbox Application (Since 1.4)
+
+Request installation of an application on a sandbox through the lybic service. Returns an operation ID that can be used to track the installation progress.
+
+method: `install_sandbox_application(sandbox_id: str, app_id: str)`
+- args:
+  - sandbox_id: str ID of the sandbox
+  - app_id: str ID of the application to install
+- return: `SandboxApplicationInstallAcceptedDto` containing `operationId` and initial `status`
+
+```python
+import asyncio
+from lybic import LybicClient, LybicAuth
+
+async def install_sandbox_app_example():
+    async with LybicClient(
+        LybicAuth(
+            org_id="ORG-xxxx",
+            api_key="lysk-xxxxxxxxxxx",
+            endpoint="https://api.lybic.cn/"
+        )
+    ) as client:
+        result = await client.tools.mobile_use.install_sandbox_application(
+            sandbox_id="SBX-xxxx",
+            app_id="APP-xxxx"
+        )
+        print(f"Operation ID: {result.operationId}")
+        print(f"Initial status: {result.status}")
+
+if __name__ == '__main__':
+    asyncio.run(install_sandbox_app_example())
+```
+
+#### 4. Get Sandbox Application Operation
+
+Query the latest state of an application installation operation.
+
+method: `get_sandbox_application_operation(sandbox_id: str, operation_id: str)`
+- args:
+  - sandbox_id: str ID of the sandbox
+  - operation_id: str ID of the sandbox operation (returned by `install_sandbox_application`)
+- return: `SandboxApplicationOperationDto` containing `status` and `detail`
+
+**Operation Status Values:** `PENDING`, `RUNNING`, `SUCCEEDED`, `FAILED`, `CANCELLED`
+
+```python
+import asyncio
+import time
+from lybic import LybicClient, LybicAuth
+
+async def poll_install_operation_example():
+    async with LybicClient(
+        LybicAuth(
+            org_id="ORG-xxxx",
+            api_key="lysk-xxxxxxxxxxx",
+            endpoint="https://api.lybic.cn/"
+        )
+    ) as client:
+        # Start installation
+        accepted = await client.tools.mobile_use.install_sandbox_application(
+            sandbox_id="SBX-xxxx",
+            app_id="APP-xxxx"
+        )
+        print(f"Installation started, operation ID: {accepted.operationId}")
+
+        # Poll until the operation completes
+        while True:
+            operation = await client.tools.mobile_use.get_sandbox_application_operation(
+                sandbox_id="SBX-xxxx",
+                operation_id=accepted.operationId
+            )
+            print(f"Status: {operation.status}")
+            if operation.status in ("SUCCEEDED", "FAILED", "CANCELLED"):
+                print(f"Final status: {operation.status}, detail: {operation.detail}")
+                break
+            await asyncio.sleep(5)
+
+if __name__ == '__main__':
+    asyncio.run(poll_install_operation_example())
+```
+
+**Synchronous Usage:**
+
+```python
+import time
+from lybic_sync import LybicSyncClient, LybicAuth
+
+with LybicSyncClient(
+    LybicAuth(
+        org_id="ORG-xxxx",
+        api_key="lysk-xxxxxxxxxxx",
+        endpoint="https://api.lybic.cn/"
+    )
+) as client:
+    accepted = client.tools.mobile_use.install_sandbox_application(
+        sandbox_id="SBX-xxxx",
+        app_id="APP-xxxx"
+    )
+    print(f"Operation ID: {accepted.operationId}")
+
+    while True:
+        operation = client.tools.mobile_use.get_sandbox_application_operation(
+            sandbox_id="SBX-xxxx",
+            operation_id=accepted.operationId
+        )
+        print(f"Status: {operation.status}")
+        if operation.status in ("SUCCEEDED", "FAILED", "CANCELLED"):
+            print(f"Final status: {operation.status}, detail: {operation.detail}")
+            break
+        time.sleep(5)
+```
+
 ### Error Handling
 
 The SDK provides user-friendly exceptions for API errors instead of raw HTTP errors.

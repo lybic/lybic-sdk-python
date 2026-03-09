@@ -362,6 +362,284 @@
         ]
       }
     },
+    "/api/orgs/{orgId}/sandboxes/{sandboxId}/shell/stream": {
+      "post": {
+        "operationId": "createSandboxShellCommand",
+        "parameters": [
+          {
+            "name": "sandboxId",
+            "required": true,
+            "in": "path",
+            "description": "The sandbox ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orgId",
+            "required": true,
+            "in": "path",
+            "description": "The organization ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SandboxShellCommandStreamCreateRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Create Sandbox Shell (SSE)",
+        "tags": [
+          "Sandbox"
+        ]
+      }
+    },
+    "/api/orgs/{orgId}/sandboxes/{sandboxId}/shell": {
+      "post": {
+        "operationId": "createSandboxShellCommand",
+        "parameters": [
+          {
+            "name": "sandboxId",
+            "required": true,
+            "in": "path",
+            "description": "The sandbox ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orgId",
+            "required": true,
+            "in": "path",
+            "description": "The organization ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SandboxShellCommandCreateRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SandboxShellCommandCreateResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Create Sandbox Shell",
+        "tags": [
+          "Sandbox"
+        ]
+      }
+    },
+    "/api/orgs/{orgId}/sandboxes/{sandboxId}/shell/{shellId}": {
+      "post": {
+        "operationId": "writeSandboxShellCommand",
+        "parameters": [
+          {
+            "name": "sandboxId",
+            "required": true,
+            "in": "path",
+            "description": "The sandbox ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "shellId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orgId",
+            "required": true,
+            "in": "path",
+            "description": "The organization ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SandboxShellCommandWriteRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Write Text to Sandbox Shell",
+        "tags": [
+          "Sandbox"
+        ]
+      },
+      "delete": {
+        "operationId": "terminateSandboxShellCommand",
+        "parameters": [
+          {
+            "name": "sandboxId",
+            "required": true,
+            "in": "path",
+            "description": "The sandbox ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "shellId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orgId",
+            "required": true,
+            "in": "path",
+            "description": "The organization ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Terminate Sandbox Shell",
+        "tags": [
+          "Sandbox"
+        ]
+      }
+    },
+    "/api/orgs/{orgId}/sandboxes/{sandboxId}/shell/{shellId}/finish": {
+      "put": {
+        "operationId": "finishSandboxShellCommand",
+        "parameters": [
+          {
+            "name": "sandboxId",
+            "required": true,
+            "in": "path",
+            "description": "The sandbox ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "shellId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orgId",
+            "required": true,
+            "in": "path",
+            "description": "The organization ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Finish Writing to Sandbox Shell",
+        "tags": [
+          "Sandbox"
+        ]
+      }
+    },
+    "/api/orgs/{orgId}/sandboxes/{sandboxId}/shell/{shellId}/read": {
+      "post": {
+        "operationId": "readSandboxShellCommand",
+        "parameters": [
+          {
+            "name": "sandboxId",
+            "required": true,
+            "in": "path",
+            "description": "The sandbox ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "shellId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orgId",
+            "required": true,
+            "in": "path",
+            "description": "The organization ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SandboxShellCommandReadResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Read Sandbox Shell Output",
+        "tags": [
+          "Sandbox"
+        ]
+      }
+    },
     "/api/orgs/{orgId}/sandboxes/from-image": {
       "post": {
         "description": "Creates a new sandbox from a machine image.",
@@ -723,6 +1001,16 @@
             }
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SandboxPreviewRequestDto"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "",
@@ -736,6 +1024,108 @@
           }
         },
         "summary": "Preview Sandbox",
+        "tags": [
+          "Sandbox"
+        ]
+      }
+    },
+    "/api/orgs/{orgId}/sandboxes/{sandboxId}/apps/{appId}": {
+      "put": {
+        "description": "Requests application installations on a sandbox through nomos.",
+        "operationId": "installSandboxApplication",
+        "parameters": [
+          {
+            "name": "sandboxId",
+            "required": true,
+            "in": "path",
+            "description": "The sandbox ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "appId",
+            "required": true,
+            "in": "path",
+            "description": "The app ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orgId",
+            "required": true,
+            "in": "path",
+            "description": "The organization ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SandboxApplicationInstallAcceptedDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Install Sandbox Application",
+        "tags": [
+          "Sandbox"
+        ]
+      }
+    },
+    "/api/orgs/{orgId}/sandboxes/{sandboxId}/operations/{operationId}": {
+      "get": {
+        "description": "Returns the latest state of an application installation operation.",
+        "operationId": "getSandboxApplicationOperation",
+        "parameters": [
+          {
+            "name": "sandboxId",
+            "required": true,
+            "in": "path",
+            "description": "The sandbox ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "operationId",
+            "required": true,
+            "in": "path",
+            "description": "The sandbox operation ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orgId",
+            "required": true,
+            "in": "path",
+            "description": "The organization ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SandboxApplicationOperationDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get Sandbox Application Operation",
         "tags": [
           "Sandbox"
         ]
@@ -2047,6 +2437,192 @@
         },
         "required": [
           "exitCode"
+        ]
+      },
+      "SandboxShellCommandStreamCreateRequestDto": {
+        "type": "object",
+        "properties": {
+          "command": {
+            "description": "The command to execute in the shell.",
+            "type": "string",
+            "minLength": 1
+          },
+          "useTty": {
+            "description": "Whether to use a TTY for the shell session.",
+            "type": "boolean",
+            "default": false
+          },
+          "timeoutSeconds": {
+            "description": "Optional timeout for the shell session in seconds.",
+            "type": "number",
+            "minimum": 1,
+            "exclusiveMinimum": false,
+            "maximum": 86400,
+            "exclusiveMaximum": false
+          },
+          "workingDirectory": {
+            "description": "Optional working directory for the shell session.",
+            "type": "string"
+          },
+          "ttyRows": {
+            "description": "Number of rows for TTY (if useTty is true).",
+            "type": "number",
+            "minimum": 1,
+            "exclusiveMinimum": false
+          },
+          "ttyCols": {
+            "description": "Number of columns for TTY (if useTty is true).",
+            "type": "number",
+            "minimum": 1,
+            "exclusiveMinimum": false
+          }
+        },
+        "required": [
+          "command"
+        ]
+      },
+      "SandboxShellCommandCreateRequestDto": {
+        "type": "object",
+        "properties": {
+          "command": {
+            "description": "The command to execute in the shell.",
+            "type": "string",
+            "minLength": 1
+          },
+          "useTty": {
+            "description": "Whether to use a TTY for the shell session.",
+            "type": "boolean",
+            "default": false
+          },
+          "timeoutSeconds": {
+            "description": "Optional timeout for the shell session in seconds.",
+            "type": "number",
+            "minimum": 1,
+            "exclusiveMinimum": false,
+            "maximum": 86400,
+            "exclusiveMaximum": false
+          },
+          "workingDirectory": {
+            "description": "Optional working directory for the shell session.",
+            "type": "string"
+          },
+          "ttyRows": {
+            "description": "Number of rows for TTY (if useTty is true).",
+            "type": "number",
+            "minimum": 1,
+            "exclusiveMinimum": false
+          },
+          "ttyCols": {
+            "description": "Number of columns for TTY (if useTty is true).",
+            "type": "number",
+            "minimum": 1,
+            "exclusiveMinimum": false
+          }
+        },
+        "required": [
+          "command"
+        ]
+      },
+      "SandboxShellCommandCreateResponseDto": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "description": "The ID of the created shell session.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "sessionId"
+        ]
+      },
+      "SandboxShellCommandWriteRequestDto": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "description": "The input data to write to the shell session.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "SandboxShellCommandReadResponseDto": {
+        "type": "object",
+        "properties": {
+          "output": {
+            "description": "Accumulated output parts from the shell session.",
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "oneofKind": {
+                      "type": "string",
+                      "enum": [
+                        "stdout"
+                      ]
+                    },
+                    "stdout": {
+                      "description": "Standard output from the shell session.",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "oneofKind",
+                    "stdout"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "oneofKind": {
+                      "type": "string",
+                      "enum": [
+                        "stderr"
+                      ]
+                    },
+                    "stderr": {
+                      "description": "Standard error output from the shell session.",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "oneofKind",
+                    "stderr"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "oneofKind": {
+                      "type": "string",
+                      "enum": [
+                        "waiting"
+                      ]
+                    },
+                    "waiting": {
+                      "description": "Indicates a prompt waiting state.",
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "oneofKind",
+                    "waiting"
+                  ]
+                }
+              ]
+            }
+          },
+          "isRunning": {
+            "description": "Whether the shell session is still running.",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "output",
+          "isRunning"
         ]
       },
       "CreateSandboxFromImageDto": {
@@ -3468,6 +4044,11 @@
                 "type": "string"
               }
             }
+          },
+          "screenShotPutUrl": {
+            "description": "Optional screenshot upload URL, if provided, the screenshot will be uploaded to this URL using HTTP PUT method",
+            "type": "string",
+            "format": "uri"
           },
           "includeScreenShot": {
             "description": "Whether to include the screenshot url after action in the response",
@@ -5391,6 +5972,11 @@
               }
             ]
           },
+          "screenShotPutUrl": {
+            "description": "Optional screenshot upload URL, passed through to redshift for BYO storage.",
+            "type": "string",
+            "format": "uri"
+          },
           "includeScreenShot": {
             "description": "Whether to include the screenshot url after action in the response",
             "type": "boolean",
@@ -5404,6 +5990,60 @@
         },
         "required": [
           "action"
+        ]
+      },
+      "SandboxPreviewRequestDto": {
+        "type": "object",
+        "properties": {
+          "screenShotPutUrl": {
+            "description": "Optional screenshot upload URL, passed through to redshift for BYO storage.",
+            "type": "string",
+            "format": "uri"
+          }
+        }
+      },
+      "SandboxApplicationInstallAcceptedDto": {
+        "type": "object",
+        "properties": {
+          "operationId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "RUNNING",
+              "SUCCEEDED",
+              "FAILED",
+              "CANCELLED"
+            ]
+          }
+        },
+        "required": [
+          "operationId",
+          "status"
+        ]
+      },
+      "SandboxApplicationOperationDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "RUNNING",
+              "SUCCEEDED",
+              "FAILED",
+              "CANCELLED"
+            ]
+          },
+          "detail": {
+            "nullable": true
+          }
+        },
+        "required": [
+          "status",
+          "detail"
         ]
       },
       "HttpMappingListResponseDto": {
