@@ -1368,20 +1368,6 @@
         "operationId": "MachineImageController_listMachineImages",
         "parameters": [
           {
-            "name": "scope",
-            "required": false,
-            "in": "query",
-            "description": "List scope, defaults to org",
-            "schema": {
-              "enum": [
-                "org",
-                "public",
-                "all"
-              ],
-              "type": "string"
-            }
-          },
-          {
             "name": "orgId",
             "required": true,
             "in": "path",
@@ -6154,17 +6140,6 @@
           "shapeName": {
             "type": "string"
           },
-          "requiredFeatureFlag": {
-            "type": "string",
-            "nullable": true
-          },
-          "scope": {
-            "type": "string",
-            "enum": [
-              "ORG",
-              "PUBLIC"
-            ]
-          },
           "status": {
             "type": "string",
             "enum": [
@@ -6180,8 +6155,6 @@
           "description",
           "createdAt",
           "shapeName",
-          "requiredFeatureFlag",
-          "scope",
           "status"
         ]
       },
@@ -6210,17 +6183,6 @@
                 "shapeName": {
                   "type": "string"
                 },
-                "requiredFeatureFlag": {
-                  "type": "string",
-                  "nullable": true
-                },
-                "scope": {
-                  "type": "string",
-                  "enum": [
-                    "ORG",
-                    "PUBLIC"
-                  ]
-                },
                 "status": {
                   "type": "string",
                   "enum": [
@@ -6236,8 +6198,6 @@
                 "description",
                 "createdAt",
                 "shapeName",
-                "requiredFeatureFlag",
-                "scope",
                 "status"
               ]
             }
